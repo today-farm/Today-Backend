@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### 서버 설정 파일 ###
-/src/main/resources/application-jwt.ymlapplication-jwt.yml
+/src/main/resources/application-jwt.yml
