@@ -21,6 +21,8 @@ public class User {
 
     private String password; // 패스워드
 
+    private String profileImgUrl; // 프로필 사진
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
