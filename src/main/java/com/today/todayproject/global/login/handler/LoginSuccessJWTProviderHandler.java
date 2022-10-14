@@ -35,7 +35,10 @@ public class LoginSuccessJWTProviderHandler extends SimpleUrlAuthenticationSucce
 
         // DB에 refreshToken 저장
         userRepository.findByEmail(email).ifPresent(
-                user -> user.updateRefreshToken(refreshToken)
+                user -> {
+                    user.updateRefreshToken(refreshToken);
+                    userRepository.saveAndFlush(user);
+                }
         );
 
 
