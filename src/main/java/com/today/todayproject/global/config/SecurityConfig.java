@@ -1,6 +1,7 @@
 package com.today.todayproject.global.config;
 
 import com.today.todayproject.domain.user.repository.UserRepository;
+import com.today.todayproject.global.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.today.todayproject.global.jwt.service.JwtService;
 import com.today.todayproject.global.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
 import com.today.todayproject.global.login.handler.LoginFailureHandler;
@@ -60,6 +61,7 @@ public class SecurityConfig {
         // 원래 스프링 시큐리티 필터 순서가 LogoutFilter 이후에 로그인 필터 동작
         // 따라서, LogoutFilter 이후에 우리가 만든 필터 동작하도록 설정
         http.addFilterAfter(customJsonUsernamePasswordAuthenticationFilter(), LogoutFilter.class);
+        http.addFilterBefore(jwtAuthenticationProcessingFilter(), CustomJsonUsernamePasswordAuthenticationFilter.class);
 
 
         return http.build();
@@ -120,5 +122,11 @@ public class SecurityConfig {
         customJsonUsernamePasswordLoginFilter.setAuthenticationSuccessHandler(loginSuccessJWTProviderHandler());
         customJsonUsernamePasswordLoginFilter.setAuthenticationFailureHandler(loginFailureHandler());
         return customJsonUsernamePasswordLoginFilter;
+    }
+
+    @Bean
+    public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
+        JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository);
+        return jwtAuthenticationFilter;
     }
 }
