@@ -16,7 +16,7 @@ public class SignUpController {
     private final SignUpService signUpService;
 
     @PostMapping("/sign-up")
-    public BaseResponse<SignUpResponseDto> signUp(@RequestBody SignUpRequestDto signUpRequestDto) {
+    public BaseResponse<SignUpResponseDto> signUp(@RequestBody SignUpRequestDto signUpRequestDto) throws Exception {
         Long createUserId = signUpService.signUp(signUpRequestDto);
         SignUpResponseDto signUpResponseDto = new SignUpResponseDto(createUserId);
         return new BaseResponse<>(signUpResponseDto);
