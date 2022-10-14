@@ -21,11 +21,17 @@ public class SignUpService {
         User user = User.builder()
                 .email(signUpRequestDto.getEmail())
                 .password(signUpRequestDto.getPassword())
+                .nickname(signUpRequestDto.getNickname())
+                .profileImgUrl(signUpRequestDto.getProfileImgUrl())
                 .role(Role.USER)
                 .build();
 
         if(userRepository.findByEmail(user.getEmail()).isPresent()) {
             throw new BaseException(BaseResponseStatus.EXIST_EMAIL);
+        }
+
+        if(userRepository.findByNickname(user.getNickname()).isPresent()) {
+            throw new BaseException(BaseResponseStatus.EXIST_NICKNAME);
         }
 
         user.encodePassword(passwordEncoder);
