@@ -26,14 +26,14 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updateNickname(UserNicknameUpdateRequestDto userNicknameUpdateRequestDto) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER.getMessage()));
 
         String originalNickname = loginUser.getNickname();
         String changeNickname = userNicknameUpdateRequestDto.getChangeNickname();
 
         // 기존 닉네임과 변경할 닉네임이 같을 때 예외 처리
         if(originalNickname == changeNickname) {
-            throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
+            throw new BaseException(BaseResponseStatus.SAME_NICKNAME.getMessage());
         }
 
         loginUser.updateNickname(userNicknameUpdateRequestDto.getChangeNickname());
@@ -45,11 +45,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public void updatePassword(UserPasswordUpdateRequestDto userPasswordUpdateRequestDto) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER.getMessage()));
 
         boolean isSamePassword = loginUser
                 .matchPassword(passwordEncoder, userPasswordUpdateRequestDto.getCurrentPassword());
-        if(!isSamePassword) throw new BaseException(BaseResponseStatus.WRONG_CURRENT_PASSWORD);
+        if(!isSamePassword) throw new BaseException(BaseResponseStatus.WRONG_CURRENT_PASSWORD.getMessage());
         loginUser.updatePassword(passwordEncoder, userPasswordUpdateRequestDto.getChangePassword());
     }
 
