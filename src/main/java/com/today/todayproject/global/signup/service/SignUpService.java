@@ -27,11 +27,11 @@ public class SignUpService {
                 .build();
 
         if(userRepository.findByEmail(user.getEmail()).isPresent()) {
-            throw new BaseException(BaseResponseStatus.EXIST_EMAIL.getMessage());
+            throw new BaseException(BaseResponseStatus.EXIST_EMAIL);
         }
 
         if(userRepository.findByNickname(user.getNickname()).isPresent()) {
-            throw new BaseException(BaseResponseStatus.EXIST_NICKNAME.getMessage());
+            throw new BaseException(BaseResponseStatus.EXIST_NICKNAME);
         }
 
         user.encodePassword(passwordEncoder);
