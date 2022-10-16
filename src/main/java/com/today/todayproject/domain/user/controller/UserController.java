@@ -1,6 +1,7 @@
 package com.today.todayproject.domain.user.controller;
 
 import com.today.todayproject.domain.user.dto.UserNicknameUpdateRequestDto;
+import com.today.todayproject.domain.user.dto.UserPasswordUpdateRequestDto;
 import com.today.todayproject.domain.user.service.UserService;
 import com.today.todayproject.global.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +23,17 @@ public class UserController {
             @RequestBody UserNicknameUpdateRequestDto userNicknameUpdateRequestDto) throws Exception {
 
         userService.updateNickname(userNicknameUpdateRequestDto);
-        return new BaseResponse<String>("닉네임 수정 성공");
+        return new BaseResponse<>("닉네임 수정 성공");
     }
 
+    /**
+     * 비밀번호 수정 API
+     */
+    @PostMapping("/user/update-password")
+    public BaseResponse<String> passwordUpdate(
+            @RequestBody UserPasswordUpdateRequestDto userPasswordUpdateRequestDto) throws Exception {
+
+        userService.updatePassword(userPasswordUpdateRequestDto);
+        return new BaseResponse<>("비밀번호 수정 성공");
+    }
 }
