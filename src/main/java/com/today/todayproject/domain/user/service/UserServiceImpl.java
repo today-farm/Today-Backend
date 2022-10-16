@@ -49,7 +49,12 @@ public class UserServiceImpl implements UserService {
 
         boolean isSamePassword = loginUser
                 .matchPassword(passwordEncoder, userPasswordUpdateRequestDto.getCurrentPassword());
-        if(!isSamePassword) throw new BaseException(BaseResponseStatus.WRONG_CURRENT_PASSWORD);
+        if(!isSamePassword) {
+            throw new BaseException(BaseResponseStatus.WRONG_CURRENT_PASSWORD);
+        }
+        if(userPasswordUpdateRequestDto.getCurrentPassword().equals(userPasswordUpdateRequestDto.getChangePassword())) {
+            throw new BaseException(BaseResponseStatus.SAME_CURRENT_CHANGE_PASSWORD);
+        }
         loginUser.updatePassword(passwordEncoder, userPasswordUpdateRequestDto.getChangePassword());
     }
 
