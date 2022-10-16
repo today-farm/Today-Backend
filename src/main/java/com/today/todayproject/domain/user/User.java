@@ -54,6 +54,10 @@ public class User {
         return passwordEncoder.matches(checkPassword, getPassword());
     }
 
+    public void updatePassword(PasswordEncoder passwordEncoder, String changePassword) {
+        this.password = passwordEncoder.encode(changePassword);
+    }
+
     public void updateNickname(String changeNickname) {
         this.nickname = changeNickname;
     }
