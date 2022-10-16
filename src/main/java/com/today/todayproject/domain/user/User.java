@@ -49,6 +49,11 @@ public class User {
         this.password = passwordEncoder.encode(password);
     }
 
+    // 파라미터로 들어온 비밀번호와 현재 비밀번호가 같으면 true, 다르면 false
+    public boolean matchPassword(PasswordEncoder passwordEncoder, String checkPassword) {
+        return passwordEncoder.matches(checkPassword, getPassword());
+    }
+
     public void updateNickname(String changeNickname) {
         this.nickname = changeNickname;
     }
