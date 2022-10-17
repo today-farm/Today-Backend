@@ -3,6 +3,7 @@ package com.today.todayproject.domain.user.service;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.dto.UserNicknameUpdateRequestDto;
 import com.today.todayproject.domain.user.dto.UserPasswordUpdateRequestDto;
+import com.today.todayproject.domain.user.dto.UserWithdrawRequestDto;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
@@ -58,4 +59,19 @@ public class UserServiceImpl implements UserService {
         loginUser.updatePassword(passwordEncoder, userPasswordUpdateRequestDto.getChangePassword());
     }
 
+    /**
+     * 회원 탈퇴 로직
+     */
+    @Override
+    public void withdraw(UserWithdrawRequestDto userWithdrawRequestDto) throws Exception {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+
+        boolean isSamePassword = loginUser
+                .matchPassword(passwordEncoder, userWithdrawRequestDto.getCurrentPassword());
+        if(!isSamePassword) {
+            throw new BaseException(BaseResponseStatus.WRONG_CURRENT_PASSWORD);
+        }
+        userRepository.delete(loginUser);
+    }
 }
