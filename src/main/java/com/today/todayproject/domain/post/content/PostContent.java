@@ -1,5 +1,6 @@
 package com.today.todayproject.domain.post.content;
 
+import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.post.Post;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -12,7 +13,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PostContent {
+public class PostContent extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

@@ -1,5 +1,6 @@
 package com.today.todayproject.domain.user;
 
+import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.friend.Friend;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,7 +15,7 @@ import java.util.List;
 @AllArgsConstructor
 @Table(name = "USERS")
 @Builder
-public class User {
+public class User extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id")

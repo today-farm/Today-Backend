@@ -1,5 +1,6 @@
 package com.today.todayproject.domain.post;
 
+import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.post.content.PostContent;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
 import com.today.todayproject.domain.post.question.PostQuestion;
@@ -16,7 +17,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class Post {
+public class Post extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_id")
