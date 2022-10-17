@@ -2,6 +2,7 @@ package com.today.todayproject.domain.user.controller;
 
 import com.today.todayproject.domain.user.dto.UserNicknameUpdateRequestDto;
 import com.today.todayproject.domain.user.dto.UserPasswordUpdateRequestDto;
+import com.today.todayproject.domain.user.dto.UserWithdrawRequestDto;
 import com.today.todayproject.domain.user.service.UserService;
 import com.today.todayproject.global.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,5 +36,15 @@ public class UserController {
 
         userService.updatePassword(userPasswordUpdateRequestDto);
         return new BaseResponse<>("비밀번호 수정 성공");
+    }
+
+    /**
+     * 회원 탈퇴 API
+     */
+    @PostMapping("/user/withdraw")
+    public BaseResponse<String> withdraw(
+            @RequestBody UserWithdrawRequestDto userWithdrawRequestDto) throws Exception {
+        userService.withdraw(userWithdrawRequestDto);
+        return new BaseResponse<>("회원 탈퇴 성공");
     }
 }
