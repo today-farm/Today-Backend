@@ -21,4 +21,10 @@ public interface S3UploadService {
 
     // 파일 확장자 추출
     String getFileExtension(String fileName);
+
+    // 1개의 파일 S3에서 삭제
+    void deleteOriginalFile(String fileName);
+
+    // 여러 개 파일 S3에서 삭제(리스트)
+    void deleteOriginalFile(List<String> fileNames);
 }
