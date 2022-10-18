@@ -6,6 +6,7 @@ import com.today.todayproject.domain.user.dto.UserWithdrawRequestDto;
 import com.today.todayproject.domain.user.service.UserService;
 import com.today.todayproject.global.BaseResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +20,7 @@ public class UserController {
     /**
      * 닉네임 수정 API
      */
-    @PostMapping("/user/update-nickname")
+    @PatchMapping("/user/update-nickname")
     public BaseResponse<String> nicknameUpdate(
             @RequestBody UserNicknameUpdateRequestDto userNicknameUpdateRequestDto) throws Exception {
 
@@ -30,7 +31,7 @@ public class UserController {
     /**
      * 비밀번호 수정 API
      */
-    @PostMapping("/user/update-password")
+    @PatchMapping("/user/update-password")
     public BaseResponse<String> passwordUpdate(
             @RequestBody UserPasswordUpdateRequestDto userPasswordUpdateRequestDto) throws Exception {
 
