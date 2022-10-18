@@ -7,7 +7,11 @@ import com.today.todayproject.global.signup.service.SignUpService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -16,8 +20,10 @@ public class SignUpController {
     private final SignUpService signUpService;
 
     @PostMapping("/sign-up")
-    public BaseResponse<SignUpResponseDto> signUp(@RequestBody SignUpRequestDto signUpRequestDto) throws Exception {
-        Long createUserId = signUpService.signUp(signUpRequestDto);
+    public BaseResponse<SignUpResponseDto> signUp(
+            @RequestPart(required = false) List<MultipartFile> multipartFiles,
+            @RequestPart SignUpRequestDto signUpRequestDto) throws Exception {
+        Long createUserId = signUpService.signUp(signUpRequestDto, multipartFiles);
         SignUpResponseDto signUpResponseDto = new SignUpResponseDto(createUserId);
         return new BaseResponse<>(signUpResponseDto);
     }
