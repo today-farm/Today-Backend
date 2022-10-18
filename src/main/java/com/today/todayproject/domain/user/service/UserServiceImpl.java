@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService {
             if (currentNickname.equals(changeNickname)) {
                 throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
             }
-            loginUser.updateNickname(userUpdateRequestDto.getChangeNickname());
         }
 
 
@@ -48,7 +47,6 @@ public class UserServiceImpl implements UserService {
             if (loginUser.matchPassword(passwordEncoder, userUpdateRequestDto.getChangePassword())) {
                 throw new BaseException(BaseResponseStatus.SAME_CURRENT_CHANGE_PASSWORD);
             }
-            loginUser.updatePassword(passwordEncoder, userUpdateRequestDto.getChangePassword());
         }
 
         if(profileImg != null) {
@@ -59,6 +57,9 @@ public class UserServiceImpl implements UserService {
             String changeProfileImgUrl = s3UploadService.uploadFile(profileImg);
             loginUser.updateProfileImgUrl(changeProfileImgUrl);
         }
+
+        loginUser.updateNickname(userUpdateRequestDto.getChangeNickname());
+        loginUser.updatePassword(passwordEncoder, userUpdateRequestDto.getChangePassword());
     }
 
 
