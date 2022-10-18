@@ -7,6 +7,7 @@ import com.today.todayproject.domain.user.dto.UserWithdrawRequestDto;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
+import com.today.todayproject.global.s3.service.S3UploadService;
 import com.today.todayproject.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -20,6 +21,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final S3UploadService s3UploadService;
 
     /**
      * 닉네임 수정 로직
@@ -72,6 +74,8 @@ public class UserServiceImpl implements UserService {
         if(!isSamePassword) {
             throw new BaseException(BaseResponseStatus.WRONG_CURRENT_PASSWORD);
         }
+        String deleteProfileImgUrl = loginUser.getProfileImgUrl();
+        s3UploadService.deleteOriginalFile(deleteProfileImgUrl);
         userRepository.delete(loginUser);
     }
 }
