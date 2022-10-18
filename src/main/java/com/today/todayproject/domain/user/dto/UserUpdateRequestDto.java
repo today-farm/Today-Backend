@@ -5,7 +5,8 @@ import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class UserNicknameUpdateRequestDto {
+public class UserUpdateRequestDto {
 
     private String changeNickname;
+    private String changePassword;
 }

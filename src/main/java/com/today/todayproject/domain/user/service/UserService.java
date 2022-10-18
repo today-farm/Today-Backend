@@ -1,14 +1,12 @@
 package com.today.todayproject.domain.user.service;
 
-import com.today.todayproject.domain.user.dto.UserNicknameUpdateRequestDto;
-import com.today.todayproject.domain.user.dto.UserPasswordUpdateRequestDto;
+import com.today.todayproject.domain.user.dto.UserUpdateRequestDto;
 import com.today.todayproject.domain.user.dto.UserWithdrawRequestDto;
+import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
-    void updateNickname(UserNicknameUpdateRequestDto userNicknameUpdateRequestDto) throws Exception;
-
-    void updatePassword(UserPasswordUpdateRequestDto userPasswordUpdateRequestDto) throws Exception;
+    void updateUser(UserUpdateRequestDto userUpdateRequestDto, MultipartFile profileImg) throws Exception;
 
     void withdraw(UserWithdrawRequestDto userWithdrawRequestDto) throws Exception;
 }

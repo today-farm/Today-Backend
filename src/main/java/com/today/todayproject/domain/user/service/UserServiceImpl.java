@@ -1,8 +1,7 @@
 package com.today.todayproject.domain.user.service;
 
 import com.today.todayproject.domain.user.User;
-import com.today.todayproject.domain.user.dto.UserNicknameUpdateRequestDto;
-import com.today.todayproject.domain.user.dto.UserPasswordUpdateRequestDto;
+import com.today.todayproject.domain.user.dto.UserUpdateRequestDto;
 import com.today.todayproject.domain.user.dto.UserWithdrawRequestDto;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
@@ -13,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional
@@ -24,42 +24,43 @@ public class UserServiceImpl implements UserService {
     private final S3UploadService s3UploadService;
 
     /**
-     * 닉네임 수정 로직
+     * 회원 정보 수정 로직
      */
     @Override
-    public void updateNickname(UserNicknameUpdateRequestDto userNicknameUpdateRequestDto) throws Exception {
+    public void updateUser(UserUpdateRequestDto userUpdateRequestDto, MultipartFile profileImg) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
-        String originalNickname = loginUser.getNickname();
-        String changeNickname = userNicknameUpdateRequestDto.getChangeNickname();
+        String currentNickname = loginUser.getNickname();
+        String changeNickname = userUpdateRequestDto.getChangeNickname();
 
-        // 기존 닉네임과 변경할 닉네임이 같을 때 예외 처리
-        if(originalNickname == changeNickname) {
-            throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
+        if(userUpdateRequestDto.getChangeNickname() != null) {
+            // 기존 닉네임과 변경할 닉네임이 같을 때 예외 처리
+            if (currentNickname.equals(changeNickname)) {
+                throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
+            }
+            loginUser.updateNickname(userUpdateRequestDto.getChangeNickname());
         }
 
-        loginUser.updateNickname(userNicknameUpdateRequestDto.getChangeNickname());
+
+        if(userUpdateRequestDto.getChangePassword() != null) {
+            // 기존 비밀번호와 변경할 비밀번호가 같을 때 예외 처리
+            if (loginUser.matchPassword(passwordEncoder, userUpdateRequestDto.getChangePassword())) {
+                throw new BaseException(BaseResponseStatus.SAME_CURRENT_CHANGE_PASSWORD);
+            }
+            loginUser.updatePassword(passwordEncoder, userUpdateRequestDto.getChangePassword());
+        }
+
+        if(profileImg != null) {
+            // 현재 프로필 사진이 기본이라면 S3 삭제 X, 있을 때만 S3에서 삭제
+            if(loginUser.getProfileImgUrl() != null) {
+                s3UploadService.deleteOriginalFile(loginUser.getProfileImgUrl());
+            }
+            String changeProfileImgUrl = s3UploadService.uploadFile(profileImg);
+            loginUser.updateProfileImgUrl(changeProfileImgUrl);
+        }
     }
 
-    /**
-     * 비밀번호 수정 로직
-     */
-    @Override
-    public void updatePassword(UserPasswordUpdateRequestDto userPasswordUpdateRequestDto) throws Exception {
-        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
-
-        boolean isSamePassword = loginUser
-                .matchPassword(passwordEncoder, userPasswordUpdateRequestDto.getCurrentPassword());
-        if(!isSamePassword) {
-            throw new BaseException(BaseResponseStatus.WRONG_CURRENT_PASSWORD);
-        }
-        if(userPasswordUpdateRequestDto.getCurrentPassword().equals(userPasswordUpdateRequestDto.getChangePassword())) {
-            throw new BaseException(BaseResponseStatus.SAME_CURRENT_CHANGE_PASSWORD);
-        }
-        loginUser.updatePassword(passwordEncoder, userPasswordUpdateRequestDto.getChangePassword());
-    }
 
     /**
      * 회원 탈퇴 로직

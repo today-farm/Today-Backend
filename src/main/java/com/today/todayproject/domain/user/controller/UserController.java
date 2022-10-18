@@ -1,7 +1,5 @@
 package com.today.todayproject.domain.user.controller;
 
-import com.today.todayproject.domain.user.dto.UserNicknameUpdateRequestDto;
-import com.today.todayproject.domain.user.dto.UserPasswordUpdateRequestDto;
 import com.today.todayproject.domain.user.dto.UserUpdateRequestDto;
 import com.today.todayproject.domain.user.dto.UserWithdrawRequestDto;
 import com.today.todayproject.domain.user.service.UserService;
