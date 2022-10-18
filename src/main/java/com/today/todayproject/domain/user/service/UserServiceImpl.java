@@ -32,11 +32,10 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
         String currentNickname = loginUser.getNickname();
-        String changeNickname = userUpdateRequestDto.getChangeNickname();
 
         if(userUpdateRequestDto.getChangeNickname() != null) {
             // 기존 닉네임과 변경할 닉네임이 같을 때 예외 처리
-            if (currentNickname.equals(changeNickname)) {
+            if (currentNickname.equals(userUpdateRequestDto.getChangeNickname())) {
                 throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
             }
         }
