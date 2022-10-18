@@ -2,6 +2,7 @@ package com.today.todayproject.global.s3.service;
 
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import com.today.todayproject.global.BaseException;
@@ -27,6 +28,8 @@ public class S3UploadServiceImpl implements S3UploadService {
 
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
+
+    private String deleteUrl = "https://todayproject-bucket.s3.ap-northeast-2.amazonaws.com/";
 
     private final AmazonS3Client amazonS3Client;
 
@@ -95,4 +98,18 @@ public class S3UploadServiceImpl implements S3UploadService {
 
     }
 
+    // DB에 저장된 URL이 fileName으로 들어옴 : https://todayproject-bucket.s3.ap-northeast-2.amazonaws.com/~~
+    // deleteObject의 delete Key는 https://todayproject-bucket.s3.ap-northeast-2.amazonaws.com/을 제외한 ~~ 이므로 URL 수정
+    public void deleteOriginalFile(String fileName) {
+        String deleteFileName = fileName.replace(deleteUrl, "");
+        amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, deleteFileName));
+    }
+
+    public void deleteOriginalFile(List<String> fileNames) {
+        fileNames.forEach(
+                file -> {
+                    String deleteFileName = file.replace(deleteUrl, "");
+                    amazonS3Client.deleteObject(new DeleteObjectRequest(bucket, deleteFileName));
+                });
+    }
 }
