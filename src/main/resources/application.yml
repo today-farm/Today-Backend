@@ -4,6 +4,13 @@ spring:
       "local" : "local, jwt, db, aws"
     active : local
 
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils : error
+
 ---
 spring:
   config:
