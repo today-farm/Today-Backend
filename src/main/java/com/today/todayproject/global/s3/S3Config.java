@@ -8,6 +8,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * AmazonS3Client를 반환하는 amazonS3Client()를 빈으로 등록하는 S3 config 클래스
+ * 이후에 UploadService에서 해당 빈을 주입받아서 사용
+ */
 @Configuration
 public class S3Config {
 
