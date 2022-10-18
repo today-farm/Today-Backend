@@ -19,7 +19,7 @@ public class UserController {
      */
     @PatchMapping("/user/update")
     public BaseResponse<String> update(
-            @RequestPart UserUpdateRequestDto userUpdateRequestDto,
+            @RequestPart(required = false) UserUpdateRequestDto userUpdateRequestDto,
             @RequestPart(required = false) MultipartFile profileImg) throws Exception {
         userService.updateUser(userUpdateRequestDto, profileImg);
         return new BaseResponse<>("회원 수정 성공");
