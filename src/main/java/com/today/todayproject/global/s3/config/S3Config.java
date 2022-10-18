@@ -1,4 +1,4 @@
-package com.today.todayproject.global.s3;
+package com.today.todayproject.global.s3.config;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
