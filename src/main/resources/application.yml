@@ -1,7 +1,7 @@
 spring:
   profiles:
     group:
-      "local" : "local, jwt, db"
+      "local" : "local, jwt, db, aws"
     active : local
 
 ---
