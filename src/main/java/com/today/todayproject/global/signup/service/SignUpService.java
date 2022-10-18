@@ -22,7 +22,7 @@ public class SignUpService {
     private final PasswordEncoder passwordEncoder;
     private final S3UploadService s3UploadService;
 
-    public Long signUp(SignUpRequestDto signUpRequestDto, List<MultipartFile> profileImg) throws Exception {
+    public Long signUp(SignUpRequestDto signUpRequestDto, MultipartFile profileImg) throws Exception {
 
         if(userRepository.findByEmail(signUpRequestDto.getEmail()).isPresent()) {
             throw new BaseException(BaseResponseStatus.EXIST_EMAIL);
@@ -34,7 +34,7 @@ public class SignUpService {
 
         // profile 사진이 있다면, User build 시 profile도 추가
         if(!profileImg.isEmpty()) {
-            String profileImgUrl = s3UploadService.uploadFile(profileImg).get(0);
+            String profileImgUrl = s3UploadService.uploadFile(profileImg);
 
             User user = User.builder()
                     .email(signUpRequestDto.getEmail())

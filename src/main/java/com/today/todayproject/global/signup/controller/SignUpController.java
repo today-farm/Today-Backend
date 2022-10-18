@@ -21,7 +21,7 @@ public class SignUpController {
 
     @PostMapping("/sign-up")
     public BaseResponse<SignUpResponseDto> signUp(
-            @RequestPart(required = false) List<MultipartFile> profileImg,
+            @RequestPart(required = false) MultipartFile profileImg,
             @RequestPart SignUpRequestDto signUpRequestDto) throws Exception {
         Long createUserId = signUpService.signUp(signUpRequestDto, profileImg);
         SignUpResponseDto signUpResponseDto = new SignUpResponseDto(createUserId);

@@ -31,7 +31,28 @@ public class S3UploadServiceImpl implements S3UploadService {
     private final AmazonS3Client amazonS3Client;
 
     @Override
-    public List<String> uploadFile(List<MultipartFile> multipartFiles) {
+    public String uploadFile(MultipartFile multipartFile) {
+
+        // file에서 DB에 저장할 File URL 생성
+        String fileName = createFileName(multipartFile.getOriginalFilename());
+
+        // S3 업로드할 때 파라미터로 필요한 ObjectMetaata 생성
+        ObjectMetadata objectMetadata = new ObjectMetadata();
+        objectMetadata.setContentLength(multipartFile.getSize());
+        objectMetadata.setContentType(multipartFile.getContentType());
+
+        // S3에 업로드
+        try(InputStream inputStream = multipartFile.getInputStream()) {
+            amazonS3Client.putObject(new PutObjectRequest(bucket, fileName, inputStream, objectMetadata)
+                    .withCannedAcl(CannedAccessControlList.PublicRead));
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "파일 업로드에 실패했습니다.");
+        }
+        return fileName;
+    }
+
+    @Override
+    public List<String> uploadFiles(List<MultipartFile> multipartFiles) {
         List<String> fileNames = new ArrayList<>();
 
         multipartFiles.forEach(file -> {
