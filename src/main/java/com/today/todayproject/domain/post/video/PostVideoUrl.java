@@ -12,7 +12,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
-public class PostVideo {
+public class PostVideoUrl {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_video_id")
@@ -29,6 +29,6 @@ public class PostVideo {
      */
     public void confirmPostQuestion(PostQuestion postQuestion) {
         this.postQuestion = postQuestion;
-        postQuestion.getPostVideos().add(this);
+        postQuestion.getPostVideoUrls().add(this);
     }
 }

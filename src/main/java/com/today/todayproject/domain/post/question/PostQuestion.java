@@ -4,7 +4,7 @@ import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.content.PostContent;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
-import com.today.todayproject.domain.post.video.PostVideo;
+import com.today.todayproject.domain.post.video.PostVideoUrl;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,7 +35,7 @@ public class PostQuestion extends BaseTimeEntity {
     private List<PostImgUrl> postImgUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = "postVideo", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostVideo> postVideos = new ArrayList<>();
+    private List<PostVideoUrl> postVideoUrls = new ArrayList<>();
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_content_id")
