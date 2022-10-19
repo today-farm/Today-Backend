@@ -23,6 +23,8 @@ public class Post extends BaseTimeEntity {
     @Column(name = "post_id")
     private Long id;
 
+    private String todayFeeling;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImgUrl> postImgUrlList = new ArrayList<>();
 
@@ -31,4 +33,5 @@ public class Post extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostQuestion> postQuestionList = new ArrayList<>();
+
 }
