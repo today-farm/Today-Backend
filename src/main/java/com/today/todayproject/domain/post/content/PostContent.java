@@ -2,6 +2,7 @@ package com.today.todayproject.domain.post.content;
 
 import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.post.Post;
+import com.today.todayproject.domain.post.question.PostQuestion;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,6 +24,9 @@ public class PostContent extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "post_id")
     private Post post;
+
+    @OneToOne(mappedBy = "postContent", fetch = FetchType.LAZY)
+    private PostQuestion postQuestion;
 
     private String content;
 
