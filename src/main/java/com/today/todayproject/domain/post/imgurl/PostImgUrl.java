@@ -37,4 +37,9 @@ public class PostImgUrl extends BaseTimeEntity {
         this.post = post;
         post.getPostImgUrlList().add(this);
     }
+
+    public void confirmPostQuestion(PostQuestion postQuestion) {
+        this.postQuestion = postQuestion;
+        postQuestion.getPostImgUrls().add(this);
+    }
 }
