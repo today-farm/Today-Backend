@@ -2,12 +2,15 @@ package com.today.todayproject.domain.post.question;
 
 import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.post.Post;
+import com.today.todayproject.domain.post.imgurl.PostImgUrl;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -21,9 +24,13 @@ public class PostQuestion extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     private Post post;
 
     private String question;
+
+    @OneToMany(mappedBy = "postQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<PostImgUrl> postImgUrls = new ArrayList<>();
 
     /**
      * 연관관계 메소드

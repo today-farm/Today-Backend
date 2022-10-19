@@ -2,6 +2,7 @@ package com.today.todayproject.domain.post.imgurl;
 
 import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.post.Post;
+import com.today.todayproject.domain.post.question.PostQuestion;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -20,7 +21,12 @@ public class PostImgUrl extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")
     private Post post;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_question_id")
+    private PostQuestion postQuestion;
 
     private String imgUrl;
 
