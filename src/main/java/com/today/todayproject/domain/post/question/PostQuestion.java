@@ -46,7 +46,7 @@ public class PostQuestion extends BaseTimeEntity {
      */
     public void confirmPost(Post post) {
         this.post = post;
-        post.getPostQuestionList().add(this);
+        post.getPostQuestions().add(this);
     }
 
     public void confirmPostContent(PostContent postContent) {
