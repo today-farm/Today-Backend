@@ -31,9 +31,11 @@ public class User extends BaseTimeEntity {
    private String profileImgUrl; // 프로필 사진
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<Friend> friendList = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)

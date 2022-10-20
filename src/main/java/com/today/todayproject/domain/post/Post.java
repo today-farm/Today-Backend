@@ -29,12 +29,15 @@ public class Post extends BaseTimeEntity {
     private String todayFeeling;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<PostImgUrl> postImgUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<PostVideoUrl> postVideoUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<PostQuestion> postQuestions = new ArrayList<>();
 
     /**
