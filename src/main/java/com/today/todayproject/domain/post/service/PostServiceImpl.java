@@ -53,6 +53,7 @@ public class PostServiceImpl implements PostService{
 
             postQuestion.confirmPost(post);
 
+            // imgCount에 맞게 돌면서 extractImgUrls에 ImgUrl 담기 -> Post의 URL에서 Question의 ImgUrl를 담은 리스트
             if(imgCount != 0) {
                 List<String> extractImgUrls = new ArrayList<>(); // 해당 Question의 URL 리스트 선언
                 List<String> imgUrls = s3UploadService.uploadFiles(uploadImgs);
@@ -63,6 +64,7 @@ public class PostServiceImpl implements PostService{
                 addImgUrl(extractImgUrls, post, postQuestion);
             }
 
+            // imgCount에 맞게 돌면서 extractVideoUrls에 VideoUrl 담기 -> Post의 URL에서 Question의 VideoUrl를 담은 리스트
             if(videoCount != 0) {
                 List<String> extractVideoUrls = new ArrayList<>(); // 해당 Question의 Video URL 리스트 선언
                 List<String> videoUrls = s3UploadService.uploadFiles(uploadVideos);
