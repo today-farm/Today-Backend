@@ -19,9 +19,8 @@ public class PostQuestionInfoDto {
     private String content;
     private List<PostImgUrlDto> postImgUrls = new ArrayList<>();
     private List<PostVideoUrlDto> postVideoUrls = new ArrayList<>();
-    private String todayFeeling;
 
-    public PostQuestionInfoDto(PostQuestion postQuestion, Post post) {
+    public PostQuestionInfoDto(PostQuestion postQuestion) {
         this.question = postQuestion.getQuestion();
         this.content = postQuestion.getContent();
         this.postImgUrls = postQuestion.getPostImgUrls().stream()
@@ -30,6 +29,5 @@ public class PostQuestionInfoDto {
         this.postVideoUrls = postQuestion.getPostVideoUrls().stream()
                 .map(postVideoUrl -> new PostVideoUrlDto(postVideoUrl))
                 .collect(Collectors.toList());
-        this.todayFeeling = post.getTodayFeeling();
     }
 }
