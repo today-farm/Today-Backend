@@ -1,6 +1,7 @@
 package com.today.todayproject.domain.post.service;
 
 import com.today.todayproject.domain.post.Post;
+import com.today.todayproject.domain.post.dto.PostInfoDto;
 import com.today.todayproject.domain.post.dto.PostSaveDto;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
 import com.today.todayproject.domain.post.question.PostQuestion;
@@ -30,6 +31,7 @@ public class PostServiceImpl implements PostService{
     private final PostRepository postRepository;
     private final S3UploadService s3UploadService;
 
+    @Override
     public void save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
@@ -94,5 +96,13 @@ public class PostServiceImpl implements PostService{
                 postVideoUrl.confirmPost(post);
                 postVideoUrl.confirmPostQuestion(postQuestion);
         });
+    }
+
+    @Override
+    public PostInfoDto getPostInfo(Long postId) throws Exception {
+        Post findPost = postRepository.findById(postId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST));
+
+        return new PostInfoDto(findPost);
     }
 }
