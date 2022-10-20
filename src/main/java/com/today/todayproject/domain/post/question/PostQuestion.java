@@ -5,10 +5,7 @@ import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.content.PostContent;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
 import com.today.todayproject.domain.post.video.PostVideoUrl;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -18,6 +15,7 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class PostQuestion extends BaseTimeEntity {
 
     @Id
