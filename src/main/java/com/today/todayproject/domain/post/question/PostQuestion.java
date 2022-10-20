@@ -28,6 +28,8 @@ public class PostQuestion extends BaseTimeEntity {
 
     private String question;
 
+    private String content;
+
     @OneToMany(mappedBy = "postQuestion", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostImgUrl> postImgUrls = new ArrayList<>();
 
