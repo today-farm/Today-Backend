@@ -2,10 +2,7 @@ package com.today.todayproject.domain.post.video;
 
 import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.question.PostQuestion;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,6 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
+@Builder
 public class PostVideoUrl {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
