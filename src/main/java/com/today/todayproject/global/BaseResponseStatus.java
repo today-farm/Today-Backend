@@ -28,7 +28,8 @@ public enum BaseResponseStatus {
     SAME_NICKNAME(false, 2004, BAD_REQUEST, "기존 닉네임과 같은 닉네임입니다."),
     WRONG_CURRENT_PASSWORD(false, 2005, BAD_REQUEST, "현재 비밀번호가 일치하지 않습니다."),
     SAME_CURRENT_CHANGE_PASSWORD(false, 2006, BAD_REQUEST, "바꿀 비밀번호를 현재 비밀번호와 다르게 설정해주세요."),
-    WRONG_FILE_EXTENSION(false, 2007, BAD_REQUEST, "잘못된 형식의 파일입니다.");
+    WRONG_FILE_EXTENSION(false, 2007, BAD_REQUEST, "잘못된 형식의 파일입니다."),
+    NOT_FOUND_POST(false, 2008, NOT_FOUND, "해당 하루 게시물을 찾을 수 없습니다.");
 
     private final boolean isSuccess;
     private final int code;
