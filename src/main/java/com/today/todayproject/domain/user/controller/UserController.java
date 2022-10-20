@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/user")
 public class UserController {
 
     private final UserService userService;
@@ -17,7 +18,7 @@ public class UserController {
     /**
      * 회원 정보 수정 API
      */
-    @PatchMapping("/user/update")
+    @PatchMapping("/update")
     public BaseResponse<String> update(
             @RequestPart(required = false) UserUpdateRequestDto userUpdateRequestDto,
             @RequestPart(required = false) MultipartFile profileImg) throws Exception {
@@ -28,7 +29,7 @@ public class UserController {
     /**
      * 회원 탈퇴 API
      */
-    @PostMapping("/user/withdraw")
+    @PostMapping("/withdraw")
     public BaseResponse<String> withdraw(
             @RequestBody UserWithdrawRequestDto userWithdrawRequestDto) throws Exception {
         userService.withdraw(userWithdrawRequestDto);
