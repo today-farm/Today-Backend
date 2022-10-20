@@ -2,7 +2,6 @@ package com.today.todayproject.domain.post.question;
 
 import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.post.Post;
-import com.today.todayproject.domain.post.content.PostContent;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
 import com.today.todayproject.domain.post.video.PostVideoUrl;
 import lombok.*;
@@ -35,20 +34,11 @@ public class PostQuestion extends BaseTimeEntity {
     @OneToMany(mappedBy = "postVideo", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostVideoUrl> postVideoUrls = new ArrayList<>();
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "post_content_id")
-    private PostContent postContent;
-
     /**
      * 연관관계 메소드
      */
     public void confirmPost(Post post) {
         this.post = post;
         post.getPostQuestions().add(this);
-    }
-
-    public void confirmPostContent(PostContent postContent) {
-        this.postContent = postContent;
-        postContent.setPostQuestion(this);
     }
 }
