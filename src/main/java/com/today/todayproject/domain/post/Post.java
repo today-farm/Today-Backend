@@ -31,9 +31,6 @@ public class Post extends BaseTimeEntity {
     private List<PostVideoUrl> postVideoUrls = new ArrayList<>();
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<PostContent> postContents = new ArrayList<>();
-
-    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostQuestion> postQuestions = new ArrayList<>();
 
 }
