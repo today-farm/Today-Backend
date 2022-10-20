@@ -2,6 +2,7 @@ package com.today.todayproject.domain.user;
 
 import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.friend.Friend;
+import com.today.todayproject.domain.post.Post;
 import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -28,6 +29,9 @@ public class User extends BaseTimeEntity {
     private String nickname; // 닉네임
 
    private String profileImgUrl; // 프로필 사진
+
+    @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Post> posts = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Friend> friendList = new ArrayList<>();
