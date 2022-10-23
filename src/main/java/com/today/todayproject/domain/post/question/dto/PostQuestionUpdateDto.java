@@ -11,6 +11,4 @@ public class PostQuestionUpdateDto {
 
     private Long questionId;
     private String content;
-    private List<String> imgUrls;
-    private List<String> videoUrls;
 }
