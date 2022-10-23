@@ -2,6 +2,7 @@ package com.today.todayproject.domain.post.controller;
 
 import com.today.todayproject.domain.post.dto.PostInfoDto;
 import com.today.todayproject.domain.post.dto.PostSaveDto;
+import com.today.todayproject.domain.post.dto.PostUpdateDto;
 import com.today.todayproject.domain.post.service.PostService;
 import com.today.todayproject.global.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -30,5 +31,15 @@ public class PostController {
     public BaseResponse<PostInfoDto> getPostInfo(@PathVariable("postId") Long postId) throws Exception {
         PostInfoDto postInfoDto = postService.getPostInfo(postId);
         return new BaseResponse<>(postInfoDto);
+    }
+
+    @PatchMapping("/update/{postId}")
+    public BaseResponse<String> update(
+            @PathVariable("postId") Long postId,
+            @RequestPart PostUpdateDto postUpdateDto,
+            @RequestPart List<MultipartFile> updateImgs,
+            @RequestPart List<MultipartFile> updateVideos) throws Exception {
+        postService.update(postId, postUpdateDto, updateImgs, updateVideos);
+        return new BaseResponse<>("하루 수정에 성공하였습니다.");
     }
 }
