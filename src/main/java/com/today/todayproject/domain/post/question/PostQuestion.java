@@ -38,6 +38,18 @@ public class PostQuestion extends BaseTimeEntity {
     @Builder.Default
     private List<PostVideoUrl> postVideoUrls = new ArrayList<>();
 
+    public void updateContent(String content) {
+        this.content = content;
+    }
+
+    public void removeImgUrl(PostImgUrl postImgUrl) {
+        postImgUrls.remove(postImgUrl);
+    }
+
+    public void removeVideoUrl(PostVideoUrl postVideoUrl) {
+        postVideoUrls.remove(postVideoUrl);
+    }
+
     /**
      * 연관관계 메소드
      */
