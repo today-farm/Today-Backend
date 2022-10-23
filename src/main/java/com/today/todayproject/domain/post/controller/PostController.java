@@ -2,6 +2,7 @@ package com.today.todayproject.domain.post.controller;
 
 import com.today.todayproject.domain.post.dto.PostInfoDto;
 import com.today.todayproject.domain.post.dto.PostSaveDto;
+import com.today.todayproject.domain.post.dto.PostSaveResponseDto;
 import com.today.todayproject.domain.post.dto.PostUpdateDto;
 import com.today.todayproject.domain.post.service.PostService;
 import com.today.todayproject.global.BaseResponse;
@@ -19,12 +20,13 @@ public class PostController {
     private final PostService postService;
 
     @PostMapping("/save")
-    public BaseResponse<String> save(
+    public BaseResponse<PostSaveResponseDto> save(
             @RequestPart PostSaveDto postSaveDto,
             @RequestPart(required = false) List<MultipartFile> uploadImgs,
             @RequestPart(required = false) List<MultipartFile> uploadVideos) throws Exception {
-        postService.save(postSaveDto, uploadImgs, uploadVideos);
-        return new BaseResponse<>("하루 작성에 성공하였습니다.");
+        List<Long> postQuestionIds = postService.save(postSaveDto, uploadImgs, uploadVideos);
+        PostSaveResponseDto postSaveResponseDto = new PostSaveResponseDto(postQuestionIds);
+        return new BaseResponse<>(postSaveResponseDto);
     }
 
     @GetMapping("/{postId}")
