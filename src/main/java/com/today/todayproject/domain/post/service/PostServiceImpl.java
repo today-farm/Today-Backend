@@ -3,9 +3,12 @@ package com.today.todayproject.domain.post.service;
 import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.dto.PostInfoDto;
 import com.today.todayproject.domain.post.dto.PostSaveDto;
+import com.today.todayproject.domain.post.dto.PostUpdateDto;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
 import com.today.todayproject.domain.post.question.PostQuestion;
 import com.today.todayproject.domain.post.question.dto.PostQuestionDto;
+import com.today.todayproject.domain.post.question.dto.PostQuestionUpdateDto;
+import com.today.todayproject.domain.post.question.repository.PostQuestionRepository;
 import com.today.todayproject.domain.post.repository.PostRepository;
 import com.today.todayproject.domain.post.video.PostVideoUrl;
 import com.today.todayproject.domain.user.User;
@@ -21,6 +24,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -29,6 +33,7 @@ public class PostServiceImpl implements PostService{
 
     private final UserRepository userRepository;
     private final PostRepository postRepository;
+    private final PostQuestionRepository postQuestionRepository;
     private final S3UploadService s3UploadService;
 
     @Override
@@ -104,5 +109,56 @@ public class PostServiceImpl implements PostService{
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST));
 
         return new PostInfoDto(findPost);
+    }
+
+    @Override
+    public void update(Long postId, PostUpdateDto postUpdateDto,
+                       List<MultipartFile> updateImgs, List<MultipartFile> updateVideos) throws Exception {
+        Post findPost = postRepository.findById(postId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST));
+
+        postUpdateDto.getPostQuestions().stream()
+                .forEach(postQuestionUpdateDto -> {
+                    try {
+                        PostQuestion findPostQuestion = postQuestionRepository.findById(postQuestionUpdateDto.getQuestionId())
+                                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST_QUESTION));
+                        findPostQuestion.updateContent(postQuestionUpdateDto.getContent());
+                        updateImgUrl(findPostQuestion, findPost, updateImgs);
+                        updateVideoUrl(findPostQuestion, findPost, updateVideos);
+                    } catch (BaseException e) {
+                        e.printStackTrace();
+                    }
+                });
+        findPost.updateTodayFeeling(postUpdateDto.getTodayFeeling());
+    }
+
+    public void updateImgUrl(PostQuestion postQuestion, Post post, List<MultipartFile> imgUrls) {
+        postQuestion.getPostImgUrls().stream()
+                        .forEach(postImgUrl -> {
+                            s3UploadService.deleteOriginalFile(postImgUrl.getImgUrl());
+                            postQuestion.removeImgUrl(postImgUrl);
+                        });
+        List<String> uploadImgUrls = s3UploadService.uploadFiles(imgUrls);
+        uploadImgUrls.stream()
+                .forEach(imgUrl -> {
+                    PostImgUrl postImgUrl = PostImgUrl.builder().imgUrl(imgUrl).build();
+                    postImgUrl.confirmPost(post);
+                    postImgUrl.confirmPostQuestion(postQuestion);
+                });
+    }
+
+    public void updateVideoUrl(PostQuestion postQuestion, Post post, List<MultipartFile> videoUrls) {
+        postQuestion.getPostVideoUrls().stream()
+                .forEach(postVideoUrl -> {
+                    s3UploadService.deleteOriginalFile(postVideoUrl.getVideoUrl());
+                    postQuestion.removeVideoUrl(postVideoUrl);
+                });
+        List<String> uploadVideoUrls = s3UploadService.uploadFiles(videoUrls);
+        uploadVideoUrls.stream()
+                .forEach(videoUrl -> {
+                    PostVideoUrl postVideoUrl = PostVideoUrl.builder().videoUrl(videoUrl).build();
+                    postVideoUrl.confirmPost(post);
+                    postVideoUrl.confirmPostQuestion(postQuestion);
+                });
     }
 }
