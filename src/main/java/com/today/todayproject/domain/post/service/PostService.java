@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface PostService {
 
-    void save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception;
+    List<Long> save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception;
 
     PostInfoDto getPostInfo(Long postId) throws Exception;
 

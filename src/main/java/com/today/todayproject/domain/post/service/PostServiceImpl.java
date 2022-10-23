@@ -37,7 +37,7 @@ public class PostServiceImpl implements PostService{
     private final S3UploadService s3UploadService;
 
     @Override
-    public void save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception {
+    public List<Long> save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
@@ -83,6 +83,10 @@ public class PostServiceImpl implements PostService{
             }
         });
         postRepository.save(post);
+        List<Long> postQuestionIds = post.getPostQuestions().stream()
+                .map(postQuestion -> postQuestion.getId())
+                .collect(Collectors.toList());
+        return postQuestionIds;
     }
 
     // 파라미터로 들어온 이미지 URL 리스트(ImgUrls)를 forEach로 PostImgUrl을 생성하고, 연관관계 설정
