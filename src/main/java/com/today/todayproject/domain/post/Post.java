@@ -40,6 +40,10 @@ public class Post extends BaseTimeEntity {
     @Builder.Default
     private List<PostQuestion> postQuestions = new ArrayList<>();
 
+    public void updateTodayFeeling(String todayFeeling) {
+        this.todayFeeling = todayFeeling;
+    }
+
     /**
      * 연관관계 메소드
      */
