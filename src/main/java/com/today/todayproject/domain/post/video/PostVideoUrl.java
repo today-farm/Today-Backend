@@ -1,5 +1,6 @@
 package com.today.todayproject.domain.post.video;
 
+import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.question.PostQuestion;
 import lombok.*;
@@ -11,7 +12,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class PostVideoUrl {
+public class PostVideoUrl extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "post_video_id")
