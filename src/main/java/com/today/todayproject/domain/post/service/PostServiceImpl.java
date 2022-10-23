@@ -123,8 +123,10 @@ public class PostServiceImpl implements PostService{
                         PostQuestion findPostQuestion = postQuestionRepository.findById(postQuestionUpdateDto.getQuestionId())
                                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST_QUESTION));
                         findPostQuestion.updateContent(postQuestionUpdateDto.getContent());
-                        updateImgUrl(findPostQuestion, findPost, updateImgs);
-                        updateVideoUrl(findPostQuestion, findPost, updateVideos);
+                        int imgCount = postQuestionUpdateDto.getImgCount();
+                        int videoCount = postQuestionUpdateDto.getVideoCount();
+                        if(imgCount != 0) updateImgUrl(findPostQuestion, findPost, updateImgs, imgCount);
+                        if(videoCount != 0) updateVideoUrl(findPostQuestion, findPost, updateVideos, videoCount);
                     } catch (BaseException e) {
                         e.printStackTrace();
                     }
@@ -132,29 +134,43 @@ public class PostServiceImpl implements PostService{
         findPost.updateTodayFeeling(postUpdateDto.getTodayFeeling());
     }
 
-    public void updateImgUrl(PostQuestion postQuestion, Post post, List<MultipartFile> imgUrls) {
+    public void updateImgUrl(PostQuestion postQuestion, Post post, List<MultipartFile> updateImgs, int imgCount) {
         postQuestion.getPostImgUrls().stream()
                         .forEach(postImgUrl -> {
                             s3UploadService.deleteOriginalFile(postImgUrl.getImgUrl());
                             postQuestion.removeImgUrl(postImgUrl);
                         });
-        List<String> uploadImgUrls = s3UploadService.uploadFiles(imgUrls);
-        uploadImgUrls.stream()
-                .forEach(imgUrl -> {
+
+        List<String> updateImgUrls = new ArrayList<>();
+        for(int imgIndex = 0; imgIndex < imgCount; imgIndex++) {
+            String updateImgUrl = s3UploadService.uploadFile(updateImgs.get(0));
+            updateImgUrls.add(updateImgUrl);
+            updateImgs.remove(0);
+        }
+
+        updateImgUrls.stream()
+               .forEach(imgUrl -> {
                     PostImgUrl postImgUrl = PostImgUrl.builder().imgUrl(imgUrl).build();
                     postImgUrl.confirmPost(post);
                     postImgUrl.confirmPostQuestion(postQuestion);
                 });
     }
 
-    public void updateVideoUrl(PostQuestion postQuestion, Post post, List<MultipartFile> videoUrls) {
+    public void updateVideoUrl(PostQuestion postQuestion, Post post, List<MultipartFile> updateVideos, int videoCount) {
         postQuestion.getPostVideoUrls().stream()
                 .forEach(postVideoUrl -> {
                     s3UploadService.deleteOriginalFile(postVideoUrl.getVideoUrl());
                     postQuestion.removeVideoUrl(postVideoUrl);
                 });
-        List<String> uploadVideoUrls = s3UploadService.uploadFiles(videoUrls);
-        uploadVideoUrls.stream()
+
+        List<String> updateVideoUrls = new ArrayList<>();
+        for(int videoIndex = 0; videoIndex < videoCount; videoIndex++) {
+            String updateVideoUrl = s3UploadService.uploadFile(updateVideos.get(0));
+            updateVideoUrls.add(updateVideoUrl);
+            updateVideos.remove(0);
+        }
+
+        updateVideoUrls.stream()
                 .forEach(videoUrl -> {
                     PostVideoUrl postVideoUrl = PostVideoUrl.builder().videoUrl(videoUrl).build();
                     postVideoUrl.confirmPost(post);
