@@ -44,4 +44,10 @@ public class PostController {
         postService.update(postId, postUpdateDto, updateImgs, updateVideos);
         return new BaseResponse<>("하루 수정에 성공하였습니다.");
     }
+
+    @DeleteMapping("/delete/{postId}")
+    public BaseResponse<String> delete(@PathVariable("postId") Long postId) throws Exception {
+        postService.delete(postId);
+        return new BaseResponse<>("하루 삭제에 성공하였습니다.");
+    }
 }
