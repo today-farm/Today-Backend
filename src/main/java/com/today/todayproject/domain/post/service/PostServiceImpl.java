@@ -181,4 +181,18 @@ public class PostServiceImpl implements PostService{
                     postVideoUrl.confirmPostQuestion(postQuestion);
                 });
     }
+
+    @Override
+    public void delete(Long postId) throws Exception {
+        Post findPost = postRepository.findById(postId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST_QUESTION));
+
+        findPost.getPostImgUrls().stream()
+                        .forEach(postImgUrl -> s3UploadService.deleteOriginalFile(postImgUrl.getImgUrl()));
+
+        findPost.getPostVideoUrls().stream()
+                        .forEach(postVideoUrl -> s3UploadService.deleteOriginalFile(postVideoUrl.getVideoUrl()));
+
+        postRepository.delete(findPost);
+    }
 }

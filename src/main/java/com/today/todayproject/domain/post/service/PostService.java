@@ -16,4 +16,6 @@ public interface PostService {
 
     void update(Long postId, PostUpdateDto postUpdateDto,
                 List<MultipartFile> updateImgs, List<MultipartFile> updateVideos) throws Exception;
+
+    void delete(Long postId) throws Exception;
 }
