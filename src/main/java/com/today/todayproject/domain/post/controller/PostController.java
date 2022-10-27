@@ -39,8 +39,8 @@ public class PostController {
     public BaseResponse<String> update(
             @PathVariable("postId") Long postId,
             @RequestPart PostUpdateDto postUpdateDto,
-            @RequestPart List<MultipartFile> updateImgs,
-            @RequestPart List<MultipartFile> updateVideos) throws Exception {
+            @RequestPart(required = false) List<MultipartFile> updateImgs,
+            @RequestPart(required = false) List<MultipartFile> updateVideos) throws Exception {
         postService.update(postId, postUpdateDto, updateImgs, updateVideos);
         return new BaseResponse<>("하루 수정에 성공하였습니다.");
     }
