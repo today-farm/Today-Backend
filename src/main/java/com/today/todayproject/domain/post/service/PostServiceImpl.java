@@ -18,6 +18,7 @@ import com.today.todayproject.global.BaseResponseStatus;
 import com.today.todayproject.global.s3.service.S3UploadService;
 import com.today.todayproject.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class PostServiceImpl implements PostService{
 
     private final UserRepository userRepository;
