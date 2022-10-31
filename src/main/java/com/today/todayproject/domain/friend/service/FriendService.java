@@ -4,5 +4,5 @@ public interface FriendService {
 
     void add(Long friendId) throws Exception;
 
-    void delete(Long friendId) throws Exception;
+    void delete(Long deleteFriendUserId) throws Exception;
 }

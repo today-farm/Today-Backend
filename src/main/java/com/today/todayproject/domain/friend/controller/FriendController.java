@@ -18,9 +18,9 @@ public class FriendController {
         return new BaseResponse<>("친구 추가에 성공했습니다.");
     }
 
-    @PostMapping("/delete/{friendId}")
-    public BaseResponse<String> delete(@PathVariable("friendId") Long friendId) throws Exception {
-        friendService.delete(friendId);
-        return new BaseResponse<>("친구 추가에 성공했습니다.");
+    @PostMapping("/delete/{deleteFriendUserId}")
+    public BaseResponse<String> delete(@PathVariable("deleteFriendUserId") Long deleteFriendUserId) throws Exception {
+        friendService.delete(deleteFriendUserId);
+        return new BaseResponse<>("친구 삭제에 성공했습니다.");
     }
 }

@@ -36,12 +36,14 @@ public class FriendServiceImpl implements FriendService {
                 .nickname(friendUser.getNickname())
                 .profileImgUrl(friendUser.getProfileImgUrl())
                 .recentFeeling(friendUser.getRecentFeeling())
+                .friendOwnerId(loginUser.getId())
                 .build();
 
         Friend friendOfLoginUser = Friend.builder()
                 .nickname(loginUser.getNickname())
                 .profileImgUrl(loginUser.getProfileImgUrl())
                 .recentFeeling(loginUser.getRecentFeeling())
+                .friendOwnerId(friendUser.getId())
                 .build();
 
         friendOfFriendUser.confirmUser(friendUser);
@@ -52,11 +54,15 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public void delete(Long friendId) throws Exception {
-        Friend findFriend = friendRepository.findById(friendId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_FRIEND));
+    public void delete(Long deleteFriendUserId) throws Exception {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
-        friendRepository.delete(findFriend);
+        User friendUser = userRepository.findById(deleteFriendUserId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+
+        friendRepository.deleteByFriendUserId(friendUser.getId());
+        friendRepository.deleteByFriendUserId(loginUser.getId());
     }
 
 }
