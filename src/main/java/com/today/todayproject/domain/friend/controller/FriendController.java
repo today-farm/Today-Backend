@@ -4,10 +4,7 @@ import com.today.todayproject.domain.friend.dto.FriendSaveDto;
 import com.today.todayproject.domain.friend.service.FriendService;
 import com.today.todayproject.global.BaseResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/friend")
@@ -19,6 +16,12 @@ public class FriendController {
     @PostMapping("/add")
     public BaseResponse<String> add(@RequestBody FriendSaveDto friendSaveDto) throws Exception {
         friendService.add(friendSaveDto);
+        return new BaseResponse<>("친구 추가에 성공했습니다.");
+    }
+
+    @PostMapping("/delete/{friendId}")
+    public BaseResponse<String> delete(@PathVariable("friendId") Long friendId) throws Exception {
+        friendService.delete(friendId);
         return new BaseResponse<>("친구 추가에 성공했습니다.");
     }
 }
