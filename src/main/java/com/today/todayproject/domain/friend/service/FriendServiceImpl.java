@@ -44,8 +44,8 @@ public class FriendServiceImpl implements FriendService {
                 .recentFeeling(loginUser.getRecentFeeling())
                 .build();
 
-        friendOfFriendUser.confirmUser(loginUser);
-        friendOfLoginUser.confirmUser(friendUser);
+        friendOfFriendUser.confirmUser(friendUser);
+        friendOfLoginUser.confirmUser(loginUser);
 
         friendRepository.save(friendOfFriendUser);
         friendRepository.save(friendOfLoginUser);
