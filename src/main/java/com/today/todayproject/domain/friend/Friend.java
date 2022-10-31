@@ -18,8 +18,10 @@ public class Friend extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    private User user;
+    @JoinColumn(name = "friend_user_id")
+    private User friend; // 친구인 유저 id (ex : 4번)
+
+    private Long friendOwnerId; // 로그인한 유저 id (ex : 1번)
 
     private String nickname; // 닉네임
 
@@ -31,8 +33,8 @@ public class Friend extends BaseTimeEntity {
     /**
      * 연관관계 메소드
      */
-    public void confirmUser(User user) {
-        this.user = user;
-        user.getFriendList().add(this);
+    public void confirmUser(User friend) {
+        this.friend = friend;
+        friend.getFriendList().add(this);
     }
 }
