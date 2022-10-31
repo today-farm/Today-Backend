@@ -37,4 +37,12 @@ public class FriendServiceImpl implements FriendService {
         friendRepository.save(friend);
     }
 
+    @Override
+    public void delete(Long friendId) throws Exception {
+        Friend findFriend = friendRepository.findById(friendId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_FRIEND));
+
+        friendRepository.delete(findFriend);
+    }
+
 }
