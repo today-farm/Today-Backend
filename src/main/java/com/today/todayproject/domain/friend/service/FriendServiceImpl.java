@@ -22,7 +22,7 @@ public class FriendServiceImpl implements FriendService {
 
     /**
      * 친구 추가 시 로그인한 유저 <-> 친구 추가하는 유저
-     * 유저 2명 모두 Friend를 생성해서 2개가 되어야하고, 서로의 friends에 추가되어야한다!
+     * 유저 2명 모두 Friend를 생성해서 2개가 되어야하고, 서로의 friends에 추가되어야한다!!
      */
     @Override
     public void add(Long friendId) throws Exception {
