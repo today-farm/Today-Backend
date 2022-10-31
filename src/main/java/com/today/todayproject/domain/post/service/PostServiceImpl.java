@@ -84,6 +84,7 @@ public class PostServiceImpl implements PostService{
                 addVideoUrl(extractVideoUrls, post, postQuestion);
             }
         });
+        loginUser.updateRecentFeeling(postSaveDto.getTodayFeeling());
         postRepository.save(post);
         List<Long> postQuestionIds = post.getPostQuestions().stream()
                 .map(postQuestion -> postQuestion.getId())
