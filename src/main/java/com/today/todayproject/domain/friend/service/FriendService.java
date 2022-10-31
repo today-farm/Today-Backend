@@ -5,5 +5,5 @@ import com.today.todayproject.global.BaseException;
 
 public interface FriendService {
 
-    void save(FriendSaveDto friendSaveDto) throws Exception;
+    void add(FriendSaveDto friendSaveDto) throws Exception;
 }
