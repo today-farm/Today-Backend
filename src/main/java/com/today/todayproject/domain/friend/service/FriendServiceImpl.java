@@ -1,7 +1,6 @@
 package com.today.todayproject.domain.friend.service;
 
 import com.today.todayproject.domain.friend.Friend;
-import com.today.todayproject.domain.friend.dto.FriendSaveDto;
 import com.today.todayproject.domain.friend.repository.FriendRepository;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.repository.UserRepository;
@@ -22,14 +21,17 @@ public class FriendServiceImpl implements FriendService {
     private final FriendRepository friendRepository;
 
     @Override
-    public void add(FriendSaveDto friendSaveDto) throws Exception {
+    public void add(Long friendId) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
+        User friendUser = userRepository.findById(friendId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+
         Friend friend = Friend.builder()
-                .nickname(friendSaveDto.getNickname())
-                .profileImgUrl(friendSaveDto.getProfileImgUrl())
-                .recentFeeling(friendSaveDto.getRecentFeeling())
+                .nickname(friendUser.getNickname())
+                .profileImgUrl(friendUser.getProfileImgUrl())
+                .recentFeeling(friendUser.getRecentFeeling())
                 .build();
 
         friend.confirmUser(loginUser);
