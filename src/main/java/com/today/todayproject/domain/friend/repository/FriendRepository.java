@@ -7,7 +7,5 @@ import java.util.Optional;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
-    Optional<Friend> findByUserId(Long id);
-
     void deleteByFriendUserId(Long friendUserId);
 }
