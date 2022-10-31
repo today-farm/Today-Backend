@@ -20,6 +20,10 @@ public class FriendServiceImpl implements FriendService {
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
 
+    /**
+     * 친구 추가 시 로그인한 유저 <-> 친구 추가하는 유저
+     * 유저 2명 모두 Friend를 생성해서 2개가 되어야하고, 서로의 friends에 추가되어야한다.
+     */
     @Override
     public void add(Long friendId) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
@@ -28,15 +32,23 @@ public class FriendServiceImpl implements FriendService {
         User friendUser = userRepository.findById(friendId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 
-        Friend friend = Friend.builder()
+        Friend friendOfFriendUser = Friend.builder()
                 .nickname(friendUser.getNickname())
                 .profileImgUrl(friendUser.getProfileImgUrl())
                 .recentFeeling(friendUser.getRecentFeeling())
                 .build();
 
-        friend.confirmUser(loginUser);
+        Friend friendOfLoginUser = Friend.builder()
+                .nickname(loginUser.getNickname())
+                .profileImgUrl(loginUser.getProfileImgUrl())
+                .recentFeeling(loginUser.getRecentFeeling())
+                .build();
 
-        friendRepository.save(friend);
+        friendOfFriendUser.confirmUser(loginUser);
+        friendOfLoginUser.confirmUser(friendUser);
+
+        friendRepository.save(friendOfFriendUser);
+        friendRepository.save(friendOfLoginUser);
     }
 
     @Override
