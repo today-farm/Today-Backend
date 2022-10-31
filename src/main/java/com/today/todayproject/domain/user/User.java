@@ -30,6 +30,8 @@ public class User extends BaseTimeEntity {
 
    private String profileImgUrl; // 프로필 사진
 
+    private String recentFeeling; // 최근 하루 작성 감정
+
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Post> posts = new ArrayList<>();
@@ -71,5 +73,9 @@ public class User extends BaseTimeEntity {
 
     public void updateProfileImgUrl(String changeProfileImgUrl) {
         this.profileImgUrl = changeProfileImgUrl;
+    }
+
+    public void updateRecentFeeling(String changeRecentFeeling) {
+        this.recentFeeling = changeRecentFeeling;
     }
 }
