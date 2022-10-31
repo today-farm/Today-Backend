@@ -61,8 +61,8 @@ public class FriendServiceImpl implements FriendService {
         User friendUser = userRepository.findById(deleteFriendUserId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 
-        friendRepository.deleteByFriendUserId(friendUser.getId());
-        friendRepository.deleteByFriendUserId(loginUser.getId());
+        friendRepository.deleteByFriendIdAndAndFriendOwnerId(friendUser.getId(), loginUser.getId());
+        friendRepository.deleteByFriendIdAndAndFriendOwnerId(loginUser.getId(), friendUser.getId());
     }
 
 }
