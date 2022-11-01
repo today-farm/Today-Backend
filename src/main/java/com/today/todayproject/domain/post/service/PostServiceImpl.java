@@ -207,7 +207,7 @@ public class PostServiceImpl implements PostService{
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 
-        List<Post> findPosts = postRepository.findAllByWriterId(findUser.getId())
+        List<Post> findPosts = postRepository.findAllByWriterIdOrderByCreatedDateAsc(findUser.getId())
                 .orElse(Collections.emptyList());
 
         return findPosts.stream()
