@@ -1,6 +1,7 @@
 package com.today.todayproject.domain.friend.service;
 
 import com.today.todayproject.domain.friend.Friend;
+import com.today.todayproject.domain.friend.dto.FriendInfoDto;
 import com.today.todayproject.domain.friend.repository.FriendRepository;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.repository.UserRepository;
@@ -11,6 +12,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -61,8 +65,23 @@ public class FriendServiceImpl implements FriendService {
         User friendUser = userRepository.findById(deleteFriendUserId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 
-        friendRepository.deleteByFriendIdAndAndFriendOwnerId(friendUser.getId(), loginUser.getId());
-        friendRepository.deleteByFriendIdAndAndFriendOwnerId(loginUser.getId(), friendUser.getId());
+        friendRepository.deleteByFriendIdAndFriendOwnerId(friendUser.getId(), loginUser.getId());
+        friendRepository.deleteByFriendIdAndFriendOwnerId(loginUser.getId(), friendUser.getId());
     }
 
+    @Override
+    public List<FriendInfoDto> getFriends(Long friendOwnerId) {
+        List<Friend> findFriends = friendRepository.findAllByFriendOwnerId(friendOwnerId)
+                .orElse(Collections.emptyList());
+
+        return findFriends.stream()
+                .map(findFriend -> {
+                    User friendUser = findFriend.getFriend();
+                    Long userId = friendUser.getId();
+                    String nickname = friendUser.getNickname();
+                    String profileImgUrl = friendUser.getProfileImgUrl();
+                    String recentFeeling = friendUser.getRecentFeeling();
+                    return new FriendInfoDto(userId, nickname, profileImgUrl, recentFeeling);
+                }).collect(Collectors.toList());
+    }
 }
