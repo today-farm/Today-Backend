@@ -18,7 +18,7 @@ public class Friend extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "friend_user_id")
     private User friend; // 친구인 유저 id (ex : 4번)
 
     private Long friendOwnerId; // 로그인한 유저 id (ex : 1번)
