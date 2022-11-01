@@ -18,4 +18,6 @@ public interface PostService {
                 List<MultipartFile> updateImgs, List<MultipartFile> updateVideos) throws Exception;
 
     void delete(Long postId) throws Exception;
+
+    List<Integer> getMonthlyPostCreationDate(Long userId) throws Exception;
 }
