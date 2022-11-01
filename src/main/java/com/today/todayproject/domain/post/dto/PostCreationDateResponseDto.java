@@ -9,7 +9,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PostMonthlyCreationDateResponseDto {
+public class PostCreationDateResponseDto {
 
-    private List<Integer> postCreationDate;
+    private List<String> postCreationDate;
 }
