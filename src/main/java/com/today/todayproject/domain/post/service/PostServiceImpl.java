@@ -203,7 +203,7 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<String> getCreationDate(Long userId) throws Exception {
+    public List<String> getCreationDates(Long userId) throws Exception {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 

@@ -20,5 +20,5 @@ public interface PostService {
 
     void delete(Long postId) throws Exception;
 
-    List<String> getCreationDate(Long userId) throws Exception;
+    List<String> getCreationDates(Long userId) throws Exception;
 }

@@ -48,12 +48,12 @@ public class PostController {
         return new BaseResponse<>("하루 삭제에 성공하였습니다.");
     }
 
-    @GetMapping("/monthly-creation-date/{userId}")
-    public BaseResponse<PostMonthlyCreationDateResponseDto> getMonthlyCreationDate(
+    @GetMapping("/creation-dates/{userId}")
+    public BaseResponse<PostCreationDateResponseDto> getCreationDates(
             @PathVariable("userId") Long userId) throws Exception {
-        List<Integer> monthlyPostCreationDates = postService.getMonthlyPostCreationDate(userId);
-        PostMonthlyCreationDateResponseDto postMonthlyCreationDateResponseDto =
-                new PostMonthlyCreationDateResponseDto(monthlyPostCreationDates);
-        return new BaseResponse<>(postMonthlyCreationDateResponseDto);
+        List<String> monthlyPostCreationDates = postService.getCreationDate(userId);
+        PostCreationDateResponseDto postCreationDateResponseDto =
+                new PostCreationDateResponseDto(monthlyPostCreationDates);
+        return new BaseResponse<>(postCreationDateResponseDto);
     }
 }
