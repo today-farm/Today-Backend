@@ -36,22 +36,22 @@ public class FriendServiceImpl implements FriendService {
         User friendUser = userRepository.findById(friendId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 
-        Friend friendOfFriendUser = Friend.builder()
+        Friend friendOfLoginUser = Friend.builder()
                 .nickname(friendUser.getNickname())
                 .profileImgUrl(friendUser.getProfileImgUrl())
                 .recentFeeling(friendUser.getRecentFeeling())
                 .friendOwnerId(loginUser.getId())
                 .build();
 
-        Friend friendOfLoginUser = Friend.builder()
+        Friend friendOfFriendUser = Friend.builder()
                 .nickname(loginUser.getNickname())
                 .profileImgUrl(loginUser.getProfileImgUrl())
                 .recentFeeling(loginUser.getRecentFeeling())
                 .friendOwnerId(friendUser.getId())
                 .build();
 
-        friendOfFriendUser.confirmUser(friendUser);
-        friendOfLoginUser.confirmUser(loginUser);
+        friendOfFriendUser.confirmUser(loginUser);
+        friendOfLoginUser.confirmUser(friendUser);
 
         friendRepository.save(friendOfFriendUser);
         friendRepository.save(friendOfLoginUser);
