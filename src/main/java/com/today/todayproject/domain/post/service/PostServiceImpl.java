@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -202,7 +203,7 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public List<Integer> getMonthlyPostCreationDate(Long userId) throws Exception {
+    public List<String> getCreationDate(Long userId) throws Exception {
         User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 
@@ -210,7 +211,16 @@ public class PostServiceImpl implements PostService{
                 .orElse(Collections.emptyList());
 
         return findPosts.stream()
-                .map(findPost -> findPost.getCreatedDate().getDayOfMonth())
+                .map(findPost -> {
+                    LocalDateTime createdDate = findPost.getCreatedDate();
+                    String year = String.valueOf(createdDate.getYear());
+                    String month = String.valueOf(createdDate.getMonthValue());
+                    int dayOfMonth = createdDate.getDayOfMonth();
+                    String day = "";
+                    if(dayOfMonth >= 1 && dayOfMonth < 10) day = "0" + dayOfMonth;
+                    if(dayOfMonth >= 10) day = String.valueOf(dayOfMonth);
+                    return year + "-" + month + "-" + day;
+                })
                 .collect(Collectors.toList());
     }
 }
