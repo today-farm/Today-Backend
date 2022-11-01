@@ -5,10 +5,9 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import javax.persistence.Column;
-import javax.persistence.EntityListeners;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @EntityListeners(AuditingEntityListener.class)
 @MappedSuperclass
@@ -22,4 +21,19 @@ public abstract class BaseTimeEntity {
     @LastModifiedDate // 조회한 Entity의 값을 변경할 때 시간 자동 저장
     @Column(updatable = true)
     private LocalDateTime lastModifiedDate;
+
+    @PrePersist
+    public void onPrePersist() {
+        String customLocalDateTimeFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        LocalDateTime parsedCreateDate = LocalDateTime.parse(customLocalDateTimeFormat, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        this.createdDate = parsedCreateDate;
+        this.lastModifiedDate = this.createdDate;
+    }
+
+    @PreUpdate
+    public void onPreUpdate() {
+        String customLocalDateTimeFormat = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        LocalDateTime parsedLastModifiedDate = LocalDateTime.parse(customLocalDateTimeFormat, DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm"));
+        this.lastModifiedDate = parsedLastModifiedDate;
+    }
 }
