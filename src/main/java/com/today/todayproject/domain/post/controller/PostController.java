@@ -51,7 +51,7 @@ public class PostController {
     @GetMapping("/creation-dates/{userId}")
     public BaseResponse<PostCreationDateResponseDto> getCreationDates(
             @PathVariable("userId") Long userId) throws Exception {
-        List<String> monthlyPostCreationDates = postService.getCreationDate(userId);
+        List<String> monthlyPostCreationDates = postService.getCreationDates(userId);
         PostCreationDateResponseDto postCreationDateResponseDto =
                 new PostCreationDateResponseDto(monthlyPostCreationDates);
         return new BaseResponse<>(postCreationDateResponseDto);
