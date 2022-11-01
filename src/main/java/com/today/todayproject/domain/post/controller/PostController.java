@@ -1,9 +1,6 @@
 package com.today.todayproject.domain.post.controller;
 
-import com.today.todayproject.domain.post.dto.PostInfoDto;
-import com.today.todayproject.domain.post.dto.PostSaveDto;
-import com.today.todayproject.domain.post.dto.PostSaveResponseDto;
-import com.today.todayproject.domain.post.dto.PostUpdateDto;
+import com.today.todayproject.domain.post.dto.*;
 import com.today.todayproject.domain.post.service.PostService;
 import com.today.todayproject.global.BaseResponse;
 import lombok.RequiredArgsConstructor;
@@ -49,5 +46,14 @@ public class PostController {
     public BaseResponse<String> delete(@PathVariable("postId") Long postId) throws Exception {
         postService.delete(postId);
         return new BaseResponse<>("하루 삭제에 성공하였습니다.");
+    }
+
+    @GetMapping("/monthly-creation-date/{userId}")
+    public BaseResponse<PostMonthlyCreationDateResponseDto> getMonthlyCreationDate(
+            @PathVariable("userId") Long userId) throws Exception {
+        List<Integer> monthlyPostCreationDates = postService.getMonthlyPostCreationDate(userId);
+        PostMonthlyCreationDateResponseDto postMonthlyCreationDateResponseDto =
+                new PostMonthlyCreationDateResponseDto(monthlyPostCreationDates);
+        return new BaseResponse<>(postMonthlyCreationDateResponseDto);
     }
 }
