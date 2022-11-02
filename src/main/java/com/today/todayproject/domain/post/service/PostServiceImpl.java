@@ -41,6 +41,7 @@ public class PostServiceImpl implements PostService{
     private final PostQuestionRepository postQuestionRepository;
     private final S3UploadService s3UploadService;
 
+    //TODO : 하루에 한번만 포스트 작성 가능하도록 처리
     @Override
     public List<Long> save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
