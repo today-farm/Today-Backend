@@ -72,6 +72,9 @@ public class InitService{
                     postQuestion.confirmPost(post);
                 }
                 user1.updateRecentFeeling("happy");
+                user2.updateRecentFeeling("happy");
+                user3.updateRecentFeeling("happy");
+                user4.updateRecentFeeling("happy");
                 postRepository.save(post);
             }
             Post post1 = postRepository.findById(1L).orElse(null);
