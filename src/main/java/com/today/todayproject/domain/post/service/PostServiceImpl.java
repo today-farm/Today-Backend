@@ -1,5 +1,7 @@
 package com.today.todayproject.domain.post.service;
 
+import com.today.todayproject.domain.crop.Crop;
+import com.today.todayproject.domain.crop.repository.CropRepository;
 import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.dto.PostInfoDto;
 import com.today.todayproject.domain.post.dto.PostSaveDto;
@@ -28,6 +30,7 @@ import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
 
 @Service
@@ -40,6 +43,7 @@ public class PostServiceImpl implements PostService{
     private final PostRepository postRepository;
     private final PostQuestionRepository postQuestionRepository;
     private final S3UploadService s3UploadService;
+    private final CropRepository cropRepository;
 
     //TODO : 하루에 한번만 포스트 작성 가능하도록 처리
     @Override
@@ -88,6 +92,24 @@ public class PostServiceImpl implements PostService{
                 addVideoUrl(extractVideoUrls, post, postQuestion);
             }
         });
+
+        if (loginUser.getPostWriteCount() == 0) {
+            Random random = new Random();
+            Crop crop = Crop.builder()
+                    .cropNumber(random.nextInt(10) + 1)
+                    .build();
+
+            crop.confirmUser(loginUser);
+            loginUser.addPostWriteCount();
+            crop.updateCropStatus(loginUser.getPostWriteCount());
+        }
+        if (loginUser.getPostWriteCount() != 0) {
+            Crop findCrop = cropRepository.findByUserId(loginUser.getId())
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP));
+            loginUser.addPostWriteCount();
+            findCrop.updateCropStatus(loginUser.getPostWriteCount());
+        }
+
         loginUser.updateRecentFeeling(postSaveDto.getTodayFeeling());
         postRepository.save(post);
         List<Long> postQuestionIds = post.getPostQuestions().stream()
