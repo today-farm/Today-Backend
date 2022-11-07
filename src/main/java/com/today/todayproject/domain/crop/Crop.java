@@ -24,4 +24,9 @@ public class Crop {
     private CropStatus status;
 
     private int cropNumber;
+
+    public void confirmUser(User user) {
+        this.user = user;
+        user.getCrops().add(this);
+    }
 }
