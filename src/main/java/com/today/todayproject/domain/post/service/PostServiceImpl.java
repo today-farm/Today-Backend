@@ -224,6 +224,15 @@ public class PostServiceImpl implements PostService{
                         .forEach(postVideoUrl -> s3UploadService.deleteOriginalFile(postVideoUrl.getVideoUrl()));
 
         postRepository.delete(findPost);
+
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+        Crop findCrop = cropRepository.findByUserId(loginUser.getId())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP));
+        loginUser.deletePost();
+        if (loginUser.getPostWriteCount() == 0) {
+            cropRepository.delete(findCrop);
+        }
     }
 
     @Override
