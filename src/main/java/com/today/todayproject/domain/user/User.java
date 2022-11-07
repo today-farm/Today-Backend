@@ -1,6 +1,7 @@
 package com.today.todayproject.domain.user;
 
 import com.today.todayproject.domain.BaseTimeEntity;
+import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.friend.Friend;
 import com.today.todayproject.domain.post.Post;
 import lombok.*;
@@ -40,10 +41,19 @@ public class User extends BaseTimeEntity {
     @Builder.Default
     private List<Friend> friendList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Crop> crops = new ArrayList<>();
+
+    private int postWriteCount;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
     private String refreshToken;
+
+    private static final int CROP_HARVEST_WRITE_COUNT = 7;
+    private static final int CROP_INIT_WRITE_COUNT =0;
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -77,5 +87,12 @@ public class User extends BaseTimeEntity {
 
     public void updateRecentFeeling(String changeRecentFeeling) {
         this.recentFeeling = changeRecentFeeling;
+    }
+
+    public void addPostWriteCount() {
+        this.postWriteCount++;
+        if (this.postWriteCount == CROP_HARVEST_WRITE_COUNT) {
+            this.postWriteCount = CROP_INIT_WRITE_COUNT;
+        }
     }
 }
