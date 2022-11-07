@@ -10,5 +10,5 @@ public interface CropRepository extends JpaRepository<Crop, Long> {
 
     Optional<Crop> findByUserId(Long userId);
 
-    Optional<List<Crop>> findAllByCreatedMonth();
+    Optional<List<Crop>> findAllByCreatedMonth(int month);
 }
