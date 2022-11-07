@@ -32,7 +32,8 @@ public enum BaseResponseStatus {
     NOT_FOUND_POST(false, 2008, NOT_FOUND, "해당 하루 게시물을 찾을 수 없습니다."),
     NOT_FOUND_POST_QUESTION(false, 2009, NOT_FOUND, "해당 하루 게시물의 질문을 찾을 수 없습니다."),
     NOT_FOUND_FRIEND(false, 2010, NOT_FOUND, "해당 친구를 찾을 수 없습니다."),
-    NOT_FOUND_USER(false, 2011, NOT_FOUND, "해당 유저를 찾을 수 없습니다.");
+    NOT_FOUND_USER(false, 2011, NOT_FOUND, "해당 유저를 찾을 수 없습니다."),
+    NOT_FOUND_CROP(false, 2012,NOT_FOUND, "해당 작물을 찾을 수 없습니다.");
 
     private final boolean isSuccess;
     private final int code;
