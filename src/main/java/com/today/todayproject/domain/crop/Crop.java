@@ -20,6 +20,8 @@ public class Crop {
     @JoinColumn(name = "user_id")
     private User user;
 
+    private int createdMonth;
+
     @Enumerated(EnumType.STRING)
     private CropStatus status;
 
