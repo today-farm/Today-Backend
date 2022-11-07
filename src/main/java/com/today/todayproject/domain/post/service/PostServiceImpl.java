@@ -97,6 +97,7 @@ public class PostServiceImpl implements PostService{
             Random random = new Random();
             Crop crop = Crop.builder()
                     .cropNumber(random.nextInt(10) + 1)
+                    .createdMonth(LocalDateTime.now().getMonthValue())
                     .build();
 
             crop.confirmUser(loginUser);
