@@ -88,4 +88,15 @@ public class FriendServiceImpl implements FriendService {
                     return new FriendInfoDto(userId, nickname, profileImgUrl, recentFeeling);
                 }).collect(Collectors.toList());
     }
+
+    @Override
+    public void acceptFriendRequest(Long opponentFriendId) throws BaseException {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+
+        Friend friendOfLoginUser = friendRepository.findByFriendIdAndFriendOwnerId(opponentFriendId, loginUser.getId())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_FRIEND));
+
+        friendOfLoginUser.updateAreWeFriend(true);
+    }
 }
