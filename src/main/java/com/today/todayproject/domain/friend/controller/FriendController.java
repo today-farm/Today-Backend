@@ -3,6 +3,7 @@ package com.today.todayproject.domain.friend.controller;
 import com.today.todayproject.domain.friend.dto.FriendGetFriendsResponseDto;
 import com.today.todayproject.domain.friend.dto.FriendInfoDto;
 import com.today.todayproject.domain.friend.service.FriendService;
+import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -32,5 +33,11 @@ public class FriendController {
     public BaseResponse<FriendGetFriendsResponseDto> getFriends(@PathVariable("friendOwnerId") Long friendOwnerId) {
         List<FriendInfoDto> friendInfoDtos = friendService.getFriends(friendOwnerId);
         return new BaseResponse<>(new FriendGetFriendsResponseDto(friendInfoDtos));
+    }
+
+    @PostMapping("/accept-request/{opponentId}")
+    public BaseResponse<String> acceptRequest(@PathVariable("opponentId") Long opponentId) throws BaseException {
+        friendService.acceptFriendRequest(opponentId);
+        return new BaseResponse<>("친구 요청을 수락하였습니다.");
     }
 }
