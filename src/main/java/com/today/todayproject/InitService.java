@@ -84,8 +84,8 @@
 //            Friend friendOfLoginUser = Friend.builder().nickname("user2").recentFeeling("happy").friendOwnerId(1L).build();
 //            Friend friendOfFriendUser = Friend.builder().nickname("user1").recentFeeling("happy").friendOwnerId(2L).build();
 //
-//            friendOfLoginUser.confirmUser(user1);
-//            friendOfFriendUser.confirmUser(user2);
+//            friendOfLoginUser.confirmUser(user2);
+//            friendOfFriendUser.confirmUser(user1);
 //
 //            friendRepository.save(friendOfLoginUser);
 //            friendRepository.save(friendOfFriendUser);
