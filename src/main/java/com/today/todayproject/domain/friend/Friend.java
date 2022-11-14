@@ -23,6 +23,8 @@ public class Friend extends BaseTimeEntity {
 
     private Long friendOwnerId; // 로그인한 유저 id (ex : 1번)
 
+    private boolean areWeFriend; // 서로 친구인지 확인하는 필드 (친구 요청 수락된 상태인지)
+
     private String nickname; // 닉네임
 
     private String profileImgUrl; // 프로필 사진
@@ -36,5 +38,9 @@ public class Friend extends BaseTimeEntity {
     public void confirmUser(User friend) {
         this.friend = friend;
         friend.getFriendList().add(this);
+    }
+
+    public void updateAreWeFriend(boolean updateAreWeFriend) {
+        this.areWeFriend = updateAreWeFriend;
     }
 }

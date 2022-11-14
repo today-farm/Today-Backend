@@ -26,7 +26,9 @@ public class FriendServiceImpl implements FriendService {
 
     /**
      * 친구 추가 시 로그인한 유저 <-> 친구 추가하는 유저
-     * 유저 2명 모두 Friend를 생성해서 2개가 되어야하고, 서로의 friends에 추가되어야한다!!
+     * 유저 2명 모두 Friend를 생성해서 2개가 되어야하고,
+     * 로그인한 유저는 친구 요청을 보냈다는 의미로 areWeFriend 필드가 true로 설정되어야 한다.
+     * 친구 추가당한 유저는 친구 요청 대기 상태로, areWeFriend 필드가 false로 설정되어야 한다. (수락하면 true로 업데이트)
      */
     @Override
     public void add(Long friendId) throws Exception {
@@ -41,6 +43,7 @@ public class FriendServiceImpl implements FriendService {
                 .profileImgUrl(friendUser.getProfileImgUrl())
                 .recentFeeling(friendUser.getRecentFeeling())
                 .friendOwnerId(loginUser.getId())
+                .areWeFriend(true)
                 .build();
 
         Friend friendOfFriendUser = Friend.builder()
@@ -48,6 +51,7 @@ public class FriendServiceImpl implements FriendService {
                 .profileImgUrl(loginUser.getProfileImgUrl())
                 .recentFeeling(loginUser.getRecentFeeling())
                 .friendOwnerId(friendUser.getId())
+                .areWeFriend(false)
                 .build();
 
         friendOfFriendUser.confirmUser(loginUser);
