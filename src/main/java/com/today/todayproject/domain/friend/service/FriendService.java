@@ -11,7 +11,7 @@ public interface FriendService {
 
     void delete(Long deleteFriendUserId) throws Exception;
 
-    List<FriendInfoDto> getFriends(Long friendOwnerId);
+    List<FriendInfoDto> getFriends(Long friendOwnerId) throws BaseException;
 
     void acceptFriendRequest(Long opponentFriendId) throws BaseException;
 

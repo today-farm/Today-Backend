@@ -30,7 +30,7 @@ public class FriendController {
     }
 
     @GetMapping("/friends/{friendOwnerId}")
-    public BaseResponse<FriendGetFriendsResponseDto> getFriends(@PathVariable("friendOwnerId") Long friendOwnerId) {
+    public BaseResponse<FriendGetFriendsResponseDto> getFriends(@PathVariable("friendOwnerId") Long friendOwnerId) throws BaseException {
         List<FriendInfoDto> friendInfoDtos = friendService.getFriends(friendOwnerId);
         return new BaseResponse<>(new FriendGetFriendsResponseDto(friendInfoDtos));
     }
