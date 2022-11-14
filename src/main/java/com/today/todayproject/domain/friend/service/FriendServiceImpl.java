@@ -99,4 +99,16 @@ public class FriendServiceImpl implements FriendService {
 
         friendOfLoginUser.updateAreWeFriend(true);
     }
+
+    @Override
+    public void refuseFriendRequest(Long opponentFriendId) throws BaseException {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+
+        User friendUser = userRepository.findById(opponentFriendId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+
+        friendRepository.deleteByFriendIdAndFriendOwnerId(friendUser.getId(), loginUser.getId());
+        friendRepository.deleteByFriendIdAndFriendOwnerId(loginUser.getId(), friendUser.getId());
+    }
 }

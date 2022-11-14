@@ -14,4 +14,6 @@ public interface FriendService {
     List<FriendInfoDto> getFriends(Long friendOwnerId);
 
     void acceptFriendRequest(Long opponentFriendId) throws BaseException;
+
+    void refuseFriendRequest(Long opponentFriendId) throws BaseException;
 }
