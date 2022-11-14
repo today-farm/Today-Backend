@@ -13,7 +13,8 @@ import javax.persistence.*;
 @Builder
 public class Friend extends BaseTimeEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "friend_id")
     private Long id;
 
@@ -23,13 +24,13 @@ public class Friend extends BaseTimeEntity {
 
     private Long friendOwnerId; // 로그인한 유저 id (ex : 1번)
 
-    private boolean areWeFriend; // 서로 친구인지 확인하는 필드 (친구 요청 수락된 상태인지)
+    private Boolean areWeFriend; // 서로 친구인지 확인하는 필드 (친구 요청 수락된 상태인지)
 
     private String nickname; // 닉네임
 
     private String profileImgUrl; // 프로필 사진
 
-   private String recentFeeling; // 최근 감정 상태
+    private String recentFeeling; // 최근 감정 상태
 
 
     /**
