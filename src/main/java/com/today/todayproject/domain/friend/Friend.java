@@ -3,6 +3,7 @@ package com.today.todayproject.domain.friend;
 import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.user.User;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import javax.persistence.*;
 
@@ -24,6 +25,7 @@ public class Friend extends BaseTimeEntity {
 
     private Long friendOwnerId; // 로그인한 유저 id (ex : 1번)
 
+    @ColumnDefault("false")
     private Boolean areWeFriend; // 서로 친구인지 확인하는 필드 (친구 요청 수락된 상태인지)
 
     private String nickname; // 닉네임
