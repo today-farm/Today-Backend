@@ -20,7 +20,7 @@ public class FriendController {
     @PostMapping("/add/{friendId}")
     public BaseResponse<String> add(@PathVariable("friendId") Long friendId) throws Exception {
         friendService.add(friendId);
-        return new BaseResponse<>("친구 추가에 성공했습니다.");
+        return new BaseResponse<>("친구 요청을 보냈습니다");
     }
 
     @PostMapping("/delete/{deleteFriendUserId}")
