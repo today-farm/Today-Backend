@@ -40,4 +40,10 @@ public class FriendController {
         friendService.acceptFriendRequest(opponentId);
         return new BaseResponse<>("친구 요청을 수락하였습니다.");
     }
+
+    @DeleteMapping("/refuse-request/{opponentId}")
+    public BaseResponse<String> refuseRequest(@PathVariable("opponentId") Long opponentId) throws BaseException {
+        friendService.refuseFriendRequest(opponentId);
+        return new BaseResponse<>("친구 요청을 거절하였습니다.");
+    }
 }
