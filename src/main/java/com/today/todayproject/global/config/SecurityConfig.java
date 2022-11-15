@@ -4,6 +4,7 @@ import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.jwt.filter.JwtAuthenticationProcessingFilter;
 import com.today.todayproject.global.jwt.service.JwtService;
 import com.today.todayproject.global.login.filter.CustomJsonUsernamePasswordAuthenticationFilter;
+import com.today.todayproject.global.login.handler.CustomAuthenticationEntryPoint;
 import com.today.todayproject.global.login.handler.LoginFailureHandler;
 import com.today.todayproject.global.login.handler.LoginSuccessJWTProviderHandler;
 import com.today.todayproject.global.login.service.LoginService;
@@ -50,8 +51,11 @@ public class SecurityConfig {
                 // 아이콘, css, js 관련
                 // 기본 페이지, css, image, js 하위 폴더에 있는 자료들은 모두 접근 가능, h2-console에 접근 가능
                 .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
-                .antMatchers("/login", "/sign-up").permitAll() // 로그인, 회원가입 접근 가능
-                .anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
+                .antMatchers("/sign-up").permitAll() // 로그인, 회원가입 접근 가능
+                .anyRequest().authenticated() // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
+                .and()
+                        .exceptionHandling()
+                                .authenticationEntryPoint(customAuthenticationEntryPoint());
 //                .and()
 //                //== 소셜 로그인 설정 ==//
 //                .oauth2Login()
@@ -128,5 +132,10 @@ public class SecurityConfig {
     public JwtAuthenticationProcessingFilter jwtAuthenticationProcessingFilter() {
         JwtAuthenticationProcessingFilter jwtAuthenticationFilter = new JwtAuthenticationProcessingFilter(jwtService, userRepository);
         return jwtAuthenticationFilter;
+    }
+
+    @Bean
+    public CustomAuthenticationEntryPoint customAuthenticationEntryPoint() {
+        return new CustomAuthenticationEntryPoint();
     }
 }
