@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class PostSaveResponseDto {
 
+    private Long postId;
     private List<Long> postQuestionId;
 }

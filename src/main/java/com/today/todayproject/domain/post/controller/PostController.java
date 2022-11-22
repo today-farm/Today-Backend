@@ -21,8 +21,7 @@ public class PostController {
             @RequestPart PostSaveDto postSaveDto,
             @RequestPart(required = false) List<MultipartFile> uploadImgs,
             @RequestPart(required = false) List<MultipartFile> uploadVideos) throws Exception {
-        List<Long> postQuestionIds = postService.save(postSaveDto, uploadImgs, uploadVideos);
-        PostSaveResponseDto postSaveResponseDto = new PostSaveResponseDto(postQuestionIds);
+        PostSaveResponseDto postSaveResponseDto = postService.save(postSaveDto, uploadImgs, uploadVideos);
         return new BaseResponse<>(postSaveResponseDto);
     }
 

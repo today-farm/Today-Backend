@@ -5,6 +5,7 @@ import com.today.todayproject.domain.crop.repository.CropRepository;
 import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.dto.PostInfoDto;
 import com.today.todayproject.domain.post.dto.PostSaveDto;
+import com.today.todayproject.domain.post.dto.PostSaveResponseDto;
 import com.today.todayproject.domain.post.dto.PostUpdateDto;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
 import com.today.todayproject.domain.post.question.PostQuestion;
@@ -47,7 +48,7 @@ public class PostServiceImpl implements PostService{
 
     //TODO : 하루에 한번만 포스트 작성 가능하도록 처리
     @Override
-    public List<Long> save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception {
+    public PostSaveResponseDto save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
@@ -116,7 +117,7 @@ public class PostServiceImpl implements PostService{
         List<Long> postQuestionIds = post.getPostQuestions().stream()
                 .map(postQuestion -> postQuestion.getId())
                 .collect(Collectors.toList());
-        return postQuestionIds;
+        return new PostSaveResponseDto(post.getId(), postQuestionIds);
     }
 
     // 파라미터로 들어온 이미지 URL 리스트(ImgUrls)를 forEach로 PostImgUrl을 생성하고, 연관관계 설정
