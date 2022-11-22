@@ -1,5 +1,6 @@
 package com.today.todayproject.domain.crop;
 
+import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.user.User;
 import lombok.*;
 
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Crop {
+public class Crop extends BaseTimeEntity {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "crop_id")
