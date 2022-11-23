@@ -25,7 +25,7 @@ public class PostController {
         return new BaseResponse<>(postSaveResponseDto);
     }
 
-    @GetMapping("/{userId}/{month}")
+    @GetMapping("monthly-post/{userId}/{month}")
     public BaseResponse<PostGetMonthInfoDto> getMonthPostInfo(@PathVariable("userId") Long userId,
                                                       @PathVariable("month") int month) throws Exception {
         PostGetMonthInfoDto userMonthPostInfo = postService.getUserMonthPostInfo(userId, month);
