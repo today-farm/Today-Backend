@@ -15,27 +15,25 @@ import java.util.stream.Collectors;
 public class PostInfoDto {
 
     private Long postId;
-    private String creationDate;
+    private String creationDay;
     private List<PostQuestionInfoDto> postQuestions = new ArrayList<>();
     private String todayFeeling;
 
     public PostInfoDto(Post post) {
         this.postId = post.getId();
-        this.creationDate = convertLocalDateTimeFormat(post);
+        this.creationDay = convertLocalDateTimeFormatToDay(post);
         this.postQuestions = post.getPostQuestions().stream()
                 .map(postQuestion -> new PostQuestionInfoDto(postQuestion))
                 .collect(Collectors.toList());
         this.todayFeeling = post.getTodayFeeling();
     }
 
-    private String convertLocalDateTimeFormat(Post post) {
+    private String convertLocalDateTimeFormatToDay(Post post) {
         LocalDateTime createdDate = post.getCreatedDate();
-        String year = String.valueOf(createdDate.getYear());
-        String month = String.valueOf(createdDate.getMonthValue());
         int dayOfMonth = createdDate.getDayOfMonth();
         String day = "";
         if(dayOfMonth >= 1 && dayOfMonth < 10) day = "0" + dayOfMonth;
         if(dayOfMonth >= 10) day = String.valueOf(dayOfMonth);
-        return year + "-" + month + "-" + day;
+        return day;
     }
 }
