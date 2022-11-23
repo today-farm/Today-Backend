@@ -101,7 +101,7 @@ public class SecurityConfig {
      */
     @Bean
     public LoginSuccessJWTProviderHandler loginSuccessJWTProviderHandler() {
-        return new LoginSuccessJWTProviderHandler(jwtService, userRepository);
+        return new LoginSuccessJWTProviderHandler(jwtService, userRepository, objectMapper);
     }
 
     /**
