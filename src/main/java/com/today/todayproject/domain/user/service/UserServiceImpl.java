@@ -1,25 +1,34 @@
 package com.today.todayproject.domain.user.service;
 
+import com.today.todayproject.domain.crop.repository.CropRepository;
+import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.User;
-import com.today.todayproject.domain.user.dto.UserUpdateRequestDto;
-import com.today.todayproject.domain.user.dto.UserWithdrawRequestDto;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
 import com.today.todayproject.global.s3.service.S3UploadService;
 import com.today.todayproject.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final CropRepository cropRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3UploadService s3UploadService;
 
@@ -78,5 +87,66 @@ public class UserServiceImpl implements UserService {
         String deleteProfileImgUrl = loginUser.getProfileImgUrl();
         s3UploadService.deleteOriginalFile(deleteProfileImgUrl);
         userRepository.delete(loginUser);
+    }
+
+    public UserGetPagingDto searchUsers(Pageable pageable, UserSearchDto userSearchDto) {
+        Long loginUserId = userSearchDto.getLoginUserId();
+        Long lastFriendUserId = userSearchDto.getLastFriendUserId();
+        Long lastUserId = userSearchDto.getLastUserId();
+        String searchUserNickname = userSearchDto.getSearchUserNickname();
+        UserGetFriendUserInfoDto userGetFriendUserInfoDto = new UserGetFriendUserInfoDto();
+        UserGetUserInfoDto userGetUserInfoDto = new UserGetUserInfoDto();
+
+        Slice<User> friendUsers = userRepository.searchFriendUserByUserNickname(loginUserId, lastFriendUserId,
+                searchUserNickname, pageable);
+
+        if (friendUsers.getContent().size() < pageable.getPageSize()) {
+            Slice<User> searchFriendUsers = userRepository.searchFriendUserByUserNickname(loginUserId, lastFriendUserId,
+                    searchUserNickname, pageable);
+
+            userGetFriendUserInfoDto = getUserGetFriendUserInfoDto(searchFriendUsers);
+
+            int userPageSize = pageable.getPageSize() - friendUsers.getContent().size();
+            Slice<User> searchUsers = userRepository.searchUserByUserNickname(lastUserId,
+                    searchUserNickname, userPageSize);
+
+            userGetUserInfoDto = getUserGetUserInfoDto(searchUsers);
+        }
+
+        if (friendUsers.getContent().size() >= pageable.getPageSize()) {
+            Slice<User> searchFriendUsers = userRepository.searchFriendUserByUserNickname(loginUserId, lastFriendUserId,
+                    searchUserNickname, pageable);
+
+            userGetFriendUserInfoDto = getUserGetFriendUserInfoDto(searchFriendUsers);
+            userGetUserInfoDto = new UserGetUserInfoDto(Collections.emptyList());
+        }
+
+        return new UserGetPagingDto(userGetFriendUserInfoDto, userGetUserInfoDto);
+    }
+
+    private UserGetUserInfoDto getUserGetUserInfoDto(Slice<User> searchUsers) {
+        List<UserSearchInfoDto> userInfos = searchUsers.stream()
+                .map(user -> {
+                    log.info("user id : {}", user.getId());
+                    int cropCount = cropRepository.countByUserId(user.getId());
+                    return new UserSearchInfoDto(user, cropCount);
+                }).collect(Collectors.toList());
+
+        UserGetUserInfoDto userGetUserInfoDto =
+                new UserGetUserInfoDto(userInfos, searchUsers);
+        return userGetUserInfoDto;
+    }
+
+    private UserGetFriendUserInfoDto getUserGetFriendUserInfoDto(Slice<User> searchFriendUsers) {
+        List<UserSearchInfoDto> friendUserInfos = searchFriendUsers.stream()
+                .map(friendUser -> {
+                    log.info("friendUser id : {}", friendUser.getId());
+                    int cropCount = cropRepository.countByUserId(friendUser.getId());
+                    return new UserSearchInfoDto(friendUser, cropCount);
+                }).collect(Collectors.toList());
+
+        UserGetFriendUserInfoDto userGetFriendUserInfoDto =
+                new UserGetFriendUserInfoDto(friendUserInfos, searchFriendUsers);
+        return userGetFriendUserInfoDto;
     }
 }
