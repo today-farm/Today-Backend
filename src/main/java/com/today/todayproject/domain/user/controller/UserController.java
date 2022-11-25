@@ -1,10 +1,10 @@
 package com.today.todayproject.domain.user.controller;
 
-import com.today.todayproject.domain.user.dto.UserUpdateRequestDto;
-import com.today.todayproject.domain.user.dto.UserWithdrawRequestDto;
+import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.service.UserService;
 import com.today.todayproject.global.BaseResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -34,5 +34,15 @@ public class UserController {
             @RequestBody UserWithdrawRequestDto userWithdrawRequestDto) throws Exception {
         userService.withdraw(userWithdrawRequestDto);
         return new BaseResponse<>("회원 탈퇴 성공");
+    }
+
+    /**
+     * 유저 검색 API
+     */
+    @GetMapping("/search")
+    public BaseResponse<UserGetPagingDto> searchUsers(@RequestBody UserSearchDto userSearchDto,
+                                                      Pageable pageable) {
+        UserGetPagingDto userGetPagingDto = userService.searchUsers(pageable, userSearchDto);
+        return new BaseResponse<>(userGetPagingDto);
     }
 }
