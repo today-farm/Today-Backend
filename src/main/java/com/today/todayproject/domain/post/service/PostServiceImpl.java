@@ -3,10 +3,7 @@ package com.today.todayproject.domain.post.service;
 import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.crop.repository.CropRepository;
 import com.today.todayproject.domain.post.Post;
-import com.today.todayproject.domain.post.dto.PostInfoDto;
-import com.today.todayproject.domain.post.dto.PostSaveDto;
-import com.today.todayproject.domain.post.dto.PostSaveResponseDto;
-import com.today.todayproject.domain.post.dto.PostUpdateDto;
+import com.today.todayproject.domain.post.dto.*;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
 import com.today.todayproject.domain.post.question.PostQuestion;
 import com.today.todayproject.domain.post.question.dto.PostQuestionDto;
@@ -147,6 +144,13 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
+    public PostGetMonthInfoDto getUserMonthPostInfo(Long userId, int month) {
+        List<Post> findPosts = postRepository.getPostByUserIdAndMonth(userId, month);
+
+        return new PostGetMonthInfoDto(findPosts);
+    }
+
+    @Override
     public void update(Long postId, PostUpdateDto postUpdateDto,
                        List<MultipartFile> updateImgs, List<MultipartFile> updateVideos) throws Exception {
         Post findPost = postRepository.findById(postId)
@@ -234,27 +238,5 @@ public class PostServiceImpl implements PostService{
         if (loginUser.getPostWriteCount() == 0) {
             cropRepository.delete(findCrop);
         }
-    }
-
-    @Override
-    public List<String> getCreationDates(Long userId) throws Exception {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
-
-        List<Post> findPosts = postRepository.findAllByWriterIdOrderByCreatedDateAsc(findUser.getId())
-                .orElse(Collections.emptyList());
-
-        return findPosts.stream()
-                .map(findPost -> {
-                    LocalDateTime createdDate = findPost.getCreatedDate();
-                    String year = String.valueOf(createdDate.getYear());
-                    String month = String.valueOf(createdDate.getMonthValue());
-                    int dayOfMonth = createdDate.getDayOfMonth();
-                    String day = "";
-                    if(dayOfMonth >= 1 && dayOfMonth < 10) day = "0" + dayOfMonth;
-                    if(dayOfMonth >= 10) day = String.valueOf(dayOfMonth);
-                    return year + "-" + month + "-" + day;
-                })
-                .collect(Collectors.toList());
     }
 }
