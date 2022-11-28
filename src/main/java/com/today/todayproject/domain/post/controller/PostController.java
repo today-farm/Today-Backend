@@ -24,7 +24,13 @@ public class PostController {
         PostSaveResponseDto postSaveResponseDto = postService.save(postSaveDto, uploadImgs, uploadVideos);
         return new BaseResponse<>(postSaveResponseDto);
     }
-    
+
+    @GetMapping("/{postId}")
+    public BaseResponse<PostInfoDto> getPostInfo(@PathVariable("postId") Long postId) throws Exception {
+        PostInfoDto postInfoDto = postService.getPostInfo(postId);
+        return new BaseResponse<>(postInfoDto);
+    }
+
     @PatchMapping("/update/{postId}")
     public BaseResponse<String> update(
             @PathVariable("postId") Long postId,
@@ -41,4 +47,12 @@ public class PostController {
         return new BaseResponse<>("하루 삭제에 성공하였습니다.");
     }
 
+    @GetMapping("/creation-dates/{userId}")
+    public BaseResponse<PostCreationDateResponseDto> getCreationDates(
+            @PathVariable("userId") Long userId) throws Exception {
+        List<String> monthlyPostCreationDates = postService.getCreationDates(userId);
+        PostCreationDateResponseDto postCreationDateResponseDto =
+                new PostCreationDateResponseDto(monthlyPostCreationDates);
+        return new BaseResponse<>(postCreationDateResponseDto);
+    }
 }
