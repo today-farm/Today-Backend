@@ -31,6 +31,13 @@ public class PostController {
         return new BaseResponse<>(postInfoDto);
     }
 
+    @GetMapping("/{userId}/{month}")
+    public BaseResponse<PostGetMonthInfoDto> getPostByUserAndMonth(@PathVariable("userId") Long userId,
+                                                                   @PathVariable("month") int month) {
+        PostGetMonthInfoDto userMonthPostInfo = postService.getUserMonthPostInfo(userId, month);
+        return new BaseResponse<>(userMonthPostInfo);
+    }
+
     @PatchMapping("/update/{postId}")
     public BaseResponse<String> update(
             @PathVariable("postId") Long postId,
@@ -45,14 +52,5 @@ public class PostController {
     public BaseResponse<String> delete(@PathVariable("postId") Long postId) throws Exception {
         postService.delete(postId);
         return new BaseResponse<>("하루 삭제에 성공하였습니다.");
-    }
-
-    @GetMapping("/creation-dates/{userId}")
-    public BaseResponse<PostCreationDateResponseDto> getCreationDates(
-            @PathVariable("userId") Long userId) throws Exception {
-        List<String> monthlyPostCreationDates = postService.getCreationDates(userId);
-        PostCreationDateResponseDto postCreationDateResponseDto =
-                new PostCreationDateResponseDto(monthlyPostCreationDates);
-        return new BaseResponse<>(postCreationDateResponseDto);
     }
 }
