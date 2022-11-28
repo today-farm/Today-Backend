@@ -24,14 +24,7 @@ public class PostController {
         PostSaveResponseDto postSaveResponseDto = postService.save(postSaveDto, uploadImgs, uploadVideos);
         return new BaseResponse<>(postSaveResponseDto);
     }
-
-    @GetMapping("/{userId}/{month}")
-    public BaseResponse<PostGetMonthInfoDto> getMonthPostInfo(@PathVariable("userId") Long userId,
-                                                      @PathVariable("month") int month) throws Exception {
-        PostGetMonthInfoDto userMonthPostInfo = postService.getUserMonthPostInfo(userId, month);
-        return new BaseResponse<>(userMonthPostInfo);
-    }
-
+    
     @PatchMapping("/update/{postId}")
     public BaseResponse<String> update(
             @PathVariable("postId") Long postId,
