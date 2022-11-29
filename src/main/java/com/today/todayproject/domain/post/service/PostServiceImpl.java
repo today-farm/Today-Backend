@@ -19,6 +19,7 @@ import com.today.todayproject.global.s3.service.S3UploadService;
 import com.today.todayproject.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,7 +45,6 @@ public class PostServiceImpl implements PostService{
     private final CropRepository cropRepository;
 
     //TODO : 하루에 한번만 포스트 작성 가능하도록 처리 -> 완료
-    //TODO : 한달 지나면 Count 초기화 처리
     @Override
     public PostSaveResponseDto save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
@@ -243,6 +243,15 @@ public class PostServiceImpl implements PostService{
         loginUser.deletePost();
         if (loginUser.getPostWriteCount() == 0) {
             cropRepository.delete(findCrop);
+        }
+    }
+
+    @Override
+    @Scheduled(cron = "0 0 3 * * ?", zone = "Asia/Seoul")
+    public void initUserCanWritePost() {
+        List<User> allUsers = userRepository.findAll();
+        for (User user : allUsers) {
+            user.initCanWritePost();
         }
     }
 }
