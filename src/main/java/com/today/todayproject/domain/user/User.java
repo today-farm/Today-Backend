@@ -3,6 +3,7 @@ package com.today.todayproject.domain.user;
 import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.friend.Friend;
+import com.today.todayproject.domain.growncrop.GrownCrop;
 import com.today.todayproject.domain.post.Post;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -34,6 +35,9 @@ public class User extends BaseTimeEntity {
 
     private String recentFeeling; // 최근 하루 작성 감정
 
+    @OneToOne(mappedBy = "user")
+    private Crop crop;
+
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Post> posts = new ArrayList<>();
@@ -44,20 +48,25 @@ public class User extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Crop> crops = new ArrayList<>();
+    private List<GrownCrop> grownCrops = new ArrayList<>();
 
     private int postWriteCount;
 
     @ColumnDefault("true")
     private Boolean canWritePost;
 
+    private int thisMonthHarvestCount;
+
     @Enumerated(EnumType.STRING)
     private Role role;
 
     private String refreshToken;
 
-    private static final int CROP_HARVEST_WRITE_COUNT = 7;
     private static final int CROP_INIT_WRITE_COUNT =0;
+
+    public void confirmCrop(Crop crop) {
+        this.crop = crop;
+    }
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;
@@ -95,9 +104,6 @@ public class User extends BaseTimeEntity {
 
     public void addPostWriteCount() {
         this.postWriteCount++;
-        if (this.postWriteCount == CROP_HARVEST_WRITE_COUNT) {
-            this.postWriteCount = CROP_INIT_WRITE_COUNT;
-        }
     }
 
     public void deletePost() {
@@ -114,5 +120,13 @@ public class User extends BaseTimeEntity {
 
     public void writePost() {
         this.canWritePost = false;
+    }
+
+    public void increaseThisMonthHarvestCount() {
+        thisMonthHarvestCount++;
+    }
+
+    public void initThisMonthHarvestCount() {
+        thisMonthHarvestCount = 0;
     }
 }
