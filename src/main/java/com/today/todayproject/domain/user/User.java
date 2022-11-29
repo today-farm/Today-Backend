@@ -99,4 +99,8 @@ public class User extends BaseTimeEntity {
     public void deletePost() {
         this.postWriteCount--;
     }
+
+    public void initPostWriteCount() {
+        this.postWriteCount = 0;
+    }
 }
