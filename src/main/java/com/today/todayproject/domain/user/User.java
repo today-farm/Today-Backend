@@ -108,6 +108,10 @@ public class User extends BaseTimeEntity {
         this.postWriteCount = 0;
     }
 
+    public void initCanWritePost() {
+        this.canWritePost = true;
+    }
+
     public void writePost() {
         this.canWritePost = false;
     }
