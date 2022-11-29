@@ -11,4 +11,6 @@ public interface UserService {
     void withdraw(UserWithdrawRequestDto userWithdrawRequestDto) throws Exception;
 
     UserGetPagingDto searchUsers(Pageable pageable, UserSearchDto userSearchDto);
+
+    void initPostWriteCount();
 }
