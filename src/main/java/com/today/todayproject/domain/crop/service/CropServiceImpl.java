@@ -11,6 +11,7 @@ import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
 import com.today.todayproject.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -45,5 +46,11 @@ public class CropServiceImpl implements CropService {
                 }).collect(Collectors.toList());
 
         return new CropGetThisMonthMyCropsResponseDto(cropInfoDtos);
+    }
+
+    @Override
+    @Scheduled(cron = "0 0 3 1 * ?", zone = "Asia/Seoul")
+    public void deletePastCrop() {
+        cropRepository.deleteAllByPastMonth();
     }
 }

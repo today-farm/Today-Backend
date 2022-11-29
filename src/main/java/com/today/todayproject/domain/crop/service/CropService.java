@@ -6,4 +6,6 @@ import com.today.todayproject.global.BaseException;
 public interface CropService {
 
     CropGetThisMonthMyCropsResponseDto getThisMonthMyCrops() throws BaseException;
+
+    void deletePastCrop();
 }
