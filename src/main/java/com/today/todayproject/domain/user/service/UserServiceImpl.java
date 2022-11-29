@@ -160,4 +160,13 @@ public class UserServiceImpl implements UserService {
             user.initPostWriteCount();
         }
     }
+
+    @Override
+    @Scheduled(cron = "0 0 3 1 * ?", zone = "Asia/Seoul")
+    public void initThisMonthHarvestCount() {
+        List<User> allUsers = userRepository.findAll();
+        for (User user : allUsers) {
+            user.initThisMonthHarvestCount();
+        }
+    }
 }

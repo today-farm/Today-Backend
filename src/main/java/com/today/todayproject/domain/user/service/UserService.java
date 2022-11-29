@@ -13,4 +13,6 @@ public interface UserService {
     UserGetPagingDto searchUsers(Pageable pageable, UserSearchDto userSearchDto);
 
     void initPostWriteCount();
+
+    void initThisMonthHarvestCount();
 }
