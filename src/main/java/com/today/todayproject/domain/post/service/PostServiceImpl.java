@@ -2,6 +2,8 @@ package com.today.todayproject.domain.post.service;
 
 import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.crop.repository.CropRepository;
+import com.today.todayproject.domain.growncrop.GrownCrop;
+import com.today.todayproject.domain.growncrop.repository.GrownCropRepository;
 import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.dto.*;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
@@ -43,6 +45,9 @@ public class PostServiceImpl implements PostService{
     private final PostQuestionRepository postQuestionRepository;
     private final S3UploadService s3UploadService;
     private final CropRepository cropRepository;
+    private final GrownCropRepository grownCropRepository;
+
+    private static final int CROP_HARVEST_WRITE_COUNT = 7;
 
     //TODO : 하루에 한번만 포스트 작성 가능하도록 처리 -> 완료
     @Override
@@ -96,7 +101,12 @@ public class PostServiceImpl implements PostService{
             }
         });
 
-        if (loginUser.getPostWriteCount() == 0) {
+        // before로 변수 받는 이유 -> .getPostWriteCount, .getThisMonthHarvestCount로 if 문에서 비교하는데,
+        // 조건문 끝나고 다음 조건갈 때 postWriteCount가 증가, .getThisMonthHarvestCount가 초기화되어 변하므로,
+        // 변하기 전 상태로 비교하기 위해 미리 변수로 받아둠
+        int beforeIncreasePostWriteCount = loginUser.getPostWriteCount();
+
+        if (beforeIncreasePostWriteCount == 0) {
             Random random = new Random();
             Crop crop = Crop.builder()
                     .cropNumber(random.nextInt(10) + 1)
@@ -107,11 +117,40 @@ public class PostServiceImpl implements PostService{
             loginUser.addPostWriteCount();
             crop.updateCropStatus(loginUser.getPostWriteCount());
             cropRepository.save(crop);
-        } else if (loginUser.getPostWriteCount() != 0) {
+        }
+        if (beforeIncreasePostWriteCount != 0) {
             Crop findCrop = cropRepository.findByUserId(loginUser.getId())
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP));
             loginUser.addPostWriteCount();
             findCrop.updateCropStatus(loginUser.getPostWriteCount());
+
+            int beforeThisMonthHarvestCount = loginUser.getThisMonthHarvestCount();
+
+            // thieMonthHarvestCount increase 시 4가 되면 황금 작물 수확 (황금 작물 넘버 = -1)
+            if (loginUser.getPostWriteCount() == CROP_HARVEST_WRITE_COUNT && beforeThisMonthHarvestCount == 3) {
+                GrownCrop goldGrownCrop = GrownCrop.builder()
+                        .cropNumber(-1)
+                        .build();
+
+                goldGrownCrop.confirmUser(loginUser);
+                grownCropRepository.save(goldGrownCrop);
+                loginUser.increaseThisMonthHarvestCount();
+                cropRepository.delete(findCrop);
+                loginUser.initPostWriteCount();
+            }
+
+            //  thieMonthHarvestCount increase 시 4가 아니면 일반 작물 수확
+            if (loginUser.getPostWriteCount() == CROP_HARVEST_WRITE_COUNT && beforeThisMonthHarvestCount != 3) {
+                GrownCrop grownCrop = GrownCrop.builder()
+                        .cropNumber(findCrop.getCropNumber())
+                        .build();
+
+                grownCrop.confirmUser(loginUser);
+                grownCropRepository.save(grownCrop);
+                loginUser.increaseThisMonthHarvestCount();
+                cropRepository.delete(findCrop);
+                loginUser.initPostWriteCount();
+            }
         }
 
         loginUser.updateRecentFeeling(postSaveDto.getTodayFeeling());
