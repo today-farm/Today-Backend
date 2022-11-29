@@ -43,11 +43,16 @@ public class PostServiceImpl implements PostService{
     private final S3UploadService s3UploadService;
     private final CropRepository cropRepository;
 
-    //TODO : 하루에 한번만 포스트 작성 가능하도록 처리
+    //TODO : 하루에 한번만 포스트 작성 가능하도록 처리 -> 완료
+    //TODO : 한달 지나면 Count 초기화 처리
     @Override
     public PostSaveResponseDto save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+
+        if (loginUser.getCanWritePost() == false) {
+            throw new BaseException(BaseResponseStatus.POST_CAN_WRITE_ONLY_ONCE_A_DAY);
+        }
 
         Post post = Post.builder()
                 .todayFeeling(postSaveDto.getTodayFeeling())
@@ -110,6 +115,7 @@ public class PostServiceImpl implements PostService{
         }
 
         loginUser.updateRecentFeeling(postSaveDto.getTodayFeeling());
+        loginUser.writePost();
         postRepository.save(post);
         List<Long> postQuestionIds = post.getPostQuestions().stream()
                 .map(postQuestion -> postQuestion.getId())
