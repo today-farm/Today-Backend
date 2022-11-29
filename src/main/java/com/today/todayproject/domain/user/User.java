@@ -48,7 +48,7 @@ public class User extends BaseTimeEntity {
 
     private int postWriteCount;
 
-    @ColumnDefault("false")
+    @ColumnDefault("true")
     private Boolean canWritePost;
 
     @Enumerated(EnumType.STRING)
@@ -109,6 +109,6 @@ public class User extends BaseTimeEntity {
     }
 
     public void writePost() {
-        this.canWritePost = true;
+        this.canWritePost = false;
     }
 }
