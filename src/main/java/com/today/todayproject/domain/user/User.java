@@ -5,6 +5,7 @@ import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.friend.Friend;
 import com.today.todayproject.domain.post.Post;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -46,6 +47,9 @@ public class User extends BaseTimeEntity {
     private List<Crop> crops = new ArrayList<>();
 
     private int postWriteCount;
+
+    @ColumnDefault("false")
+    private Boolean canWritePost;
 
     @Enumerated(EnumType.STRING)
     private Role role;
