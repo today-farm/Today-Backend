@@ -12,4 +12,5 @@ public class PostSaveDto {
 
     private List<PostQuestionDto> postQuestions;
     private String todayFeeling;
+    private Boolean canPublicAccess;
 }

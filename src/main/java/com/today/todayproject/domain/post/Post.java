@@ -28,6 +28,8 @@ public class Post extends BaseTimeEntity {
 
     private String todayFeeling;
 
+    private Boolean canPublicAccess;
+
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<PostImgUrl> postImgUrls = new ArrayList<>();

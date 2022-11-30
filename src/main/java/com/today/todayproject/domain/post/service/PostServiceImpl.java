@@ -62,6 +62,7 @@ public class PostServiceImpl implements PostService{
         Post post = Post.builder()
                 .todayFeeling(postSaveDto.getTodayFeeling())
                 .writer(loginUser)
+                .canPublicAccess(postSaveDto.getCanPublicAccess())
                 .build();
 
         List<PostQuestionDto> postQuestions = postSaveDto.getPostQuestions();
