@@ -7,7 +7,5 @@ import java.util.List;
 
 public interface CropService {
 
-    List<CropInfoDto> getThisMonthMyCrops() throws BaseException;
-
     void deletePastCrop();
 }

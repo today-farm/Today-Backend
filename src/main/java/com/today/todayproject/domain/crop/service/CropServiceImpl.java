@@ -23,28 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class CropServiceImpl implements CropService {
 
-    private final UserRepository userRepository;
     private final CropRepository cropRepository;
-
-    @Override
-    public List<CropInfoDto> getThisMonthMyCrops() throws BaseException {
-        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
-
-
-        List<Crop> findCrops = cropRepository.findAllByCreatedMonthAndUserIdAndIsHarvested(
-                LocalDateTime.now().getMonthValue(), loginUser.getId(), false)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP));
-
-        List<CropInfoDto> cropInfoDtos = findCrops.stream()
-                .map(findCrop -> {
-                    int cropNumber = findCrop.getCropNumber();
-                    CropStatus cropStatus = findCrop.getStatus();
-                    return new CropInfoDto(cropNumber, cropStatus);
-                }).collect(Collectors.toList());
-
-        return cropInfoDtos;
-    }
 
     @Override
     @Scheduled(cron = "0 0 3 1 * ?", zone = "Asia/Seoul")
