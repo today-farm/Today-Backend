@@ -112,6 +112,7 @@ public class PostServiceImpl implements PostService{
             Crop crop = Crop.builder()
                     .cropNumber(random.nextInt(10) + 1)
                     .createdMonth(LocalDateTime.now().getMonthValue())
+                    .isHarvested(false)
                     .build();
 
             crop.confirmUser(loginUser);

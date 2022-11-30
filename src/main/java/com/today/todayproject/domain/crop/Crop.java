@@ -27,6 +27,7 @@ public class Crop extends BaseTimeEntity {
     private CropStatus status;
 
     private int cropNumber;
+    private Boolean isHarvested;
 
     public void confirmUser(User user) {
         this.user = user;
