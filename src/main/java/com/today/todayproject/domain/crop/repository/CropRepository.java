@@ -10,7 +10,7 @@ public interface CropRepository extends JpaRepository<Crop, Long>, CustomCropRep
 
     Optional<Crop> findByUserId(Long userId);
 
-    Optional<List<Crop>> findAllByCreatedMonthAndUserId(int month, Long userId);
+    Optional<List<Crop>> findAllByCreatedMonthAndUserIdAndIsHarvested(int month, Long userId, Boolean isHarvested);
 
     int countByUserId(Long userId);
 }

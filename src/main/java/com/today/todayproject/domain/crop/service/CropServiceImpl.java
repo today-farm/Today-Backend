@@ -32,8 +32,8 @@ public class CropServiceImpl implements CropService {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 
 
-        List<Crop> findCrops = cropRepository.findAllByCreatedMonthAndUserId(
-                LocalDateTime.now().getMonthValue(), loginUser.getId())
+        List<Crop> findCrops = cropRepository.findAllByCreatedMonthAndUserIdAndIsHarvested(
+                LocalDateTime.now().getMonthValue(), loginUser.getId(), false)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP));
 
         List<CropInfoDto> cropInfoDtos = findCrops.stream()
