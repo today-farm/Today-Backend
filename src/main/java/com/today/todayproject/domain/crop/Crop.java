@@ -48,4 +48,8 @@ public class Crop extends BaseTimeEntity {
             this.status = CropStatus.GROWN_SPROUT;
         }
     }
+
+    public void harvest() {
+        this.isHarvested = true;
+    }
 }

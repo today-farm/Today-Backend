@@ -137,7 +137,7 @@ public class PostServiceImpl implements PostService{
                 goldGrownCrop.confirmUser(loginUser);
                 grownCropRepository.save(goldGrownCrop);
                 loginUser.increaseThisMonthHarvestCount();
-                cropRepository.delete(findCrop);
+                findCrop.harvest();
                 loginUser.initPostWriteCount();
             }
 
@@ -150,7 +150,7 @@ public class PostServiceImpl implements PostService{
                 grownCrop.confirmUser(loginUser);
                 grownCropRepository.save(grownCrop);
                 loginUser.increaseThisMonthHarvestCount();
-                cropRepository.delete(findCrop);
+                findCrop.harvest();
                 loginUser.initPostWriteCount();
             }
         }
