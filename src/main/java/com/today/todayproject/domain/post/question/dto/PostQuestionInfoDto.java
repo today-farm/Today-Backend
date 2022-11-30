@@ -15,12 +15,14 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 public class PostQuestionInfoDto {
 
+    private Long questionId;
     private String question;
     private String content;
     private List<PostImgUrlDto> postImgUrls = new ArrayList<>();
     private List<PostVideoUrlDto> postVideoUrls = new ArrayList<>();
 
     public PostQuestionInfoDto(PostQuestion postQuestion) {
+        this.questionId = postQuestion.getId();
         this.question = postQuestion.getQuestion();
         this.content = postQuestion.getContent();
         this.postImgUrls = postQuestion.getPostImgUrls().stream()
