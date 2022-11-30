@@ -137,7 +137,6 @@ public class PostServiceImpl implements PostService{
             if (loginUser.getPostWriteCount() == CROP_HARVEST_WRITE_COUNT && beforeThisMonthHarvestCount == 3) {
                 GrownCrop goldGrownCrop = GrownCrop.builder()
                         .cropNumber(-1)
-                        .harvestedMonth(LocalDateTime.now().getMonthValue())
                         .build();
 
                 goldGrownCrop.confirmUser(loginUser);
@@ -151,7 +150,6 @@ public class PostServiceImpl implements PostService{
             if (loginUser.getPostWriteCount() == CROP_HARVEST_WRITE_COUNT && beforeThisMonthHarvestCount != 3) {
                 GrownCrop grownCrop = GrownCrop.builder()
                         .cropNumber(findCrop.getCropNumber())
-                        .harvestedMonth(LocalDateTime.now().getMonthValue())
                         .build();
 
                 grownCrop.confirmUser(loginUser);
