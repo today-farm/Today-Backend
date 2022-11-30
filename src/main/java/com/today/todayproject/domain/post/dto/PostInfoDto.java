@@ -18,6 +18,7 @@ public class PostInfoDto {
     private List<PostQuestionInfoDto> postQuestions = new ArrayList<>();
     private String creationDay;
     private String todayFeeling;
+    private Boolean canPublicAccess;
 
     public PostInfoDto(Post post) {
         this.postId = post.getId();
@@ -26,6 +27,7 @@ public class PostInfoDto {
                 .collect(Collectors.toList());
         this.creationDay = convertLocalDateTimeFormatToDay(post.getCreatedDate());
         this.todayFeeling = post.getTodayFeeling();
+        this.canPublicAccess = post.getCanPublicAccess();
     }
 
     private String convertLocalDateTimeFormatToDay(LocalDateTime createdDate) {
