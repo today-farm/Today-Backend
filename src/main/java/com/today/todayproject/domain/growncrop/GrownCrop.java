@@ -21,6 +21,7 @@ public class GrownCrop extends BaseTimeEntity {
     private User user;
 
     private int cropNumber;
+    private int harvestedMonth;
 
     public void confirmUser(User user) {
         this.user = user;
