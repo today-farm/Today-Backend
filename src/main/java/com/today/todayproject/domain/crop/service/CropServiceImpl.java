@@ -2,7 +2,6 @@ package com.today.todayproject.domain.crop.service;
 
 import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.crop.CropStatus;
-import com.today.todayproject.domain.crop.dto.CropGetThisMonthMyCropsResponseDto;
 import com.today.todayproject.domain.crop.dto.CropInfoDto;
 import com.today.todayproject.domain.crop.repository.CropRepository;
 import com.today.todayproject.domain.user.User;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,7 +27,7 @@ public class CropServiceImpl implements CropService {
     private final CropRepository cropRepository;
 
     @Override
-    public CropGetThisMonthMyCropsResponseDto getThisMonthMyCrops() throws BaseException {
+    public List<CropInfoDto> getThisMonthMyCrops() throws BaseException {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 
@@ -45,7 +43,7 @@ public class CropServiceImpl implements CropService {
                     return new CropInfoDto(cropNumber, cropStatus);
                 }).collect(Collectors.toList());
 
-        return new CropGetThisMonthMyCropsResponseDto(cropInfoDtos);
+        return cropInfoDtos;
     }
 
     @Override
