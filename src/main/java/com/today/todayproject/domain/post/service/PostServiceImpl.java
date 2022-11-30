@@ -7,12 +7,14 @@ import com.today.todayproject.domain.growncrop.repository.GrownCropRepository;
 import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.dto.*;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
+import com.today.todayproject.domain.post.imgurl.dto.PostImgUrlDto;
 import com.today.todayproject.domain.post.question.PostQuestion;
 import com.today.todayproject.domain.post.question.dto.PostQuestionDto;
 import com.today.todayproject.domain.post.question.dto.PostQuestionUpdateDto;
 import com.today.todayproject.domain.post.question.repository.PostQuestionRepository;
 import com.today.todayproject.domain.post.repository.PostRepository;
 import com.today.todayproject.domain.post.video.PostVideoUrl;
+import com.today.todayproject.domain.post.video.dto.PostVideoUrlDto;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
@@ -70,8 +72,11 @@ public class PostServiceImpl implements PostService{
         postQuestions.stream().forEach(postQuestionDto -> {
             String question = postQuestionDto.getQuestion();
             String content = postQuestionDto.getContent();
-            int imgCount = postQuestionDto.getImgCount();
-            int videoCount = postQuestionDto.getVideoCount();
+            List<PostImgUrlDto> imgs = postQuestionDto.getImgs();
+            List<PostVideoUrlDto> videos = postQuestionDto.getVideos();
+            addImgs();
+            addVideos();
+
             PostQuestion postQuestion = PostQuestion.builder()
                     .question(question)
                     .content(content)
@@ -211,6 +216,9 @@ public class PostServiceImpl implements PostService{
                         PostQuestion findPostQuestion = postQuestionRepository.findById(postQuestionUpdateDto.getQuestionId())
                                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST_QUESTION));
                         findPostQuestion.updateContent(postQuestionUpdateDto.getContent());
+                        deleteImgs(findPostQuestion ,postQuestionUpdateDto.getImgUrlsToDelete());
+                        deleteVideos(findPostQuestion ,postQuestionUpdateDto.getVideoUrlsToDelete());
+
                         int imgCount = postQuestionUpdateDto.getImgCount();
                         int videoCount = postQuestionUpdateDto.getVideoCount();
                         if(imgCount != 0) updateImgUrl(findPostQuestion, findPost, updateImgs, imgCount);
@@ -221,6 +229,22 @@ public class PostServiceImpl implements PostService{
                 });
         findPost.updateTodayFeeling(postUpdateDto.getTodayFeeling());
     }
+
+    private void deleteImgs(PostQuestion postQuestion, List<String> imgUrlsToDelete) {
+        for (String imgUrlToDelete : imgUrlsToDelete) {
+            postQuestion.getPostImgUrls().remove(imgUrlToDelete);
+        }
+        s3UploadService.deleteOriginalFile(imgUrlsToDelete);
+    }
+
+    private void deleteVideos(PostQuestion postQuestion, List<String> videoUrlsToDelete) {
+        for (String videoUrlToDelete : videoUrlsToDelete) {
+            postQuestion.getPostVideoUrls().remove(videoUrlToDelete);
+        }
+        s3UploadService.deleteOriginalFile(videoUrlsToDelete);
+    }
+
+    private void uploadImgs(List<MultipartFile> update)
 
     public void updateImgUrl(PostQuestion postQuestion, Post post, List<MultipartFile> updateImgs, int imgCount) {
         postQuestion.getPostImgUrls().stream()
