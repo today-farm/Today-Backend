@@ -160,17 +160,17 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserGetThisMonthMyCropDto getThisMonthMyCrop() throws BaseException {
-        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+    public UserGetThisMonthMyCropDto getThisMonthMyCrop(Long userId) throws BaseException {
+        User findUser = userRepository.findById(userId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 
 
         List<Crop> findCrops = cropRepository.findAllByCreatedMonthAndUserIdAndIsHarvested(
-                        LocalDateTime.now().getMonthValue(), loginUser.getId(), false)
+                        LocalDateTime.now().getMonthValue(), findUser.getId(), false)
                 .orElse(Collections.emptyList());
 
         List<GrownCrop> findGrownCrops = grownCropRepository.findAllByUserIdAndHarvestedMonth(
-                        loginUser.getId(), LocalDateTime.now().getMonthValue())
+                        findUser.getId(), LocalDateTime.now().getMonthValue())
                 .orElse(Collections.emptyList());
 
         List<CropInfoDto> cropInfoDtos = Collections.emptyList();

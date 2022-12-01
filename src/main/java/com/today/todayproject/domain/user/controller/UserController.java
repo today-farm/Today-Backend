@@ -2,6 +2,7 @@ package com.today.todayproject.domain.user.controller;
 
 import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.service.UserService;
+import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -44,5 +45,14 @@ public class UserController {
                                                       Pageable pageable) {
         UserGetPagingDto userGetPagingDto = userService.searchUsers(pageable, userSearchDto);
         return new BaseResponse<>(userGetPagingDto);
+    }
+
+    /**
+     * 이번 달 내 작물들 조회 API(메인 페이지)
+     */
+    @GetMapping("/this-month-my-crops")
+    public BaseResponse<UserGetThisMonthMyCropDto> getThisMonthMyCrops() throws BaseException {
+        UserGetThisMonthMyCropDto thisMonthMyCrop = userService.getThisMonthMyCrop();
+        return new BaseResponse<>(thisMonthMyCrop);
     }
 }
