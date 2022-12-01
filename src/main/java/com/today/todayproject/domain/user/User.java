@@ -52,8 +52,8 @@ public class User extends BaseTimeEntity {
 
     private int postWriteCount;
 
-    @ColumnDefault("true")
-    private Boolean canWritePost;
+    @Builder.Default
+    private Boolean canWritePost = true;
 
     private int thisMonthHarvestCount;
 
