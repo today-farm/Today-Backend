@@ -13,7 +13,7 @@ public interface UserService {
 
     UserGetPagingDto searchUsers(Pageable pageable, UserSearchDto userSearchDto);
 
-    UserGetThisMonthMyCropDto getThisMonthMyCrop() throws BaseException;
+    UserGetThisMonthMyCropDto getThisMonthMyCrop(Long userId) throws BaseException;
 
     void initPostWriteCount();
 
