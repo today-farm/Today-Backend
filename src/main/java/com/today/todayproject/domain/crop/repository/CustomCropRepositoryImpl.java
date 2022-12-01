@@ -26,7 +26,7 @@ public class CustomCropRepositoryImpl implements CustomCropRepository {
     }
 
     private int extractPastMonth() {
-        int thisMonth = LocalDateTime.now().getDayOfMonth();
+        int thisMonth = LocalDateTime.now().getMonthValue();
         int pastMonth = thisMonth - 1;
         if (pastMonth == 0) {
             pastMonth = 12;
