@@ -45,6 +45,9 @@ public class Post extends BaseTimeEntity {
     public void updateTodayFeeling(String todayFeeling) {
         this.todayFeeling = todayFeeling;
     }
+    public void updateCanPublicAccess(Boolean canPublicAccess) {
+        this.canPublicAccess = canPublicAccess;
+    }
 
     /**
      * 연관관계 메소드

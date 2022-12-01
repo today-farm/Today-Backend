@@ -217,6 +217,7 @@ public class PostServiceImpl implements PostService{
             }
         }
         findPost.updateTodayFeeling(postUpdateDto.getTodayFeeling());
+        findPost.updateCanPublicAccess(postUpdateDto.getCanPublicAccess());
     }
 
     private void confirmImgUrlPostAndPostQuestion(Post findPost, PostQuestion findPostQuestion,

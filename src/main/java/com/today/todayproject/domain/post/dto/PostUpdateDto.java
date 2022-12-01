@@ -12,4 +12,5 @@ public class PostUpdateDto {
 
     private List<PostQuestionUpdateDto> postQuestions;
     private String todayFeeling;
+    private Boolean canPublicAccess;
 }
