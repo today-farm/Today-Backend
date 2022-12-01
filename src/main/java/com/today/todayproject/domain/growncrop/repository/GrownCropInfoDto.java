@@ -11,7 +11,7 @@ public class GrownCropInfoDto {
     private int cropNumber;
     private Boolean isGoldGrownCrop;
 
-    GrownCropInfoDto(GrownCrop grownCrop) {
+    public GrownCropInfoDto(GrownCrop grownCrop) {
         this.cropNumber = grownCrop.getCropNumber();
         if (grownCrop.getCropNumber() == -1) {
             this.isGoldGrownCrop = true;
