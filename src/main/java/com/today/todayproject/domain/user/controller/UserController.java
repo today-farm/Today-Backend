@@ -48,11 +48,12 @@ public class UserController {
     }
 
     /**
-     * 이번 달 내 작물들 조회 API(메인 페이지)
+     * 이번 달 유저 작물들 조회 API(메인 페이지)
      */
-    @GetMapping("/this-month-my-crops")
-    public BaseResponse<UserGetThisMonthMyCropDto> getThisMonthMyCrops() throws BaseException {
-        UserGetThisMonthMyCropDto thisMonthMyCrop = userService.getThisMonthMyCrop();
+    @GetMapping("/this-month-crops/{userId}")
+    public BaseResponse<UserGetThisMonthMyCropDto> getThisMonthMyCrops(
+            @PathVariable("userId") Long userId) throws BaseException {
+        UserGetThisMonthMyCropDto thisMonthMyCrop = userService.getThisMonthMyCrop(userId);
         return new BaseResponse<>(thisMonthMyCrop);
     }
 }
