@@ -1,6 +1,12 @@
 package com.today.todayproject.domain.user.service;
 
+import com.today.todayproject.domain.crop.Crop;
+import com.today.todayproject.domain.crop.CropStatus;
+import com.today.todayproject.domain.crop.dto.CropInfoDto;
 import com.today.todayproject.domain.crop.repository.CropRepository;
+import com.today.todayproject.domain.growncrop.GrownCrop;
+import com.today.todayproject.domain.growncrop.repository.GrownCropInfoDto;
+import com.today.todayproject.domain.growncrop.repository.GrownCropRepository;
 import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.repository.UserRepository;
@@ -18,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,6 +37,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final CropRepository cropRepository;
+    private final GrownCropRepository grownCropRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3UploadService s3UploadService;
 
@@ -149,6 +157,48 @@ public class UserServiceImpl implements UserService {
         UserGetFriendUserInfoDto userGetFriendUserInfoDto =
                 new UserGetFriendUserInfoDto(friendUserInfos, searchFriendUsers);
         return userGetFriendUserInfoDto;
+    }
+
+    @Override
+    public UserGetThisMonthMyCropDto getThisMonthMyCrop() throws BaseException {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+
+
+        List<Crop> findCrops = cropRepository.findAllByCreatedMonthAndUserIdAndIsHarvested(
+                        LocalDateTime.now().getMonthValue(), loginUser.getId(), false)
+                .orElse(Collections.emptyList());
+
+        List<GrownCrop> findGrownCrops = grownCropRepository.findAllByUserIdAndHarvestedMonth(
+                        loginUser.getId(), LocalDateTime.now().getMonthValue())
+                .orElse(Collections.emptyList());
+
+        List<CropInfoDto> cropInfoDtos = Collections.emptyList();
+        List<GrownCropInfoDto> grownCropInfoDtos = Collections.emptyList();
+
+        if (!findCrops.isEmpty()) {
+            cropInfoDtos = generateCropInfoDto(findCrops);
+        }
+
+        if (!findGrownCrops.isEmpty()) {
+            grownCropInfoDtos = generateGrownCropInfoDto(findGrownCrops);
+        }
+
+        return new UserGetThisMonthMyCropDto(cropInfoDtos, grownCropInfoDtos);
+    }
+
+    private List<CropInfoDto> generateCropInfoDto(List<Crop> findCrops) {
+         return findCrops.stream()
+                .map(findCrop -> {
+                    int cropNumber = findCrop.getCropNumber();
+                    CropStatus cropStatus = findCrop.getStatus();
+                    return new CropInfoDto(cropNumber, cropStatus);
+                }).collect(Collectors.toList());
+    }
+
+    private List<GrownCropInfoDto> generateGrownCropInfoDto(List<GrownCrop> findGrownCrops) {
+        return findGrownCrops.stream()
+                .map(GrownCropInfoDto::new).collect(Collectors.toList());
     }
 
 
