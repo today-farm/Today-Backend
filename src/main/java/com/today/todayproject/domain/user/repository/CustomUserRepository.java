@@ -8,5 +8,5 @@ public interface CustomUserRepository {
 
     Slice<User> searchFriendUserByUserNickname(Long loginUserId, Long lastFriendUserId, String searchUserNickname, Pageable pageable);
 
-    Slice<User> searchUserByUserNickname(Long lastUserId, String searchUserNickname, int userPageSize);
+    Slice<User> searchUserByUserNickname(Long loginUserId, Long lastUserId, String searchUserNickname, int userPageSize);
 }

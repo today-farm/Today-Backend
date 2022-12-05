@@ -64,21 +64,23 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
      * 단순 유저 닉네임으로 검색해서 유저 반환하는 메소드 구현
      */
     @Override
-    public Slice<User> searchUserByUserNickname(Long lastUserId, String searchUserNickname,
+    public Slice<User> searchUserByUserNickname(Long loginUserId, Long lastUserId, String searchUserNickname,
                                                 int userPageSize) {
 
         PageRequest page = PageRequest.of(0, userPageSize);
 
-        List<User> users = getUsers(lastUserId, searchUserNickname, userPageSize);
+        List<User> users = getUsers(loginUserId, lastUserId, searchUserNickname, userPageSize);
 
         return checkLastPage(page, users);
     }
 
-    private List<User> getUsers(Long lastUserId, String searchUserNickname, int userPageSize) {
+    private List<User> getUsers(Long loginUserId, Long lastUserId, String searchUserNickname, int userPageSize) {
         return query.selectFrom(user)
+                .leftJoin(user.friendList, friend1)
                 .where(
                         ltUserId(lastUserId),
-
+                        user.id.ne(loginUserId),
+                        friend1.friendOwnerId.ne(loginUserId).or(friend1.friendOwnerId.isNull()),
                         userNicknameHasStr(searchUserNickname)
                 )
                 .orderBy(user.id.desc())

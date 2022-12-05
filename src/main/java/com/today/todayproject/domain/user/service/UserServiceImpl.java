@@ -116,7 +116,7 @@ public class UserServiceImpl implements UserService {
             userGetFriendUserInfoDto = getUserGetFriendUserInfoDto(searchFriendUsers);
 
             int userPageSize = pageable.getPageSize() - friendUsers.getContent().size();
-            Slice<User> searchUsers = userRepository.searchUserByUserNickname(lastUserId,
+            Slice<User> searchUsers = userRepository.searchUserByUserNickname(loginUserId, lastUserId,
                     searchUserNickname, userPageSize);
 
             userGetUserInfoDto = getUserGetUserInfoDto(searchUsers);
