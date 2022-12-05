@@ -41,8 +41,12 @@ public class UserController {
      * 유저 검색 API
      */
     @GetMapping("/search")
-    public BaseResponse<UserGetPagingDto> searchUsers(@RequestBody UserSearchDto userSearchDto,
+    public BaseResponse<UserGetPagingDto> searchUsers(@RequestParam(name = "loginUserId") Long loginUserId,
+                                                      @RequestParam(required = false, name = "lastFriendUserId") Long lastFriendUserId,
+                                                      @RequestParam(required = false, name = "lastUserId") Long lastUserId,
+                                                      @RequestParam("searchUserNickname") String searchUserNickname,
                                                       Pageable pageable) {
+        UserSearchDto userSearchDto = new UserSearchDto(loginUserId, lastFriendUserId, lastUserId, searchUserNickname);
         UserGetPagingDto userGetPagingDto = userService.searchUsers(pageable, userSearchDto);
         return new BaseResponse<>(userGetPagingDto);
     }
