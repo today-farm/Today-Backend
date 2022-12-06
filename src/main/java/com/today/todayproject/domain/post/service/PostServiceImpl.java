@@ -290,8 +290,12 @@ public class PostServiceImpl implements PostService{
         Crop findCrop = cropRepository.findByUserId(loginUser.getId())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP));
         loginUser.deletePost();
+        loginUser.initCanWritePost();
         if (loginUser.getPostWriteCount() == 0) {
             cropRepository.delete(findCrop);
+        }
+        if (loginUser.getPostWriteCount() != 0) {
+            findCrop.updateCropStatus(loginUser.getPostWriteCount());
         }
     }
 
