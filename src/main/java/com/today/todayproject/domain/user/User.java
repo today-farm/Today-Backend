@@ -104,8 +104,12 @@ public class User extends BaseTimeEntity {
         this.postWriteCount++;
     }
 
-    public void deletePost() {
+    public void minusPostWriteCount() {
         this.postWriteCount--;
+    }
+
+    public void rollbackPostWriteCountBeforeHarvest() {
+        this.postWriteCount = 6;
     }
 
     public void initPostWriteCount() {
