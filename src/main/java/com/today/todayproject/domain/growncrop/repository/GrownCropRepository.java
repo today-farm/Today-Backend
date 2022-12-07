@@ -10,4 +10,6 @@ import java.util.Optional;
 public interface GrownCropRepository extends JpaRepository<GrownCrop, Long> {
 
     Optional<List<GrownCrop>> findAllByUserIdAndHarvestedMonth(Long userId, int harvestedMonth);
+
+    Optional<GrownCrop> deleteByUserIdOrderByCreatedDateDesc(Long userId);
 }

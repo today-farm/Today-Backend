@@ -274,32 +274,73 @@ public class PostServiceImpl implements PostService{
         return addPostVideoUrls;
     }
 
-    // TODO : 6회 -> 7회로 넘어갔을 때 수확 후 삭제하면 어떻게 할지 정하기(1주 이내는 수확 작물 삭제, 1주 이후면 수확 작물 남겨놓기?)
+    // TODO : 6회 -> 7회로 넘어갔을 때 수확 후 삭제하면 어떻게 할지 정하기
     @Override
     public void delete(Long postId) throws Exception {
-        Post findPost = postRepository.findById(postId)
+        Post deletePost = postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST_QUESTION));
 
-        findPost.getPostImgUrls().stream()
-                        .forEach(postImgUrl -> s3UploadService.deleteOriginalFile(postImgUrl.getImgUrl()));
-
-        findPost.getPostVideoUrls().stream()
-                        .forEach(postVideoUrl -> s3UploadService.deleteOriginalFile(postVideoUrl.getVideoUrl()));
-
-        postRepository.delete(findPost);
 
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
-        Crop findCrop = cropRepository.findByUserIdAndIsHarvested(loginUser.getId(), false)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP));
-        loginUser.deletePost();
-        loginUser.initCanWritePost();
-        if (loginUser.getPostWriteCount() == 0) {
-            cropRepository.delete(findCrop);
+
+        Crop recentCrop = cropRepository.findByUserIdAndCreatedMonthOrderByCreatedDateDesc(loginUser.getId(),
+                        LocalDateTime.now().getMonthValue())
+                .orElse(null);
+
+        Crop cropOfDeletePost = deletePost.getCrop();
+
+        userInitPostWriteCount(deletePost, loginUser);
+
+        // 이번 달 가장 최근 생성된 작물이 없으면(이전 달 삭제인 경우), 무조건 삭제할 Post는 이번 달이 아니므로 작물 관련없이 Post만 삭제
+        // 이번 달 성장중인 작물 중 지금 성장하는 작물이 아닌 경우, 작물 관련 없이 Post만 삭제
+        if (recentCrop == null && recentCrop != cropOfDeletePost) {
+            deleteImgsAndVideos(deletePost);
+            postRepository.delete(deletePost);
         }
-        if (loginUser.getPostWriteCount() != 0) {
-            findCrop.updateCropStatus(loginUser.getPostWriteCount());
+
+        // 이번 달 성장중인 작물 게시물 삭제인 경우
+        if (recentCrop == cropOfDeletePost) {
+            deleteImgsAndVideos(deletePost);
+            postRepository.delete(deletePost);
+
+            // postWriteCount가 0이라는 것은 수확한 후(작성을 하지 않은 경우는 위에서 이미 처리)이므로 이때 삭제하면 GrownCrop(수확한 작물)도 삭제
+            if (loginUser.getPostWriteCount() == 0) {
+                loginUser.rollbackPostWriteCountBeforeHarvest();
+                cropOfDeletePost.updateCropStatus(loginUser.getPostWriteCount());
+                grownCropRepository.deleteByUserIdOrderByCreatedDateDesc(loginUser.getId());
+            }
+            if (loginUser.getPostWriteCount() != 0) {
+                loginUser.minusPostWriteCount();
+                cropOfDeletePost.updateCropStatus(loginUser.getPostWriteCount());
+            }
         }
+    }
+
+    private void userInitPostWriteCount(Post deletePost, User loginUser) {
+        int nowHour = LocalDateTime.now().getHour();
+        int nowDay = LocalDateTime.now().getDayOfMonth();
+        int deletePostHour = deletePost.getCreatedDate().getHour();
+        int deletePostDay = deletePost.getCreatedDate().getDayOfMonth();
+        // 오늘 작성한 게시물
+        if (nowHour <= 3) {
+            if (deletePostDay == nowDay || (deletePostDay == nowDay -1 && deletePostHour > 3)) {
+                loginUser.initCanWritePost();
+            }
+        }
+        if (nowHour > 3) {
+            if (deletePostDay == nowDay) {
+                loginUser.initCanWritePost();
+            }
+        }
+    }
+
+    private void deleteImgsAndVideos(Post deletePost) {
+        deletePost.getPostImgUrls().stream()
+                        .forEach(postImgUrl -> s3UploadService.deleteOriginalFile(postImgUrl.getImgUrl()));
+
+        deletePost.getPostVideoUrls().stream()
+                        .forEach(postVideoUrl -> s3UploadService.deleteOriginalFile(postVideoUrl.getVideoUrl()));
     }
 
     @Override

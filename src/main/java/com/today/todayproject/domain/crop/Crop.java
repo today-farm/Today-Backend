@@ -1,10 +1,13 @@
 package com.today.todayproject.domain.crop;
 
 import com.today.todayproject.domain.BaseTimeEntity;
+import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -20,6 +23,10 @@ public class Crop extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
+
+    @OneToMany(mappedBy = "crop", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Post> posts = new ArrayList<>();
 
     private int createdMonth;
 

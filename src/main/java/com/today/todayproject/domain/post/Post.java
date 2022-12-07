@@ -1,6 +1,7 @@
 package com.today.todayproject.domain.post;
 
 import com.today.todayproject.domain.BaseTimeEntity;
+import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
 import com.today.todayproject.domain.post.question.PostQuestion;
 import com.today.todayproject.domain.post.video.PostVideoUrl;
@@ -25,6 +26,10 @@ public class Post extends BaseTimeEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "writer_id")
     private User writer;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "crop_id")
+    private Crop crop;
 
     private String todayFeeling;
 
@@ -55,5 +60,10 @@ public class Post extends BaseTimeEntity {
     public void confirmWriter(User writer) {
         this.writer = writer;
         writer.getPosts().add(this);
+    }
+
+    public void confirmCrop(Crop crop) {
+        this.crop = crop;
+        crop.getPosts().add(this);
     }
 }
