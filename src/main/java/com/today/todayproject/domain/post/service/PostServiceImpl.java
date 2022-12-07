@@ -257,6 +257,7 @@ public class PostServiceImpl implements PostService{
             PostImgUrl postImgUrl = PostImgUrl.builder().imgUrl(addImgUrls.get(0)).build();
             addImgUrls.remove(0);
             addPostImgUrls.add(postImgUrl);
+            addImgs.remove(0);
         }
         return addPostImgUrls;
     }
@@ -268,10 +269,12 @@ public class PostServiceImpl implements PostService{
             PostVideoUrl postVideoUrl = PostVideoUrl.builder().videoUrl(addVideoUrls.get(0)).build();
             addVideoUrls.remove(0);
             addPostVideoUrls.add(postVideoUrl);
+            addVideos.remove(0);
         }
         return addPostVideoUrls;
     }
 
+    // TODO : 6회 -> 7회로 넘어갔을 때 수확 후 삭제하면 어떻게 할지 정하기(1주 이내는 수확 작물 삭제, 1주 이후면 수확 작물 남겨놓기?)
     @Override
     public void delete(Long postId) throws Exception {
         Post findPost = postRepository.findById(postId)
