@@ -8,7 +8,7 @@ import java.util.Optional;
 
 public interface CropRepository extends JpaRepository<Crop, Long>, CustomCropRepository {
 
-    Optional<Crop> findByUserId(Long userId);
+    Optional<Crop> findByUserIdAndIsHarvested(Long userId, Boolean isHarvested);
 
     Optional<List<Crop>> findAllByCreatedMonthAndUserIdAndIsHarvested(int month, Long userId, Boolean isHarvested);
 

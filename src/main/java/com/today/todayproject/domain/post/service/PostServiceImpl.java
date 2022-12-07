@@ -115,7 +115,7 @@ public class PostServiceImpl implements PostService{
             cropRepository.save(crop);
         }
         if (beforeIncreasePostWriteCount != 0) {
-            Crop findCrop = cropRepository.findByUserId(loginUser.getId())
+            Crop findCrop = cropRepository.findByUserIdAndIsHarvested(loginUser.getId(), false)
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP));
             loginUser.addPostWriteCount();
             findCrop.updateCropStatus(loginUser.getPostWriteCount());
@@ -287,7 +287,7 @@ public class PostServiceImpl implements PostService{
 
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
-        Crop findCrop = cropRepository.findByUserId(loginUser.getId())
+        Crop findCrop = cropRepository.findByUserIdAndIsHarvested(loginUser.getId(), false)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP));
         loginUser.deletePost();
         loginUser.initCanWritePost();
