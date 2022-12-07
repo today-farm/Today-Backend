@@ -35,8 +35,9 @@ public class User extends BaseTimeEntity {
 
     private String recentFeeling; // 최근 하루 작성 감정
 
-    @OneToOne(mappedBy = "user")
-    private Crop crop;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Crop> crops = new ArrayList<>();
 
     @OneToMany(mappedBy = "writer", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
@@ -64,9 +65,6 @@ public class User extends BaseTimeEntity {
 
     private static final int CROP_INIT_WRITE_COUNT =0;
 
-    public void confirmCrop(Crop crop) {
-        this.crop = crop;
-    }
 
     public void updateRefreshToken(String refreshToken) {
         this.refreshToken = refreshToken;

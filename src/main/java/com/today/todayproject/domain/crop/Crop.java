@@ -17,7 +17,7 @@ public class Crop extends BaseTimeEntity {
     @Column(name = "crop_id")
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -31,7 +31,7 @@ public class Crop extends BaseTimeEntity {
 
     public void confirmUser(User user) {
         this.user = user;
-        user.confirmCrop(this);
+        user.getCrops().add(this);
     }
 
     public void updateCropStatus(int userPostWriteCount) {
