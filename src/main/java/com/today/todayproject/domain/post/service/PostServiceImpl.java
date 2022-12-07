@@ -61,9 +61,9 @@ public class PostServiceImpl implements PostService{
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
-        if (loginUser.getCanWritePost() == false) {
-            throw new BaseException(BaseResponseStatus.POST_CAN_WRITE_ONLY_ONCE_A_DAY);
-        }
+//        if (loginUser.getCanWritePost() == false) {
+//            throw new BaseException(BaseResponseStatus.POST_CAN_WRITE_ONLY_ONCE_A_DAY);
+//        }
 
         Post post = Post.builder()
                 .todayFeeling(postSaveDto.getTodayFeeling())
