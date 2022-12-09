@@ -312,7 +312,11 @@ public class PostServiceImpl implements PostService{
                 cropOfDeletePost.updateCropStatus(loginUser.getPostWriteCount());
                 grownCropRepository.deleteByUserIdOrderByCreatedDateDesc(loginUser.getId());
             }
-            if (loginUser.getPostWriteCount() != 0) {
+            if (loginUser.getPostWriteCount() == 1) {
+                loginUser.minusPostWriteCount();
+                cropRepository.delete(cropOfDeletePost);
+            }
+            if (loginUser.getPostWriteCount() != 0 && loginUser.getPostWriteCount() != 1) {
                 loginUser.minusPostWriteCount();
                 cropOfDeletePost.updateCropStatus(loginUser.getPostWriteCount());
             }
