@@ -120,6 +120,7 @@ public class PostServiceImpl implements PostService{
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP));
             loginUser.addPostWriteCount();
             findCrop.updateCropStatus(loginUser.getPostWriteCount());
+            post.confirmCrop(findCrop);
 
             int beforeThisMonthHarvestCount = loginUser.getThisMonthHarvestCount();
 
