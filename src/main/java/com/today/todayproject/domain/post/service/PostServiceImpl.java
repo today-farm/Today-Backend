@@ -278,7 +278,7 @@ public class PostServiceImpl implements PostService{
     @Override
     public void delete(Long postId) throws Exception {
         Post deletePost = postRepository.findById(postId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST_QUESTION));
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST));
 
 
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
@@ -294,13 +294,13 @@ public class PostServiceImpl implements PostService{
 
         // 이번 달 가장 최근 생성된 작물이 없으면(이전 달 삭제인 경우), 무조건 삭제할 Post는 이번 달이 아니므로 작물 관련없이 Post만 삭제
         // 이번 달 성장중인 작물 중 지금 성장하는 작물이 아닌 경우, 작물 관련 없이 Post만 삭제
-        if (recentCrop == null && recentCrop != cropOfDeletePost) {
+        if (recentCrop == null || !recentCrop.equals(cropOfDeletePost)) {
             deleteImgsAndVideos(deletePost);
             postRepository.delete(deletePost);
         }
 
         // 이번 달 성장중인 작물 게시물 삭제인 경우
-        if (recentCrop == cropOfDeletePost) {
+        if (recentCrop.equals(cropOfDeletePost)) {
             deleteImgsAndVideos(deletePost);
             postRepository.delete(deletePost);
 
