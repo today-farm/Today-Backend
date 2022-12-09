@@ -14,5 +14,5 @@ public interface CropRepository extends JpaRepository<Crop, Long>, CustomCropRep
 
     int countByUserId(Long userId);
 
-    Optional<Crop> findByUserIdAndCreatedMonthOrderByCreatedDateDesc(Long userId, int createdMonth);
+    Optional<Crop> findTopByUserIdAndCreatedMonthOrderByCreatedDateDesc(Long userId, int createdMonth);
 }

@@ -112,6 +112,7 @@ public class PostServiceImpl implements PostService{
             crop.confirmUser(loginUser);
             loginUser.addPostWriteCount();
             crop.updateCropStatus(loginUser.getPostWriteCount());
+            post.confirmCrop(crop);
             cropRepository.save(crop);
         }
         if (beforeIncreasePostWriteCount != 0) {
@@ -284,7 +285,7 @@ public class PostServiceImpl implements PostService{
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
-        Crop recentCrop = cropRepository.findByUserIdAndCreatedMonthOrderByCreatedDateDesc(loginUser.getId(),
+        Crop recentCrop = cropRepository.findTopByUserIdAndCreatedMonthOrderByCreatedDateDesc(loginUser.getId(),
                         LocalDateTime.now().getMonthValue())
                 .orElse(null);
 
