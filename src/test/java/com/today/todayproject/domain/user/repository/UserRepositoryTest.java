@@ -21,20 +21,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Transactional
 class UserRepositoryTest {
 
-    @Autowired UserRepository userRepository;
-    @Autowired EntityManager em;
+    @Autowired
+    UserRepository userRepository;
     @Autowired
     PasswordEncoder passwordEncoder;
-
-    @AfterEach
-    void after() {
-        em.clear();
-    }
-
-    private void flushAndClear() {
-        em.flush();
-        em.clear();
-    }
 
     @Test
     void 회원_저장_성공() throws BaseException {
