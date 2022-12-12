@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
         }
 
         // profile 사진이 있다면, User build 시 profile도 추가
-        if(!profileImg.isEmpty()) {
+        if(profileImg != null) {
             String profileImgUrl = s3UploadService.uploadFile(profileImg);
 
             User user = User.builder()
@@ -82,6 +82,7 @@ public class UserServiceImpl implements UserService {
                     .role(Role.USER)
                     .build();
 
+            log.info("profileImg : {}", profileImg);
             user.encodePassword(passwordEncoder);
             User saveUser = userRepository.save(user);
             return saveUser.getId();
