@@ -92,28 +92,30 @@ public class UserServiceImpl implements UserService {
     /**
      * 회원 정보 수정 로직
      */
+    // TODO : Optional의 ifPresent로 로직 변경, 3중 if문 없애기
     @Override
     public void updateUser(UserUpdateRequestDto userUpdateRequestDto, MultipartFile profileImg) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
         String currentNickname = loginUser.getNickname();
-
-        if(userUpdateRequestDto.getChangeNickname() != null) {
-            // 기존 닉네임과 변경할 닉네임이 같을 때 예외 처리
-            if (currentNickname.equals(userUpdateRequestDto.getChangeNickname())) {
-                throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
+        if (userUpdateRequestDto != null) {
+            if(userUpdateRequestDto.getChangeNickname() != null) {
+                // 기존 닉네임과 변경할 닉네임이 같을 때 예외 처리
+                if (currentNickname.equals(userUpdateRequestDto.getChangeNickname())) {
+                    throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
+                }
+                loginUser.updateNickname(userUpdateRequestDto.getChangeNickname());
             }
-            loginUser.updateNickname(userUpdateRequestDto.getChangeNickname());
-        }
 
 
-        if(userUpdateRequestDto.getChangePassword() != null) {
-            // 기존 비밀번호와 변경할 비밀번호가 같을 때 예외 처리
-            if (loginUser.matchPassword(passwordEncoder, userUpdateRequestDto.getChangePassword())) {
-                throw new BaseException(BaseResponseStatus.SAME_CURRENT_CHANGE_PASSWORD);
+            if(userUpdateRequestDto.getChangePassword() != null) {
+                // 기존 비밀번호와 변경할 비밀번호가 같을 때 예외 처리
+                if (loginUser.matchPassword(passwordEncoder, userUpdateRequestDto.getChangePassword())) {
+                    throw new BaseException(BaseResponseStatus.SAME_CURRENT_CHANGE_PASSWORD);
+                }
+                loginUser.updatePassword(passwordEncoder, userUpdateRequestDto.getChangePassword());
             }
-            loginUser.updatePassword(passwordEncoder, userUpdateRequestDto.getChangePassword());
         }
 
         if(profileImg != null) {
