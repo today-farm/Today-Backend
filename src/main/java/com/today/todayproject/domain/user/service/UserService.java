@@ -7,6 +7,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 public interface UserService {
 
+    Long signUp(UserSignUpRequestDto userSignUpRequestDto, MultipartFile profileImg) throws Exception;
+
     void updateUser(UserUpdateRequestDto userUpdateRequestDto, MultipartFile profileImg) throws Exception;
 
     void withdraw(UserWithdrawRequestDto userWithdrawRequestDto) throws Exception;

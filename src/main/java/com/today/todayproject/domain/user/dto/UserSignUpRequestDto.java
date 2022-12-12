@@ -1,11 +1,11 @@
-package com.today.todayproject.global.signup.dto;
+package com.today.todayproject.domain.user.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
 @NoArgsConstructor
-public class SignUpRequestDto {
+public class UserSignUpRequestDto {
 
     private String email;
     private String password;

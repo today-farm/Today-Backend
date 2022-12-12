@@ -7,12 +7,14 @@ import com.today.todayproject.domain.crop.repository.CropRepository;
 import com.today.todayproject.domain.growncrop.GrownCrop;
 import com.today.todayproject.domain.growncrop.repository.GrownCropInfoDto;
 import com.today.todayproject.domain.growncrop.repository.GrownCropRepository;
+import com.today.todayproject.domain.user.Role;
 import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
 import com.today.todayproject.global.s3.service.S3UploadService;
+import com.today.todayproject.domain.user.dto.UserSignUpRequestDto;
 import com.today.todayproject.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +42,51 @@ public class UserServiceImpl implements UserService {
     private final GrownCropRepository grownCropRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3UploadService s3UploadService;
+
+    /**
+     * 회원 가입 로직
+     */
+    @Override
+    public Long signUp(UserSignUpRequestDto userSignUpRequestDto, MultipartFile profileImg) throws Exception {
+
+        if(userRepository.findByEmail(userSignUpRequestDto.getEmail()).isPresent()) {
+            throw new BaseException(BaseResponseStatus.EXIST_EMAIL);
+        }
+
+        if(userRepository.findByNickname(userSignUpRequestDto.getNickname()).isPresent()) {
+            throw new BaseException(BaseResponseStatus.EXIST_NICKNAME);
+        }
+
+        // profile 사진이 있다면, User build 시 profile도 추가
+        if(!profileImg.isEmpty()) {
+            String profileImgUrl = s3UploadService.uploadFile(profileImg);
+
+            User user = User.builder()
+                    .email(userSignUpRequestDto.getEmail())
+                    .password(userSignUpRequestDto.getPassword())
+                    .nickname(userSignUpRequestDto.getNickname())
+                    .profileImgUrl(profileImgUrl)
+                    .role(Role.USER)
+                    .build();
+
+            user.encodePassword(passwordEncoder);
+            User saveUser = userRepository.save(user);
+            return saveUser.getId();
+        } else {
+            // profile 사진이 없다면, User build 시 profile null로 추가
+            User user = User.builder()
+                    .email(userSignUpRequestDto.getEmail())
+                    .password(userSignUpRequestDto.getPassword())
+                    .nickname(userSignUpRequestDto.getNickname())
+                    .profileImgUrl(null)
+                    .role(Role.USER)
+                    .build();
+
+            user.encodePassword(passwordEncoder);
+            User saveUser = userRepository.save(user);
+            return saveUser.getId();
+        }
+    }
 
     /**
      * 회원 정보 수정 로직
