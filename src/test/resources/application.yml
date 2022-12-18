@@ -1,0 +1,47 @@
+spring:
+  profiles:
+    group:
+      "local" : "local, jwt, db, aws"
+    active : local
+
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 300MB
+
+logging:
+  level:
+    com:
+      amazonaws:
+        util:
+          EC2MetadataUtils : error
+
+---
+spring:
+  config:
+    activate:
+      on-profile: "local"
+
+#  h2:
+#    console:
+#      enabled: true
+#
+#  datasource:
+#    # url: jdbc:h2:tcp://localhost/~/jpashop
+#    url: jdbc:h2:mem:test
+#    username: sa
+#    password:
+#    driver-class-name: org.h2.Driver
+#
+#  jpa:
+#    hibernate:
+#      ddl-auto: create
+#    properties:
+#      hibernate:
+#        #        show_sql: true ->  System.out으로 출력하므로 logger로 출력하는 logging.level.org.hibernate.SQL: debug 사용
+#        format_sql: true
+#
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
+##    org.hibernate.type: trace -> p6spy 외부 라이브러리 사용으로 대체
