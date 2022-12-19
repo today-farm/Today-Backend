@@ -4,10 +4,14 @@ import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.service.UserService;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponse;
+import com.today.todayproject.global.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -21,7 +25,7 @@ public class UserController {
     @PostMapping("/sign-up")
     public BaseResponse<UserSignUpResponseDto> signUp(
             @RequestPart(required = false) MultipartFile profileImg,
-            @RequestPart UserSignUpRequestDto userSignUpRequestDto) throws Exception {
+            @Validated(ValidationSequence.class) @RequestPart UserSignUpRequestDto userSignUpRequestDto) throws Exception {
         Long createUserId = userService.signUp(userSignUpRequestDto, profileImg);
         UserSignUpResponseDto userSignUpResponseDto = new UserSignUpResponseDto(createUserId);
         return new BaseResponse<>(userSignUpResponseDto);
@@ -32,7 +36,7 @@ public class UserController {
      */
     @PatchMapping("/user/update")
     public BaseResponse<String> update(
-            @RequestPart(required = false) UserUpdateRequestDto userUpdateRequestDto,
+            @Validated(ValidationSequence.class) @RequestPart(required = false) UserUpdateRequestDto userUpdateRequestDto,
             @RequestPart(required = false) MultipartFile profileImg) throws Exception {
         userService.updateUser(userUpdateRequestDto, profileImg);
         return new BaseResponse<>("회원 수정 성공");
