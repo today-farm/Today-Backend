@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -30,6 +31,14 @@ public class ExceptionAdvice {
     public ResponseEntity handleHttpRequestMethodEx(HttpRequestMethodNotSupportedException exception) {
         log.error("HTTP Method 매핑 오류 발생! {}", exception.getMessage());
         return new ResponseEntity(new ExceptionDto(5000, exception.getMessage()), HttpStatus.METHOD_NOT_ALLOWED);
+    }
+
+    // Validation 예외 발생 시
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        log.error("Controller Validation 오류 발생");
+        return new ResponseEntity(new ExceptionDto(5001,
+                exception.getBindingResult().getAllErrors().get(0).getDefaultMessage()), HttpStatus.BAD_REQUEST);
     }
 
     // 위에서 처리하지 않은 모든 예외 발생 시
