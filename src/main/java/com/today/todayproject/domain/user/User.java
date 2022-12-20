@@ -4,9 +4,9 @@ import com.today.todayproject.domain.BaseTimeEntity;
 import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.friend.Friend;
 import com.today.todayproject.domain.growncrop.GrownCrop;
+import com.today.todayproject.domain.notification.Notification;
 import com.today.todayproject.domain.post.Post;
 import lombok.*;
-import org.hibernate.annotations.ColumnDefault;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.persistence.*;
@@ -50,6 +50,10 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<GrownCrop> grownCrops = new ArrayList<>();
+
+    @OneToMany(mappedBy = "receiver", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Notification> notifications = new ArrayList<>();
 
     private int postWriteCount;
 
