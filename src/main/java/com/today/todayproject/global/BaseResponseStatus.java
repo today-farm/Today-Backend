@@ -36,7 +36,8 @@ public enum BaseResponseStatus {
     NOT_FOUND_CROP(false, 2012,NOT_FOUND, "해당 작물을 찾을 수 없습니다."),
     POST_CAN_WRITE_ONLY_ONCE_A_DAY(false, 2013, BAD_REQUEST, "하루 작성은 하루에 1번만 가능합니다."),
     NOT_FOUND_IMG(false, 2014, NOT_FOUND, "해당 이미지를 찾을 수 없습니다."),
-    NOT_FOUND_VIDEO(false, 2015, NOT_FOUND, "해당 비디오를 찾을 수 없습니다.");
+    NOT_FOUND_VIDEO(false, 2015, NOT_FOUND, "해당 비디오를 찾을 수 없습니다."),
+    NOT_ACCESS_FRIEND_LIST(false, 2016, BAD_REQUEST, "친구의 친구 목록은 조회할 수 없습니다.");
 
 
     private final boolean isSuccess;
