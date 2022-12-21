@@ -42,6 +42,8 @@ public class FriendServiceImpl implements FriendService {
         User friendUser = userRepository.findById(friendId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
 
+        checkDuplicateRequest(loginUser, friendUser);
+
         Friend friendOfLoginUser = Friend.builder()
                 .nickname(friendUser.getNickname())
                 .profileImgUrl(friendUser.getProfileImgUrl())
@@ -66,6 +68,12 @@ public class FriendServiceImpl implements FriendService {
 
         String notificationContent = loginUser.getNickname() + "님이 친구 요청을 보냈습니다.";
         notificationService.send(friendUser, NotificationType.FRIEND_REQUEST, notificationContent);
+    }
+
+    private void checkDuplicateRequest(User loginUser, User friendUser) throws BaseException {
+        if (friendRepository.existsByFriendOwnerIdAndFriend(loginUser.getId(), friendUser)) {
+            throw new BaseException(BaseResponseStatus.NOT_DUPLICATE_FRIEND_REQUEST);
+        }
     }
 
     @Override
