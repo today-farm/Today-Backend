@@ -3,6 +3,8 @@ package com.today.todayproject.domain.friend.service;
 import com.today.todayproject.domain.friend.Friend;
 import com.today.todayproject.domain.friend.dto.FriendInfoDto;
 import com.today.todayproject.domain.friend.repository.FriendRepository;
+import com.today.todayproject.domain.notification.NotificationType;
+import com.today.todayproject.domain.notification.service.NotificationService;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
@@ -24,6 +26,7 @@ public class FriendServiceImpl implements FriendService {
 
     private final UserRepository userRepository;
     private final FriendRepository friendRepository;
+    private final NotificationService notificationService;
 
     /**
      * 친구 추가 시 로그인한 유저 <-> 친구 추가하는 유저
@@ -60,6 +63,9 @@ public class FriendServiceImpl implements FriendService {
 
         friendRepository.save(friendOfFriendUser);
         friendRepository.save(friendOfLoginUser);
+
+        String notificationContent = loginUser.getNickname() + "님이 친구 요청을 보냈습니다.";
+        notificationService.send(friendUser, NotificationType.FRIEND_REQUEST, notificationContent);
     }
 
     @Override
