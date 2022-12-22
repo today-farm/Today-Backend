@@ -119,7 +119,7 @@ class UserServiceImplTest {
                 "images",
                 "testImage1.jpeg",
                 "jpeg",
-                new FileInputStream("src/test/resources/testImage/testImage1.jpeg"));
+                new FileInputStream("src/test/resources/testimage/testImage1.jpeg"));
     }
 
     // 여러 로직들에 SecurityUtil.getLoginUserEmail()로 로그인한 유저의 이메일을 가져오는 기능을 사용하므로

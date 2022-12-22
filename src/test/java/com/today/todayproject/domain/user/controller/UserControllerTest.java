@@ -132,7 +132,7 @@ class UserControllerTest {
                 "profileImg",
                 "testImage1.jpeg",
                 "jpeg",
-                new FileInputStream("src/test/resources/testImage/testImage1.jpeg"));
+                new FileInputStream("src/test/resources/testimage/testImage1.jpeg"));
     }
 
     private MockMultipartFile generateUpdateMultipartFileImage() throws IOException {
@@ -140,7 +140,7 @@ class UserControllerTest {
                 "profileImg",
                 "testImage2.png",
                 "png",
-                new FileInputStream("src/test/resources/testImage/testImage2.png"));
+                new FileInputStream("src/test/resources/testimage/testImage2.png"));
     }
 
 
