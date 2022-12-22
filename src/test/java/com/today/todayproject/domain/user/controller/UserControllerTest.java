@@ -2,6 +2,8 @@ package com.today.todayproject.domain.user.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.today.todayproject.domain.friend.Friend;
+import com.today.todayproject.domain.user.Role;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.dto.UserSignUpRequestDto;
 import com.today.todayproject.domain.user.dto.UserUpdateRequestDto;
@@ -9,6 +11,8 @@ import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.domain.user.service.UserService;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
+import com.today.todayproject.global.util.GenerateDummy;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -23,12 +27,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -40,12 +46,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @Transactional
+@Slf4j
 class UserControllerTest {
 
     @Autowired
     MockMvc mockMvc;
     @Autowired
     ObjectMapper objectMapper;
+    @Autowired
+    EntityManager em;
     @Autowired
     PasswordEncoder passwordEncoder;
     @Autowired
@@ -61,6 +70,62 @@ class UserControllerTest {
 
     @Value("${jwt.access.header}")
     private String accessHeader;
+
+    void userAndFriendSetUp() throws Exception {
+        saveUsersAndFriends();
+    }
+
+    private void saveUsersAndFriends() throws Exception {
+        User user1 = GenerateDummy.generateDummyUser("test1@naver.com", "1234", "KSH1",
+                "s3://imgUrl1", Role.USER);
+        User user2 = GenerateDummy.generateDummyUser("test2@naver.com", "1234", "KSH2",
+                "s3://imgUrl2", Role.USER);
+        User user3 = GenerateDummy.generateDummyUser("test3@naver.com", "1234", "KSH3",
+                "s3://imgUrl3", Role.USER);
+        User user4 = GenerateDummy.generateDummyUser("test4@naver.com", "1234", "KSH4",
+                "s3://imgUrl4", Role.USER);
+        User user5 = GenerateDummy.generateDummyUser("test5@naver.com", "1234", "KSH5",
+                "s3://imgUrl5", Role.USER);
+        User user6 = GenerateDummy.generateDummyUser("test6@naver.com", "1234", "KSH6",
+                "s3://imgUrl6", Role.USER);
+        User user7 = GenerateDummy.generateDummyUser("test7@naver.com", "1234", "KSH7",
+                "s3://imgUrl7", Role.USER);
+        User user8 = GenerateDummy.generateDummyUser("test8@naver.com", "1234", "KSH8",
+                "s3://imgUrl8", Role.USER);
+        User user9 = GenerateDummy.generateDummyUser("test9@naver.com", "1234", "KSH9",
+                "s3://imgUrl9", Role.USER);
+        User user10 = GenerateDummy.generateDummyUser("test10@naver.com", "1234", "KSH10",
+                "s3://imgUrl10", Role.USER);
+
+        signUpDummyData(user1);
+        signUpDummyData(user2);
+        signUpDummyData(user3);
+        signUpDummyData(user4);
+        signUpDummyData(user5);
+        signUpDummyData(user6);
+        signUpDummyData(user7);
+        signUpDummyData(user8);
+        signUpDummyData(user9);
+        signUpDummyData(user10);
+        User findUser2 = userRepository.findByEmail("test2@naver.com").orElse(null);
+        saveFriends(user1, findUser2);
+    }
+
+    private void saveFriends(User requestUser, User requestedUser) throws Exception {
+        Long requestedUserId = requestedUser.getId();
+        log.info("requestedUserId : {}", requestedUserId);
+        String accessToken = getAccessTokenByLogin(requestUser.getEmail(), requestUser.getPassword());
+        mockMvc.perform(
+                post("/friend/add/{friendId}", requestedUserId)
+                        .header(accessHeader, BEARER + accessToken))
+                .andExpect(status().isOk());
+    }
+
+    private void signUpDummyData(User user) throws Exception {
+        String signUpDto = objectMapper.writeValueAsString(
+                new UserSignUpRequestDto(user.getEmail(), user.getPassword(), user.getNickname()));
+        signUpNoProfileSuccess(generateSignUpDtoFile(signUpDto));
+    }
 
     private MockMultipartFile generateMultipartFileImage() throws IOException {
         return new MockMultipartFile(
@@ -115,7 +180,7 @@ class UserControllerTest {
                 dto.getBytes(StandardCharsets.UTF_8));
     }
 
-    private String getAccessTokenByLogin() throws Exception {
+    private String getAccessTokenByLogin(String email, String password) throws Exception {
         Map<String, String> userMap = new HashMap<>();
         userMap.put("email", email);
         userMap.put("password", password);
@@ -270,7 +335,7 @@ class UserControllerTest {
         //given
         String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
-        String accessToken = getAccessTokenByLogin();
+        String accessToken = getAccessTokenByLogin(email, password);
         User beforeUpdateUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
         String beforeUpdateProfileImgUrl = beforeUpdateUser.getProfileImgUrl();
@@ -302,7 +367,7 @@ class UserControllerTest {
         //given
         String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
-        String accessToken = getAccessTokenByLogin();
+        String accessToken = getAccessTokenByLogin(email, password);
 
         String updateDto = objectMapper.writeValueAsString(
                 new UserUpdateRequestDto(nickname+"123", null));
@@ -327,7 +392,7 @@ class UserControllerTest {
         //given
         String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
-        String accessToken = getAccessTokenByLogin();
+        String accessToken = getAccessTokenByLogin(email, password);
 
         String updateDto = objectMapper.writeValueAsString(
                 new UserUpdateRequestDto(null, password + "123"));
@@ -351,7 +416,7 @@ class UserControllerTest {
         //given
         String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
-        String accessToken = getAccessTokenByLogin();
+        String accessToken = getAccessTokenByLogin(email, password);
         User beforeUpdateUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
         String beforeUpdateProfileImgUrl = beforeUpdateUser.getProfileImgUrl();
@@ -375,7 +440,7 @@ class UserControllerTest {
         //given
         String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
-        String accessToken = getAccessTokenByLogin();
+        String accessToken = getAccessTokenByLogin(email, password);
 
         String updateDto = objectMapper.writeValueAsString(
                 new UserUpdateRequestDto(changeNickname, null));
@@ -402,7 +467,7 @@ class UserControllerTest {
         //given
         String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
-        String accessToken = getAccessTokenByLogin();
+        String accessToken = getAccessTokenByLogin(email, password);
 
         String updateDto = objectMapper.writeValueAsString(
                 new UserUpdateRequestDto(changeNickname, null));
@@ -431,7 +496,7 @@ class UserControllerTest {
         //given
         String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
-        String accessToken = getAccessTokenByLogin();
+        String accessToken = getAccessTokenByLogin(email, password);
 
         String updateDto = objectMapper.writeValueAsString(
                 new UserUpdateRequestDto(null, changePassword));
@@ -450,5 +515,49 @@ class UserControllerTest {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
         assertThat(passwordEncoder.matches(changePassword, updateFailUser.getPassword())).isFalse();
         assertThat(passwordEncoder.matches(password, updateFailUser.getPassword())).isTrue();
+    }
+
+    @Test
+    void 처음_요청_시_유저_조회_성공() throws Exception {
+        //given
+        userAndFriendSetUp();
+        String accessToken = getAccessTokenByLogin("test1@naver.com", "1234");
+        String searchUserNickname = "KSH";
+
+        //when, then
+        User loginUser = userRepository.findByEmail("test1@naver.com")
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+        mockMvc.perform
+                (get("/user/search")
+                        .param("loginUserId", String.valueOf(loginUser.getId()))
+                        .param("searchUserNickname", searchUserNickname)
+                        .header(accessHeader, BEARER + accessToken))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void 처음_요청_아닐_시_유저_조회_성공() throws Exception {
+        //given
+        userAndFriendSetUp();
+        String accessToken = getAccessTokenByLogin("test1@naver.com", "1234");
+        String searchUserNickname = "KSH";
+
+        User loginUser = userRepository.findByEmail("test1@naver.com")
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+        User lastFriendUser = userRepository.findByEmail("test2@naver.com")
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+        User lastUser = userRepository.findByEmail("test7@naver.com")
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+
+        //when, then
+
+        mockMvc.perform
+                        (get("/user/search")
+                                .param("loginUserId", String.valueOf(loginUser.getId()))
+                                .param("lastFriendUserId", String.valueOf(lastFriendUser.getId()))
+                                .param("lastUserId", String.valueOf(lastUser.getId()))
+                                .param("searchUserNickname", searchUserNickname)
+                                .header(accessHeader, BEARER + accessToken))
+                .andExpect(status().isOk());
     }
 }
