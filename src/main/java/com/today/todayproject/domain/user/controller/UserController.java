@@ -1,5 +1,6 @@
 package com.today.todayproject.domain.user.controller;
 
+import com.today.todayproject.domain.crop.dto.ThisMonthUserCropDto;
 import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.service.UserService;
 import com.today.todayproject.global.BaseException;
@@ -10,8 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
 
 @RestController
 @RequiredArgsConstructor
@@ -64,15 +63,5 @@ public class UserController {
         UserSearchDto userSearchDto = new UserSearchDto(loginUserId, lastFriendUserId, lastUserId, searchUserNickname);
         UserGetPagingDto userGetPagingDto = userService.searchUsers(pageable, userSearchDto);
         return new BaseResponse<>(userGetPagingDto);
-    }
-
-    /**
-     * 이번 달 유저 작물들 조회 API(메인 페이지)
-     */
-    @GetMapping("/user/this-month-crops/{userId}")
-    public BaseResponse<UserGetThisMonthMyCropDto> getThisMonthMyCrops(
-            @PathVariable("userId") Long userId) throws BaseException {
-        UserGetThisMonthMyCropDto thisMonthMyCrop = userService.getThisMonthMyCrop(userId);
-        return new BaseResponse<>(thisMonthMyCrop);
     }
 }

@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final CropRepository cropRepository;
-    private final GrownCropRepository grownCropRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3UploadService s3UploadService;
 
@@ -207,48 +206,6 @@ public class UserServiceImpl implements UserService {
         UserGetFriendUserInfoDto userGetFriendUserInfoDto =
                 new UserGetFriendUserInfoDto(friendUserInfos, searchFriendUsers);
         return userGetFriendUserInfoDto;
-    }
-
-    @Override
-    public UserGetThisMonthMyCropDto getThisMonthMyCrop(Long userId) throws BaseException {
-        User findUser = userRepository.findById(userId)
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
-
-
-        List<Crop> findCrops = cropRepository.findAllByCreatedMonthAndUserIdAndIsHarvested(
-                        LocalDateTime.now().getMonthValue(), findUser.getId(), false)
-                .orElse(Collections.emptyList());
-
-        List<GrownCrop> findGrownCrops = grownCropRepository.findAllByUserIdAndHarvestedMonth(
-                        findUser.getId(), LocalDateTime.now().getMonthValue())
-                .orElse(Collections.emptyList());
-
-        List<CropInfoDto> cropInfoDtos = Collections.emptyList();
-        List<GrownCropInfoDto> grownCropInfoDtos = Collections.emptyList();
-
-        if (!findCrops.isEmpty()) {
-            cropInfoDtos = generateCropInfoDto(findCrops);
-        }
-
-        if (!findGrownCrops.isEmpty()) {
-            grownCropInfoDtos = generateGrownCropInfoDto(findGrownCrops);
-        }
-
-        return new UserGetThisMonthMyCropDto(cropInfoDtos, grownCropInfoDtos);
-    }
-
-    private List<CropInfoDto> generateCropInfoDto(List<Crop> findCrops) {
-         return findCrops.stream()
-                .map(findCrop -> {
-                    int cropNumber = findCrop.getCropNumber();
-                    CropStatus cropStatus = findCrop.getStatus();
-                    return new CropInfoDto(cropNumber, cropStatus);
-                }).collect(Collectors.toList());
-    }
-
-    private List<GrownCropInfoDto> generateGrownCropInfoDto(List<GrownCrop> findGrownCrops) {
-        return findGrownCrops.stream()
-                .map(GrownCropInfoDto::new).collect(Collectors.toList());
     }
 
 
