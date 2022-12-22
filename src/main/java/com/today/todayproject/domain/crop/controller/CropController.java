@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CropController {
 
-    private CropService cropService;
+    private final CropService cropService;
 
     /**
      * 이번 달 유저 작물들 조회 API(메인 페이지)
