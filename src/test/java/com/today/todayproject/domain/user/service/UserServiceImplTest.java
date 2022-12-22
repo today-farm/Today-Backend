@@ -1,19 +1,22 @@
 package com.today.todayproject.domain.user.service;
 
+import com.today.todayproject.domain.friend.Friend;
 import com.today.todayproject.domain.user.Role;
 import com.today.todayproject.domain.user.User;
-import com.today.todayproject.domain.user.dto.UserSignUpRequestDto;
-import com.today.todayproject.domain.user.dto.UserUpdateRequestDto;
-import com.today.todayproject.domain.user.dto.UserWithdrawRequestDto;
+import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
+import com.today.todayproject.global.util.GenerateDummy;
 import com.today.todayproject.global.util.SecurityUtil;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContext;
@@ -27,6 +30,7 @@ import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -47,6 +51,64 @@ class UserServiceImplTest {
     @Autowired
     EntityManager em;
 
+    private User user1;
+    private User user2;
+    private User user3;
+    private User user4;
+    private User user5;
+    private User user6;
+    private User user7;
+    private User user8;
+    private User user9;
+    private User user10;
+
+    private static final int SEARCH_SIZE = 5;
+
+    void userAndFriendSetUp() {
+        saveUsers();
+        saveFriends();
+    }
+
+    private void saveUsers() {
+        user1 = GenerateDummy.generateDummyUser("test1@naver.com", "1234", "KSH1",
+                "s3://imgUrl1", Role.USER);
+        user2 = GenerateDummy.generateDummyUser("test2@naver.com", "1234", "KSH2",
+                "s3://imgUrl2", Role.USER);
+        user3 = GenerateDummy.generateDummyUser("test3@naver.com", "1234", "KSH3",
+                "s3://imgUrl3", Role.USER);
+        user4 = GenerateDummy.generateDummyUser("test4@naver.com", "1234", "KSH4",
+                "s3://imgUrl4", Role.USER);
+        user5 = GenerateDummy.generateDummyUser("test5@naver.com", "1234", "KSH5",
+                "s3://imgUrl5", Role.USER);
+        user6 = GenerateDummy.generateDummyUser("test6@naver.com", "1234", "KSH6",
+                "s3://imgUrl6", Role.USER);
+        user7 = GenerateDummy.generateDummyUser("test7@naver.com", "1234", "KSH7",
+                "s3://imgUrl7", Role.USER);
+        user8 = GenerateDummy.generateDummyUser("test8@naver.com", "1234", "KSH8",
+                "s3://imgUrl8", Role.USER);
+        user9 = GenerateDummy.generateDummyUser("test9@naver.com", "1234", "KSH9",
+                "s3://imgUrl9", Role.USER);
+        user10 = GenerateDummy.generateDummyUser("test10@naver.com", "1234", "KSH10",
+                "s3://imgUrl10", Role.USER);
+
+        em.persist(user1);
+        em.persist(user2);
+        em.persist(user3);
+        em.persist(user4);
+        em.persist(user5);
+        em.persist(user6);
+        em.persist(user7);
+        em.persist(user8);
+        em.persist(user9);
+        em.persist(user10);
+    }
+
+    private void saveFriends() {
+        List<Friend> friends = GenerateDummy.generateDummyFriend(user1, user2);
+        for (Friend friend : friends) {
+            em.persist(friend);
+        }
+    }
 
     private UserSignUpRequestDto generateUserSignUpRequestDto() {
         return new UserSignUpRequestDto("test1@gmail.com", "password1", "KSH");
@@ -279,5 +341,46 @@ class UserServiceImplTest {
         //when, then
         UserWithdrawRequestDto userWithdrawRequestDto = new UserWithdrawRequestDto("password1234");
         assertThrows(BaseException.class, () -> userService.withdraw(userWithdrawRequestDto));
+    }
+
+    @Test
+    void 유저_검색_성공_처음_요청_시() {
+        //given
+        userAndFriendSetUp();
+        UserSearchDto userSearchDto = new UserSearchDto(user1.getId(), null, null, "KSH");
+        Pageable pageable = PageRequest.of(0, SEARCH_SIZE);
+
+        //when
+        UserGetPagingDto userGetPagingDto = userService.searchUsers(pageable, userSearchDto);
+        UserGetUserInfoDto userInfos = userGetPagingDto.getUserInfos();
+        UserGetFriendUserInfoDto friendInfos = userGetPagingDto.getFriendInfos();
+        int searchFriendSize = friendInfos.getFriendUserInfos().size();
+        int searchUserSize = SEARCH_SIZE - searchFriendSize;
+
+        //then
+        assertThat(userInfos.getHasNext()).isTrue();
+        assertThat(friendInfos.getHasNext()).isFalse();
+        assertThat(userInfos.getUserInfos().size()).isEqualTo(searchUserSize);
+        assertThat(userInfos.getUserInfos().get(0).getUserId()).isEqualTo(user10.getId());
+    }
+
+    @Test
+    void 유저_검색_성공_처음_요청_아닐_시() {
+        //given
+        userAndFriendSetUp();
+        UserSearchDto userSearchDto = new UserSearchDto(
+                user1.getId(), user2.getId(), user7.getId(), "KSH");
+        Pageable pageable = PageRequest.of(0, SEARCH_SIZE);
+
+        //when
+        UserGetPagingDto userGetPagingDto = userService.searchUsers(pageable, userSearchDto);
+        UserGetUserInfoDto userInfos = userGetPagingDto.getUserInfos();
+        UserGetFriendUserInfoDto friendInfos = userGetPagingDto.getFriendInfos();
+
+        //then
+        assertThat(userInfos.getHasNext()).isFalse();
+        assertThat(friendInfos.getHasNext()).isFalse();
+        assertThat(userInfos.getUserInfos().size()).isEqualTo(4);
+        assertThat(userInfos.getUserInfos().get(0).getUserId()).isEqualTo(user6.getId());
     }
 }
