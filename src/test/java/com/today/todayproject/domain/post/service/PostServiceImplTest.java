@@ -155,8 +155,8 @@ class PostServiceImplTest {
         assertThat(findPost).isNotNull();
         assertThat(findPost.getTodayFeeling()).isEqualTo("happy");
         assertThat(findPost.getCanPublicAccess()).isTrue();
-        assertThat(postQuestion.getQuestion()).isEqualTo("맑음");
-        assertThat(postQuestion.getContent()).isEqualTo("오늘의 날씨는?");
+        assertThat(postQuestion.getQuestion()).isEqualTo("오늘의 날씨는?");
+        assertThat(postQuestion.getContent()).isEqualTo("맑음");
         assertThat(postQuestion.getPostImgUrls().size()).isEqualTo(imgCount);
         assertThat(postQuestion.getPostVideoUrls().size()).isEqualTo(videoCount);
         assertThat(loginUser.getCanWritePost()).isFalse();
