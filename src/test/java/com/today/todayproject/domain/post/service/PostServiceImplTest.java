@@ -5,6 +5,8 @@ import com.today.todayproject.domain.crop.CropStatus;
 import com.today.todayproject.domain.crop.repository.CropRepository;
 import com.today.todayproject.domain.growncrop.repository.GrownCropRepository;
 import com.today.todayproject.domain.post.Post;
+import com.today.todayproject.domain.post.dto.PostGetMonthInfoDto;
+import com.today.todayproject.domain.post.dto.PostInfoDto;
 import com.today.todayproject.domain.post.dto.PostSaveDto;
 import com.today.todayproject.domain.post.dto.PostSaveResponseDto;
 import com.today.todayproject.domain.post.question.PostQuestion;
@@ -34,6 +36,7 @@ import javax.transaction.Transactional;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,9 +68,6 @@ class PostServiceImplTest {
     @Autowired
     GrownCropRepository grownCropRepository;
 
-    private String question = "오늘의 날씨는?";
-    private String content = "맑음";
-    private String todayFeeling = "happy";
     private int imgCount = 2;
     private int videoCount = 2;
 
@@ -113,12 +113,25 @@ class PostServiceImplTest {
                 new FileInputStream("src/test/resources/testvideo/" + originalFilename));
     }
 
-    private void postSave() throws Exception {
+    private void postSave(
+            String question, String content, String todayFeeling, boolean canPublicAccess) throws Exception {
         List<MultipartFile> uploadImgs = getTwoUploadImgs();
         List<MultipartFile> uploadVideos = getTwoUploadVideos();
         PostQuestionDto postQuestionDto = new PostQuestionDto(question, content, imgCount, videoCount);
-        PostSaveDto postSaveDto = new PostSaveDto(List.of(postQuestionDto), todayFeeling, true);
+        PostSaveDto postSaveDto = new PostSaveDto(List.of(postQuestionDto), todayFeeling, canPublicAccess);
         postService.save(postSaveDto, uploadImgs, uploadVideos);
+    }
+
+    private String extractCurrentDay() {
+        int dayOfMonth = LocalDateTime.now().getDayOfMonth();
+        String day = "";
+        if(dayOfMonth >= 1 && dayOfMonth < 10) {
+            day = "0" + dayOfMonth;
+        }
+        if(dayOfMonth >= 10) {
+            day = String.valueOf(dayOfMonth);
+        }
+        return day;
     }
 
     @Test
@@ -127,8 +140,9 @@ class PostServiceImplTest {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail()).orElse(null);
         List<MultipartFile> uploadImgs = getTwoUploadImgs();
         List<MultipartFile> uploadVideos = getTwoUploadVideos();
-        PostQuestionDto postQuestionDto = new PostQuestionDto(question, content, imgCount, videoCount);
-        PostSaveDto postSaveDto = new PostSaveDto(List.of(postQuestionDto), todayFeeling, true);
+        PostQuestionDto postQuestionDto = new PostQuestionDto(
+                "오늘의 날씨는?", "맑음", imgCount, videoCount);
+        PostSaveDto postSaveDto = new PostSaveDto(List.of(postQuestionDto), "happy", true);
 
         //when
         PostSaveResponseDto saveResponseDto = postService.save(postSaveDto, uploadImgs, uploadVideos);
@@ -137,10 +151,10 @@ class PostServiceImplTest {
 
         //then
         assertThat(findPost).isNotNull();
-        assertThat(findPost.getTodayFeeling()).isEqualTo(todayFeeling);
+        assertThat(findPost.getTodayFeeling()).isEqualTo("happy");
         assertThat(findPost.getCanPublicAccess()).isTrue();
-        assertThat(postQuestion.getQuestion()).isEqualTo(question);
-        assertThat(postQuestion.getContent()).isEqualTo(content);
+        assertThat(postQuestion.getQuestion()).isEqualTo("맑음");
+        assertThat(postQuestion.getContent()).isEqualTo("오늘의 날씨는?");
         assertThat(postQuestion.getPostImgUrls().size()).isEqualTo(imgCount);
         assertThat(postQuestion.getPostVideoUrls().size()).isEqualTo(videoCount);
         assertThat(loginUser.getCanWritePost()).isFalse();
@@ -175,7 +189,7 @@ class PostServiceImplTest {
     void 하루_작성_시_작성_횟수가_0이었으면_작물_생성() throws Exception {
         //given
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail()).orElse(null);
-        postSave();
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
 
         //when
         Crop findCrop = cropRepository.findByUserIdAndIsHarvested(loginUser.getId(), false)
@@ -190,13 +204,13 @@ class PostServiceImplTest {
     void 하루_작성_시_작성_횟수에_맞게_작물_업데이트() throws Exception {
         //given
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail()).orElse(null);
-        postSave();
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
         Crop beforePostCrop = cropRepository.findByUserIdAndIsHarvested(loginUser.getId(), false)
                 .orElse(null);
         CropStatus beforePostCropStatus = beforePostCrop.getStatus();
 
         //when
-        postSave();
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
         Crop afterPostCrop = cropRepository.findByUserIdAndIsHarvested(loginUser.getId(), false)
                 .orElse(null);
 
@@ -209,19 +223,19 @@ class PostServiceImplTest {
     void 하루_작성_시_작성_횟수_7번이_되면_수확() throws Exception {
         //given
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail()).orElse(null);
-        postSave();
-        postSave();
-        postSave();
-        postSave();
-        postSave();
-        postSave();
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
         Crop beforePostCrop = cropRepository.findByUserIdAndIsHarvested(loginUser.getId(), false)
                 .orElse(null);
         CropStatus beforePostCropStatus = beforePostCrop.getStatus();
         Boolean beforePostCropIsHarvested = beforePostCrop.getIsHarvested();
 
         //when
-        postSave();
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
         Crop afterPostCrop = cropRepository.findByUserIdAndIsHarvested(loginUser.getId(), true)
                 .orElse(null);
         CropStatus afterPostCropStatus = afterPostCrop.getStatus();
@@ -234,4 +248,32 @@ class PostServiceImplTest {
         assertThat(afterPostCropIsHarvested).isTrue();
     }
 
+    @Test
+    void 월별_작성한_하루_전체_조회_기능() throws Exception {
+        //given
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail()).orElse(null);
+        postSave("오늘의 날씨는?", "맑음", "happy", true);
+        postSave("오늘 먹은 음식은?", "돈까스", "normal", true);
+
+        //when
+        PostGetMonthInfoDto userMonthPostInfo =
+                postService.getUserMonthPostInfo(loginUser.getId(), LocalDateTime.now().getMonthValue());
+        List<PostInfoDto> postInfoDtos = userMonthPostInfo.getPostInfoDtos();
+        PostInfoDto post1InfoDto = postInfoDtos.get(0);
+        PostInfoDto post2InfoDto = postInfoDtos.get(1);
+        String currentDay = extractCurrentDay();
+
+        //then
+        assertThat(postInfoDtos.size()).isEqualTo(2);
+        assertThat(post1InfoDto.getCreationDay()).isEqualTo(currentDay);
+        assertThat(post1InfoDto.getPostQuestions().get(0).getQuestion()).isEqualTo("오늘의 날씨는?");
+        assertThat(post1InfoDto.getPostQuestions().get(0).getContent()).isEqualTo("맑음");
+        assertThat(post1InfoDto.getTodayFeeling()).isEqualTo("happy");
+        assertThat(post1InfoDto.getCanPublicAccess()).isTrue();
+        assertThat(post2InfoDto.getCreationDay()).isEqualTo(currentDay);
+        assertThat(post2InfoDto.getPostQuestions().get(0).getQuestion()).isEqualTo("오늘 먹은 음식은?");
+        assertThat(post2InfoDto.getPostQuestions().get(0).getContent()).isEqualTo("돈까스");
+        assertThat(post2InfoDto.getTodayFeeling()).isEqualTo("normal");
+        assertThat(post2InfoDto.getCanPublicAccess()).isTrue();
+    }
 }
