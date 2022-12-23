@@ -54,6 +54,14 @@ public class Post extends BaseTimeEntity {
         this.canPublicAccess = canPublicAccess;
     }
 
+    public void removeImgUrl(PostImgUrl postImgUrl) {
+        this.postImgUrls.remove(postImgUrl);
+    }
+
+    public void removeVideoUrl(PostVideoUrl postVideoUrl) {
+        this.postVideoUrls.remove(postVideoUrl);
+    }
+
     /**
      * 연관관계 메소드
      */

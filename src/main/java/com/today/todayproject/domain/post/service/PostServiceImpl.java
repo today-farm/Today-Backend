@@ -203,8 +203,8 @@ public class PostServiceImpl implements PostService{
             findPostQuestion.updateContent(postQuestionUpdateDto.getContent());
 
             // 삭제
-            deleteImgs(findPostQuestion, postQuestionUpdateDto.getDeleteImgUrlId());
-            deleteVideos(findPostQuestion, postQuestionUpdateDto.getDeleteVideoUrlId());
+            deleteImgs(findPost, findPostQuestion, postQuestionUpdateDto.getDeleteImgUrlId());
+            deleteVideos(findPost, findPostQuestion, postQuestionUpdateDto.getDeleteVideoUrlId());
 
             int addImgCount = postQuestionUpdateDto.getAddImgCount();
             int addVideoCount = postQuestionUpdateDto.getAddVideoCount();
@@ -234,20 +234,22 @@ public class PostServiceImpl implements PostService{
         postVideoUrl.confirmPostQuestion(findPostQuestion);
     }
 
-    private void deleteImgs(PostQuestion postQuestion, List<Long> deleteImgUrlIds) throws BaseException {
+    private void deleteImgs(Post post, PostQuestion postQuestion, List<Long> deleteImgUrlIds) throws BaseException {
         for (Long deleteImgUrlId : deleteImgUrlIds) {
             PostImgUrl findPostImgUrl = postImgUrlRepository.findById(deleteImgUrlId)
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_IMG));
             postQuestion.removeImgUrl(findPostImgUrl);
+            post.removeImgUrl(findPostImgUrl);
             s3UploadService.deleteOriginalFile(findPostImgUrl.getImgUrl());
         }
     }
 
-    private void deleteVideos(PostQuestion postQuestion, List<Long> deleteVideoIds) throws BaseException {
+    private void deleteVideos(Post post, PostQuestion postQuestion, List<Long> deleteVideoIds) throws BaseException {
         for (Long deleteVideoUrlId : deleteVideoIds) {
             PostVideoUrl findPostVideoUrl = postVideoUrlRepository.findById(deleteVideoUrlId)
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_VIDEO));
             postQuestion.removeVideoUrl(findPostVideoUrl);
+            post.removeVideoUrl(findPostVideoUrl);
             s3UploadService.deleteOriginalFile(findPostVideoUrl.getVideoUrl());
         }
     }
