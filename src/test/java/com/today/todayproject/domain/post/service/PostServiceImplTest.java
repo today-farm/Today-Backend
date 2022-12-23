@@ -5,13 +5,13 @@ import com.today.todayproject.domain.crop.CropStatus;
 import com.today.todayproject.domain.crop.repository.CropRepository;
 import com.today.todayproject.domain.growncrop.repository.GrownCropRepository;
 import com.today.todayproject.domain.post.Post;
-import com.today.todayproject.domain.post.dto.PostGetMonthInfoDto;
-import com.today.todayproject.domain.post.dto.PostInfoDto;
-import com.today.todayproject.domain.post.dto.PostSaveDto;
-import com.today.todayproject.domain.post.dto.PostSaveResponseDto;
+import com.today.todayproject.domain.post.dto.*;
+import com.today.todayproject.domain.post.imgurl.PostImgUrl;
 import com.today.todayproject.domain.post.question.PostQuestion;
 import com.today.todayproject.domain.post.question.dto.PostQuestionDto;
+import com.today.todayproject.domain.post.question.dto.PostQuestionUpdateDto;
 import com.today.todayproject.domain.post.repository.PostRepository;
+import com.today.todayproject.domain.post.video.PostVideoUrl;
 import com.today.todayproject.domain.user.Role;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.dto.UserSignUpRequestDto;
@@ -38,7 +38,9 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -113,13 +115,13 @@ class PostServiceImplTest {
                 new FileInputStream("src/test/resources/testvideo/" + originalFilename));
     }
 
-    private void postSave(
+    private PostSaveResponseDto postSave(
             String question, String content, String todayFeeling, boolean canPublicAccess) throws Exception {
         List<MultipartFile> uploadImgs = getTwoUploadImgs();
         List<MultipartFile> uploadVideos = getTwoUploadVideos();
         PostQuestionDto postQuestionDto = new PostQuestionDto(question, content, imgCount, videoCount);
         PostSaveDto postSaveDto = new PostSaveDto(List.of(postQuestionDto), todayFeeling, canPublicAccess);
-        postService.save(postSaveDto, uploadImgs, uploadVideos);
+        return postService.save(postSaveDto, uploadImgs, uploadVideos);
     }
 
     private String extractCurrentDay() {
@@ -276,4 +278,144 @@ class PostServiceImplTest {
         assertThat(post2InfoDto.getTodayFeeling()).isEqualTo("normal");
         assertThat(post2InfoDto.getCanPublicAccess()).isTrue();
     }
+
+    @Test
+    void 하루_수정_기능_게시글_관련_내용_이미지_영상_모두_수정() throws Exception {
+        //given
+        PostSaveResponseDto postSaveResponseDto =
+                postSave("오늘의 날씨는?", "맑음", "happy", true);
+        Long postId = postSaveResponseDto.getPostId();
+        Long postQuestionId = postSaveResponseDto.getPostQuestionId().get(0);
+        Post findPost = postRepository.findById(postId).orElse(null);
+        PostQuestion postQuestion = findPost.getPostQuestions().get(0);
+        List<Long> deleteImgUrlIds = getDeleteImgUrlIds(findPost);
+        List<Long> deleteVideoUrlIds = getDeleteVideoUrlIds(findPost);
+
+        PostQuestionUpdateDto postQuestionUpdateDto = new PostQuestionUpdateDto(
+                postQuestionId, "흐림", deleteImgUrlIds, deleteVideoUrlIds, 2, 2);
+        PostUpdateDto postUpdateDto =
+                new PostUpdateDto(List.of(postQuestionUpdateDto), "normal", false);
+
+        //when
+        postService.update(postId, postUpdateDto, getUpdateImgs(), getUpdateVideos());
+
+        //then
+        assertThat(findPost.getTodayFeeling()).isEqualTo("normal");
+        assertThat(findPost.getCanPublicAccess()).isFalse();
+        assertThat(findPost.getPostImgUrls().size()).isEqualTo(3);
+        assertThat(findPost.getPostVideoUrls().size()).isEqualTo(3);
+        assertThat(postQuestion.getContent()).isEqualTo("흐림");
+    }
+
+    private List<Long> getDeleteImgUrlIds(Post findPost) {
+        List<Long> deleteImgUrlIds = new ArrayList<>();
+        Long deleteImgUrlId = findPost.getPostImgUrls().get(0).getId();
+        deleteImgUrlIds.add(deleteImgUrlId);
+        return deleteImgUrlIds;
+    }
+
+    private List<Long> getDeleteVideoUrlIds(Post findPost) {
+        List<Long> deleteVideoUrlIds = new ArrayList<>();
+        Long deleteImgUrlId = findPost.getPostVideoUrls().get(0).getId();
+        deleteVideoUrlIds.add(deleteImgUrlId);
+        return deleteVideoUrlIds;
+    }
+
+    private List<MultipartFile> getUpdateImgs() throws IOException {
+        List<MultipartFile> updateImgs = new ArrayList<>();
+        updateImgs.add(generateMultipartFileImage("testImage2.png"));
+        updateImgs.add(generateMultipartFileImage("testImage3.png"));
+        return updateImgs;
+    }
+
+    private List<MultipartFile> getUpdateVideos() throws IOException {
+        List<MultipartFile> updateVideos = new ArrayList<>();
+        updateVideos.add(generateMultipartFileVideo("testVideo2.mp4"));
+        updateVideos.add(generateMultipartFileVideo("testVideo3.mp4"));
+        return updateVideos;
+    }
+
+    @Test
+    void 하루_수정_기능_게시글_관련_내용만_수정() throws Exception {
+        //given
+        PostSaveResponseDto postSaveResponseDto =
+                postSave("오늘의 날씨는?", "맑음", "happy", true);
+        Long postId = postSaveResponseDto.getPostId();
+        Long postQuestionId = postSaveResponseDto.getPostQuestionId().get(0);
+        Post findPost = postRepository.findById(postId).orElse(null);
+        PostQuestion postQuestion = findPost.getPostQuestions().get(0);
+
+        PostQuestionUpdateDto postQuestionUpdateDto = new PostQuestionUpdateDto(
+                postQuestionId, "흐림",
+                Collections.emptyList(), Collections.emptyList(), 0, 0);
+        PostUpdateDto postUpdateDto =
+                new PostUpdateDto(List.of(postQuestionUpdateDto), "normal", false);
+
+        //when
+        postService.update(postId, postUpdateDto, getUpdateImgs(), getUpdateVideos());
+
+        //then
+        assertThat(findPost.getTodayFeeling()).isEqualTo("normal");
+        assertThat(findPost.getCanPublicAccess()).isFalse();
+        assertThat(findPost.getPostImgUrls().size()).isEqualTo(imgCount);
+        assertThat(findPost.getPostVideoUrls().size()).isEqualTo(videoCount);
+        assertThat(postQuestion.getContent()).isEqualTo("흐림");
+    }
+
+    @Test
+    void 하루_수정_기능_이미지만_수정() throws Exception {
+        //given
+        PostSaveResponseDto postSaveResponseDto =
+                postSave("오늘의 날씨는?", "맑음", "happy", true);
+        Long postId = postSaveResponseDto.getPostId();
+        Long postQuestionId = postSaveResponseDto.getPostQuestionId().get(0);
+        Post findPost = postRepository.findById(postId).orElse(null);
+        PostQuestion postQuestion = findPost.getPostQuestions().get(0);
+        List<Long> deleteImgUrlIds = getDeleteImgUrlIds(findPost);
+
+        PostQuestionUpdateDto postQuestionUpdateDto = new PostQuestionUpdateDto(
+                postQuestionId, "맑음",
+                deleteImgUrlIds, Collections.emptyList(), 0, 0);
+        PostUpdateDto postUpdateDto =
+                new PostUpdateDto(List.of(postQuestionUpdateDto), "happy", true);
+
+        //when
+        postService.update(postId, postUpdateDto, getUpdateImgs(), getUpdateVideos());
+
+        //then
+        assertThat(findPost.getTodayFeeling()).isEqualTo("happy");
+        assertThat(findPost.getCanPublicAccess()).isTrue();
+        assertThat(findPost.getPostImgUrls().size()).isEqualTo(1);
+        assertThat(findPost.getPostVideoUrls().size()).isEqualTo(videoCount);
+        assertThat(postQuestion.getContent()).isEqualTo("맑음");
+    }
+
+    @Test
+    void 하루_수정_기능_영상만_수정() throws Exception {
+        //given
+        PostSaveResponseDto postSaveResponseDto =
+                postSave("오늘의 날씨는?", "맑음", "happy", true);
+        Long postId = postSaveResponseDto.getPostId();
+        Long postQuestionId = postSaveResponseDto.getPostQuestionId().get(0);
+        Post findPost = postRepository.findById(postId).orElse(null);
+        PostQuestion postQuestion = findPost.getPostQuestions().get(0);
+        List<Long> deleteVideoUrlIds = getDeleteVideoUrlIds(findPost);
+
+        PostQuestionUpdateDto postQuestionUpdateDto = new PostQuestionUpdateDto(
+                postQuestionId, "맑음",
+                Collections.emptyList(), deleteVideoUrlIds, 0, 0);
+        PostUpdateDto postUpdateDto =
+                new PostUpdateDto(List.of(postQuestionUpdateDto), "happy", true);
+
+        //when
+        postService.update(postId, postUpdateDto, getUpdateImgs(), getUpdateVideos());
+
+        //then
+        assertThat(findPost.getTodayFeeling()).isEqualTo("happy");
+        assertThat(findPost.getCanPublicAccess()).isTrue();
+        assertThat(findPost.getPostImgUrls().size()).isEqualTo(imgCount);
+        assertThat(findPost.getPostVideoUrls().size()).isEqualTo(1);
+        assertThat(postQuestion.getContent()).isEqualTo("맑음");
+    }
+
 }
