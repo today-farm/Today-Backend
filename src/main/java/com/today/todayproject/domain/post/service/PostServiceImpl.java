@@ -277,8 +277,7 @@ public class PostServiceImpl implements PostService{
         }
         return addPostVideoUrls;
     }
-
-    // TODO : 6회 -> 7회로 넘어갔을 때 수확 후 삭제하면 어떻게 할지 정하기
+    
     @Override
     public void delete(Long postId) throws Exception {
         Post deletePost = postRepository.findById(postId)
