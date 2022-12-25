@@ -3,6 +3,7 @@ package com.today.todayproject.domain.post.service;
 import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.crop.CropStatus;
 import com.today.todayproject.domain.crop.repository.CropRepository;
+import com.today.todayproject.domain.growncrop.GrownCrop;
 import com.today.todayproject.domain.growncrop.repository.GrownCropRepository;
 import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.dto.*;
@@ -18,9 +19,11 @@ import com.today.todayproject.domain.user.dto.UserSignUpRequestDto;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.domain.user.service.UserService;
 import com.today.todayproject.global.BaseException;
+import com.today.todayproject.global.BaseResponseStatus;
 import com.today.todayproject.global.util.SecurityUtil;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -29,6 +32,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
@@ -418,4 +422,166 @@ class PostServiceImplTest {
         assertThat(postQuestion.getContent()).isEqualTo("맑음");
     }
 
+    @Test
+    void 하루_삭제_기능() throws Exception {
+        //given
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+        PostSaveResponseDto postSaveResponseDto =
+                postSave("오늘의 날씨는?", "맑음", "happy", true);
+        Long postId = postSaveResponseDto.getPostId();
+
+        //when
+        postService.delete(postId);
+
+        //then
+        assertThat(loginUser.getPostWriteCount()).isEqualTo(0);
+        assertThatThrownBy(() -> postRepository.findById(postId).orElseThrow(
+                () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST)
+        ))
+                .isInstanceOf(BaseException.class);
+    }
+
+    @Nested
+    class 하루_삭제_시_작물_상태_업데이트_테스트 {
+
+        @Test
+        void 하루_작성_횟수_1회인_경우_삭제_시_작물도_삭제() throws Exception {
+            //given
+            User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+            PostSaveResponseDto postSaveResponseDto =
+                    postSave("오늘의 날씨는?", "맑음", "happy", true);
+            Long postId = postSaveResponseDto.getPostId();
+            Post findPost = postRepository.findById(postId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST));
+            Long cropId = findPost.getCrop().getId();
+
+            //when
+            postService.delete(postId);
+
+            //then
+            assertThat(loginUser.getPostWriteCount()).isEqualTo(0);
+            assertThatThrownBy(() -> postRepository.findById(postId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST)
+            ))
+                    .isInstanceOf(BaseException.class);
+            assertThatThrownBy(() -> cropRepository.findById(cropId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_CROP)
+            ))
+                    .isInstanceOf(BaseException.class);
+        }
+
+        @Test
+        void 하루_작성_횟수_2회에서_삭제_시_상태_업데이트() throws Exception {
+            //given
+            User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            PostSaveResponseDto postSaveResponseDto2 =
+                    postSave("오늘의 날씨는?", "맑음", "happy", true);
+            Long postId = postSaveResponseDto2.getPostId();
+            Post findPost = postRepository.findById(postId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST));
+            Crop crop = findPost.getCrop();
+
+            //when
+            postService.delete(postId);
+
+            //then
+            assertThat(loginUser.getPostWriteCount()).isEqualTo(1);
+            assertThat(crop.getStatus()).isEqualTo(CropStatus.SEED);
+            assertThatThrownBy(() -> postRepository.findById(postId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST)
+            ));
+        }
+
+        @Test
+        void 하루_작성_횟수_4회에서_삭제_시_상태_업데이트() throws Exception {
+            //given
+            User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            PostSaveResponseDto postSaveResponseDto4 =
+                    postSave("오늘의 날씨는?", "맑음", "happy", true);
+            Long postId = postSaveResponseDto4.getPostId();
+            Post findPost = postRepository.findById(postId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST));
+            Crop crop = findPost.getCrop();
+
+            //when
+            postService.delete(postId);
+
+            //then
+            assertThat(loginUser.getPostWriteCount()).isEqualTo(3);
+            assertThat(crop.getStatus()).isEqualTo(CropStatus.SPROUT);
+            assertThatThrownBy(() -> postRepository.findById(postId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST)
+            ));
+        }
+
+        @Test
+        void 하루_작성_횟수_6회에서_삭제_시_상태_업데이트() throws Exception {
+            //given
+            User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            PostSaveResponseDto postSaveResponseDto6 =
+                    postSave("오늘의 날씨는?", "맑음", "happy", true);
+            Long postId = postSaveResponseDto6.getPostId();
+            Post findPost = postRepository.findById(postId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST));
+            Crop crop = findPost.getCrop();
+
+            //when
+            postService.delete(postId);
+
+            //then
+            assertThat(loginUser.getPostWriteCount()).isEqualTo(5);
+            assertThat(crop.getStatus()).isEqualTo(CropStatus.GROWING_SPROUT);
+            assertThatThrownBy(() -> postRepository.findById(postId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST)
+            ));
+        }
+
+        @Test
+        void 하루_작성_횟수_7회로_현재_수확한_작물_하루_삭제_시_상태_업데이트() throws Exception {
+            //given
+            User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            postSave("오늘의 날씨는?", "맑음", "happy", true);
+            PostSaveResponseDto postSaveResponseDto7 =
+                    postSave("오늘의 날씨는?", "맑음", "happy", true);
+            Long postId = postSaveResponseDto7.getPostId();
+            Post findPost = postRepository.findById(postId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST));
+            Crop crop = findPost.getCrop();
+
+            //when
+            postService.delete(postId);
+            List<GrownCrop> grownCrops = grownCropRepository.findAllByUserIdAndHarvestedMonth(
+                    loginUser.getId(), LocalDateTime.now().getMonthValue()
+            ).orElse(Collections.emptyList());
+
+            //then
+            assertThat(loginUser.getPostWriteCount()).isEqualTo(6);
+            assertThat(crop.getStatus()).isEqualTo(CropStatus.FRUIT_CROP);
+            assertThat(crop.getIsHarvested()).isFalse();
+            assertThat(grownCrops).isEmpty();
+            assertThatThrownBy(() -> postRepository.findById(postId).orElseThrow(
+                    () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST)
+            ));
+        }
+    }
 }
