@@ -33,6 +33,7 @@ dependencies {
 	implementation 'com.auth0:java-jwt:3.18.2'
 	implementation 'mysql:mysql-connector-java'
 	implementation 'org.springframework.cloud:spring-cloud-starter-aws:2.2.6.RELEASE'
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 	implementation "com.querydsl:querydsl-jpa:${queryDslVersion}"
 	implementation "com.querydsl:querydsl-apt:${queryDslVersion}"
 	compileOnly 'org.projectlombok:lombok'
