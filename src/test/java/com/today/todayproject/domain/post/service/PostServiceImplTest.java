@@ -20,6 +20,7 @@ import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.domain.user.service.UserService;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
+import com.today.todayproject.global.util.GenerateDummy;
 import com.today.todayproject.global.util.SecurityUtil;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -583,5 +584,45 @@ class PostServiceImplTest {
                     () -> new BaseException(BaseResponseStatus.NOT_FOUND_POST)
             ));
         }
+    }
+
+    @Test
+    void 하루_조회_기능() throws Exception {
+        //given
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+        PostSaveResponseDto canAccessPostSaveResponseDto =
+                postSave("오늘의 날씨는?", "맑음", "happy", true);
+        PostSaveResponseDto cannotAccessPostSaveResponseDto =
+                postSave("오늘의 날씨는?", "흐림", "sad", false);
+        Long canAccessPostId = canAccessPostSaveResponseDto.getPostId();
+        Long cannotAccessPostId = cannotAccessPostSaveResponseDto.getPostId();
+
+        //when
+        PostInfoDto canAccessPostInfo = postService.getPostInfo(canAccessPostId, loginUser.getId());
+        PostInfoDto cannotAccessPostInfo = postService.getPostInfo(cannotAccessPostId, loginUser.getId());
+
+        //then
+        assertThat(canAccessPostInfo.getCanPublicAccess()).isTrue();
+        assertThat(canAccessPostInfo.getTodayFeeling()).isEqualTo("happy");
+        assertThat(canAccessPostInfo.getPostQuestions().get(0).getContent()).isEqualTo("맑음");
+        assertThat(cannotAccessPostInfo.getCanPublicAccess()).isFalse();
+        assertThat(cannotAccessPostInfo.getTodayFeeling()).isEqualTo("sad");
+        assertThat(cannotAccessPostInfo.getPostQuestions().get(0).getContent()).isEqualTo("흐림");
+    }
+
+    @Test
+    void 비공개_하루일_때_조회하는_유저가_로그인한_유저가_아니면_예외_처리() throws Exception {
+        //given
+        User user = GenerateDummy.generateDummyUser("test1@naver.com", "1234", "KSH1",
+                "s3://imgUrl1", Role.USER);
+        userRepository.save(user);
+        PostSaveResponseDto cannotAccessPostSaveResponseDto =
+                postSave("오늘의 날씨는?", "흐림", "sad", false);
+        Long cannotAccessPostId = cannotAccessPostSaveResponseDto.getPostId();
+
+        //when, then
+        assertThatThrownBy(() -> postService.getPostInfo(cannotAccessPostId, user.getId()))
+                .isInstanceOf(BaseException.class);
     }
 }
