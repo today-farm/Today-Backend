@@ -277,7 +277,7 @@ public class PostServiceImpl implements PostService{
         }
         return addPostVideoUrls;
     }
-    
+
     @Override
     public void delete(Long postId) throws Exception {
         Post deletePost = postRepository.findById(postId)
