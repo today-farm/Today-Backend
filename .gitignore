@@ -43,3 +43,4 @@ out/
 application-aws.yml
 application-jwt.yml
 application-db.yml
+application-mail.yml
