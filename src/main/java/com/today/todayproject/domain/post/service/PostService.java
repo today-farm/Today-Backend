@@ -11,7 +11,7 @@ public interface PostService {
 
     PostSaveResponseDto save(PostSaveDto postSaveDto, List<MultipartFile> uploadImgs, List<MultipartFile> uploadVideos) throws Exception;
 
-    PostInfoDto getPostInfo(Long postId) throws Exception; // 상세 조회
+    PostInfoDto getPostInfo(Long postId, Long userId) throws Exception; // 상세 조회
 
     PostGetMonthInfoDto getUserMonthPostInfo(Long userId, int month); // 그 달의 유저가 작성한 하루 전체 조회
 

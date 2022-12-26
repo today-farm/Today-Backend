@@ -2,12 +2,13 @@ package com.today.todayproject.domain.post.service;
 
 import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.crop.repository.CropRepository;
+import com.today.todayproject.domain.friend.Friend;
+import com.today.todayproject.domain.friend.repository.FriendRepository;
 import com.today.todayproject.domain.growncrop.GrownCrop;
 import com.today.todayproject.domain.growncrop.repository.GrownCropRepository;
 import com.today.todayproject.domain.post.Post;
 import com.today.todayproject.domain.post.dto.*;
 import com.today.todayproject.domain.post.imgurl.PostImgUrl;
-import com.today.todayproject.domain.post.imgurl.dto.PostImgUrlDto;
 import com.today.todayproject.domain.post.imgurl.repository.PostImgUrlRepository;
 import com.today.todayproject.domain.post.question.PostQuestion;
 import com.today.todayproject.domain.post.question.dto.PostQuestionDto;
@@ -15,7 +16,6 @@ import com.today.todayproject.domain.post.question.dto.PostQuestionUpdateDto;
 import com.today.todayproject.domain.post.question.repository.PostQuestionRepository;
 import com.today.todayproject.domain.post.repository.PostRepository;
 import com.today.todayproject.domain.post.video.PostVideoUrl;
-import com.today.todayproject.domain.post.video.dto.PostVideoUrlDto;
 import com.today.todayproject.domain.post.video.repository.PostVideoUrlRepository;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.repository.UserRepository;
@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
-import java.time.Month;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -52,6 +51,7 @@ public class PostServiceImpl implements PostService{
     private final GrownCropRepository grownCropRepository;
     private final PostImgUrlRepository postImgUrlRepository;
     private final PostVideoUrlRepository postVideoUrlRepository;
+    private final FriendRepository friendRepository;
 
     private static final int CROP_HARVEST_WRITE_COUNT = 7;
 
@@ -177,11 +177,45 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public PostInfoDto getPostInfo(Long postId) throws Exception {
+    public PostInfoDto getPostInfo(Long postId, Long userId) throws Exception {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+
+        User findUser = userRepository.findById(userId)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+
         Post findPost = postRepository.findById(postId)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_POST));
 
+        validateFindUser(loginUser, findUser, findPost);
+
         return new PostInfoDto(findPost);
+    }
+
+    private void validateFindUser(User loginUser, User findUser, Post findPost) throws BaseException {
+        // 농장 방문한 유저는 무조건 로그인한 유저의 친구이므로 일단 체크 필요 X
+//        if (findPost.getCanPublicAccess() == true) {
+//            checkFriendLoginUserAndFindUser(loginUser, findUser);
+//        }
+        if (findPost.getCanPublicAccess() == false) {
+            checkFindUserEqualLoginUser(loginUser, findUser);
+        }
+    }
+
+//    private void checkFriendLoginUserAndFindUser(User loginUser, User findUser) throws BaseException {
+//        boolean isLoginUserFriend = friendRepository.existsByFriendOwnerIdAndFriendAndAreWeFriend(
+//                loginUser.getId(), findUser, true);
+//        boolean isFindUserFriend = friendRepository.existsByFriendOwnerIdAndFriendAndAreWeFriend(
+//                findUser.getId(), loginUser, true);
+//        if (!(isLoginUserFriend && isFindUserFriend)) {
+//            throw new BaseException(BaseResponseStatus.CANNOT_SEE_POST_NOT_FRIEND_USER);
+//        }
+//    }
+
+    private void checkFindUserEqualLoginUser(User loginUser, User findUser) throws BaseException {
+        if (!loginUser.getId().equals(findUser.getId())) {
+            throw new BaseException(BaseResponseStatus.CANNOT_SEE_POST_NOT_LOGIN_USER);
+        }
     }
 
     @Override

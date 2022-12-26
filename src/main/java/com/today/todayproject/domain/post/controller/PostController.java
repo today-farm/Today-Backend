@@ -25,9 +25,10 @@ public class PostController {
         return new BaseResponse<>(postSaveResponseDto);
     }
 
-    @GetMapping("/{postId}")
-    public BaseResponse<PostInfoDto> getPostInfo(@PathVariable("postId") Long postId) throws Exception {
-        PostInfoDto postInfoDto = postService.getPostInfo(postId);
+    @GetMapping("/{postId}/{userId}")
+    public BaseResponse<PostInfoDto> getPostInfo(@PathVariable("postId") Long postId,
+                                                 @PathVariable("userId") Long userId) throws Exception {
+        PostInfoDto postInfoDto = postService.getPostInfo(postId, userId);
         return new BaseResponse<>(postInfoDto);
     }
 
