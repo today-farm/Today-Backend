@@ -40,8 +40,8 @@ public enum BaseResponseStatus {
     NOT_ACCESS_FRIEND_LIST(false, 2016, BAD_REQUEST, "친구의 친구 목록은 조회할 수 없습니다."),
     NOT_DUPLICATE_FRIEND_REQUEST(false, 2017, BAD_REQUEST, "친구 요청을 중복해서 보낼 수 없습니다."),
     CANNOT_SEE_POST_NOT_FRIEND_USER(false, 2018, BAD_REQUEST, "친구가 아닌 유저는 해당 하루를 볼 수 없습니다."),
-    CANNOT_SEE_POST_NOT_LOGIN_USER(false, 2019, BAD_REQUEST, "자기 자신만 해당 하루를 볼 수 있습니다.");
-
+    CANNOT_SEE_POST_NOT_LOGIN_USER(false, 2019, BAD_REQUEST, "자기 자신만 해당 하루를 볼 수 있습니다."),
+    NOT_FOUND_USER_FIND_PASSWORD_EMAIL(false, 2020, BAD_REQUEST, "해당 이메일을 가진 유저가 존재하지 않습니다.");
 
     private final boolean isSuccess;
     private final int code;

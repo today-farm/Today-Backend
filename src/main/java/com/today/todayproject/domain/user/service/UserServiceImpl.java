@@ -13,6 +13,8 @@ import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
+import com.today.todayproject.global.email.dto.EmailDto;
+import com.today.todayproject.global.email.service.EmailService;
 import com.today.todayproject.global.s3.service.S3UploadService;
 import com.today.todayproject.domain.user.dto.UserSignUpRequestDto;
 import com.today.todayproject.global.util.SecurityUtil;
@@ -26,6 +28,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -41,6 +44,7 @@ public class UserServiceImpl implements UserService {
     private final CropRepository cropRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3UploadService s3UploadService;
+    private final EmailService emailService;
 
     /**
      * 회원 가입 로직
@@ -206,6 +210,18 @@ public class UserServiceImpl implements UserService {
         UserGetFriendUserInfoDto userGetFriendUserInfoDto =
                 new UserGetFriendUserInfoDto(friendUserInfos, searchFriendUsers);
         return userGetFriendUserInfoDto;
+    }
+
+    @Override
+    public void sendTempPasswordEmail(UserFindPasswordDto userFindPasswordDto) throws Exception {
+        User findUser = userRepository.findByEmail(userFindPasswordDto.getCheckEmail())
+                .orElse(null);
+        if (findUser == null) {
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_USER_FIND_PASSWORD_EMAIL);
+        }
+
+        EmailDto emailDto = emailService.generateEmailDtoAndChangePassword(findUser, passwordEncoder);
+        emailService.sendEmail(emailDto);
     }
 
 
