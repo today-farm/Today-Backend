@@ -64,4 +64,13 @@ public class UserController {
         UserGetPagingDto userGetPagingDto = userService.searchUsers(pageable, userSearchDto);
         return new BaseResponse<>(userGetPagingDto);
     }
+
+    /**
+     * 비밀번호 찾기 API
+     */
+    @PostMapping("/find-password")
+    public BaseResponse<String> findPassword(UserFindPasswordDto userFindPasswordDto) throws Exception {
+        userService.sendTempPasswordEmail(userFindPasswordDto);
+        return new BaseResponse<>("임시 비밀번호를 담은 인증 메일이 전송되었습니다.");
+    }
 }
