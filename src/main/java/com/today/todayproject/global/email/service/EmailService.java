@@ -11,10 +11,12 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ResourceUtils;
 
 import javax.activation.FileDataSource;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.FileNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -45,15 +47,15 @@ public class EmailService {
         user.updatePassword(passwordEncoder, tempPassword);
     }
 
-    public void sendEmail(EmailDto emailDto) throws MessagingException {
+    public void sendEmail(EmailDto emailDto) throws Exception {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
         mimeMessageHelper.setFrom(fromAddress);
         mimeMessageHelper.setTo(emailDto.getUserEmail());
         mimeMessageHelper.setSubject(emailDto.getTitle());
         mimeMessageHelper.setText(emailDto.getContent(), true);
-        mimeMessageHelper.addInline("haru-img", new FileDataSource(
-                "/Users/kimseonghun/email-img/no-think.jpeg"));
+        mimeMessageHelper.addInline("haru-img", ResourceUtils.getFile(
+                ResourceUtils.CLASSPATH_URL_PREFIX + "email/findpassword/no-think.jpeg"));
 
         mailSender.send(mimeMessage);
         log.info("임시비밀번호 발급 이메일 전송 완료");
