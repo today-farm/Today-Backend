@@ -15,6 +15,7 @@ import com.today.todayproject.domain.post.repository.PostRepository;
 import com.today.todayproject.domain.post.video.PostVideoUrl;
 import com.today.todayproject.domain.user.Role;
 import com.today.todayproject.domain.user.User;
+import com.today.todayproject.domain.user.dto.UserEmailAuthCodeDto;
 import com.today.todayproject.domain.user.dto.UserSignUpRequestDto;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.domain.user.service.UserService;
@@ -82,15 +83,14 @@ class PostServiceImplTest {
     // 여러 로직들에 SecurityUtil.getLoginUserEmail()로 로그인한 유저의 이메일을 가져오는 기능을 사용하므로
     // 회원 가입한 유저를 인증 객체로 설정해준다.
     void setAuthenticatedUser() throws Exception {
-        MockMultipartFile profileImg = generateMultipartFileImage("testImage1.jpeg");
-        UserSignUpRequestDto userSignUpRequestDto =
-                new UserSignUpRequestDto("test1@gamil.com", "password1", "KSH1");
-        userService.signUp(userSignUpRequestDto, profileImg);
+        User user = GenerateDummy.generateDummyUser("test1@naver.com", "1234", "KSH1",
+                "s3://imgUrl1", Role.USER);
+        em.persist(user);
         SecurityContext emptyContext = SecurityContextHolder.createEmptyContext();
 
         UserDetails userDetailsUser = org.springframework.security.core.userdetails.User.builder()
-                .username(userSignUpRequestDto.getEmail())
-                .password(userSignUpRequestDto.getPassword())
+                .username("test1@naver.com")
+                .password("1234")
                 .roles(Role.USER.name())
                 .build();
 
@@ -614,12 +614,12 @@ class PostServiceImplTest {
     @Test
     void 비공개_하루일_때_조회하는_유저가_로그인한_유저가_아니면_예외_처리() throws Exception {
         //given
-        User user = GenerateDummy.generateDummyUser("test1@naver.com", "1234", "KSH1",
-                "s3://imgUrl1", Role.USER);
-        userRepository.save(user);
         PostSaveResponseDto cannotAccessPostSaveResponseDto =
                 postSave("오늘의 날씨는?", "흐림", "sad", false);
         Long cannotAccessPostId = cannotAccessPostSaveResponseDto.getPostId();
+        User user = GenerateDummy.generateDummyUser("test2@naver.com", "1234", "KSH1",
+                "s3://imgUrl1", Role.USER);
+        em.persist(user);
 
         //when, then
         assertThatThrownBy(() -> postService.getPostInfo(cannotAccessPostId, user.getId()))
