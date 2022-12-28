@@ -2,7 +2,8 @@ package com.today.todayproject.global.email.service;
 
 import com.today.todayproject.domain.user.Role;
 import com.today.todayproject.domain.user.User;
-import com.today.todayproject.global.email.dto.EmailDto;
+import com.today.todayproject.global.email.dto.AuthenticationCodeEmailDto;
+import com.today.todayproject.global.email.dto.IssueTempPasswordEmailDto;
 import com.today.todayproject.global.util.GenerateDummy;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,10 +36,11 @@ class EmailServiceTest {
         User user = GenerateDummy.generateDummyUser("ohk9134@naver.com", "1234", "KSH1",
                 "s3://imgUrl1", Role.USER);
         em.persist(user);
-        EmailDto emailDto = emailService.generateEmailDtoAndChangePassword(user, passwordEncoder);
+        IssueTempPasswordEmailDto issueTempPasswordEmailDto =
+                emailService.generateIssueTempPasswordEmailDtoAndChangePassword(user, passwordEncoder);
 
         //when, then
-        assertDoesNotThrow(() -> emailService.sendIssueTempPasswordEmail(emailDto));
+        assertDoesNotThrow(() -> emailService.sendIssueTempPasswordEmail(issueTempPasswordEmailDto));
     }
 
     @Test
@@ -50,11 +52,24 @@ class EmailServiceTest {
         boolean beforeUpdateUserPasswordMatchResult = user.matchPassword(passwordEncoder, "1234");
 
         //when
-        emailService.generateEmailDtoAndChangePassword(user, passwordEncoder);
+        emailService.generateIssueTempPasswordEmailDtoAndChangePassword(user, passwordEncoder);
         boolean afterUpdateUserPasswordMatchResult = user.matchPassword(passwordEncoder, "1234");
 
         //then
         assertThat(beforeUpdateUserPasswordMatchResult).isTrue();
         assertThat(afterUpdateUserPasswordMatchResult).isFalse();
+    }
+
+    @Test
+    void 회원가입_인증_코드_발급_메일_보내기_기능_테스트() {
+        //given
+        User user = GenerateDummy.generateDummyUser("ohk9134@naver.com", "1234", "KSH1",
+                "s3://imgUrl1", Role.USER);
+        em.persist(user);
+        AuthenticationCodeEmailDto authenticationCodeEmailDto =
+                emailService.generateAuthenticationCodeEmailDto(user.getEmail(), 123456);
+
+        //when, then
+        assertDoesNotThrow(() -> emailService.sendAuthenticationCodeEmail(authenticationCodeEmailDto));
     }
 }

@@ -67,6 +67,8 @@ public class User extends BaseTimeEntity {
 
     private String refreshToken;
 
+    private Boolean emailAuth;
+
     private static final int CROP_INIT_WRITE_COUNT =0;
 
 
@@ -134,5 +136,9 @@ public class User extends BaseTimeEntity {
 
     public void initThisMonthHarvestCount() {
         thisMonthHarvestCount = 0;
+    }
+
+    public void emailAuthSuccess() {
+        this.emailAuth = true;
     }
 }

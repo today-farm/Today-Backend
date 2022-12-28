@@ -7,13 +7,17 @@ import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
-import com.today.todayproject.global.email.dto.EmailDto;
+import com.today.todayproject.global.email.EmailAuth;
+import com.today.todayproject.global.email.dto.AuthenticationCodeEmailDto;
+import com.today.todayproject.global.email.dto.IssueTempPasswordEmailDto;
+import com.today.todayproject.global.email.repository.EmailAuthRepository;
 import com.today.todayproject.global.email.service.EmailService;
 import com.today.todayproject.global.s3.service.S3UploadService;
 import com.today.todayproject.domain.user.dto.UserSignUpRequestDto;
 import com.today.todayproject.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -22,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.mail.MessagingException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -34,6 +39,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final CropRepository cropRepository;
+    private final EmailAuthRepository emailAuthRepository;
     private final PasswordEncoder passwordEncoder;
     private final S3UploadService s3UploadService;
     private final EmailService emailService;
@@ -62,10 +68,12 @@ public class UserServiceImpl implements UserService {
                     .nickname(userSignUpRequestDto.getNickname())
                     .profileImgUrl(profileImgUrl)
                     .role(Role.USER)
+                    .emailAuth(false)
                     .build();
 
             user.encodePassword(passwordEncoder);
             User saveUser = userRepository.save(user);
+            sendAuthenticationCodeEmail(userSignUpRequestDto, user);
             return saveUser.getId();
         } else {
             // profile 사진이 없다면, User build 시 profile null로 추가
@@ -75,13 +83,35 @@ public class UserServiceImpl implements UserService {
                     .nickname(userSignUpRequestDto.getNickname())
                     .profileImgUrl(null)
                     .role(Role.USER)
+                    .emailAuth(false)
                     .build();
 
             log.info("profileImg : {}", profileImg);
             user.encodePassword(passwordEncoder);
             User saveUser = userRepository.save(user);
+            sendAuthenticationCodeEmail(userSignUpRequestDto, user);
             return saveUser.getId();
         }
+    }
+
+    private void sendAuthenticationCodeEmail(UserSignUpRequestDto userSignUpRequestDto, User user) throws MessagingException {
+        EmailAuth emailAuth = generateEmailAuth(userSignUpRequestDto);
+        AuthenticationCodeEmailDto authenticationCodeEmailDto =
+                emailService.generateAuthenticationCodeEmailDto(user.getEmail(), emailAuth.getAuthCode());
+        emailService.sendAuthenticationCodeEmail(authenticationCodeEmailDto);
+    }
+
+    private EmailAuth generateEmailAuth(UserSignUpRequestDto userSignUpRequestDto) {
+        return emailAuthRepository.save(
+                EmailAuth.builder()
+                        .email(userSignUpRequestDto.getEmail())
+                        .authCode(getAuthenticationCode())
+                        .expired(false)
+                        .build());
+    }
+
+    private int getAuthenticationCode() {
+        return Integer.parseInt(RandomStringUtils.randomNumeric(6));
     }
 
     /**
@@ -212,8 +242,9 @@ public class UserServiceImpl implements UserService {
             throw new BaseException(BaseResponseStatus.NOT_FOUND_USER_FIND_PASSWORD_EMAIL);
         }
 
-        EmailDto emailDto = emailService.generateEmailDtoAndChangePassword(findUser, passwordEncoder);
-        emailService.sendIssueTempPasswordEmail(emailDto);
+        IssueTempPasswordEmailDto issueTempPasswordEmailDto =
+                emailService.generateIssueTempPasswordEmailDtoAndChangePassword(findUser, passwordEncoder);
+        emailService.sendIssueTempPasswordEmail(issueTempPasswordEmailDto);
     }
 
 

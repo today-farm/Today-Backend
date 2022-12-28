@@ -5,9 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class EmailDto {
+@NoArgsConstructor
+public class AuthenticationCodeEmailDto {
 
     private String userEmail;
     private String title;
