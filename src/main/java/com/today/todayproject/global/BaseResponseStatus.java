@@ -41,7 +41,9 @@ public enum BaseResponseStatus {
     NOT_DUPLICATE_FRIEND_REQUEST(false, 2017, BAD_REQUEST, "친구 요청을 중복해서 보낼 수 없습니다."),
     CANNOT_SEE_POST_NOT_FRIEND_USER(false, 2018, BAD_REQUEST, "친구가 아닌 유저는 해당 하루를 볼 수 없습니다."),
     CANNOT_SEE_POST_NOT_LOGIN_USER(false, 2019, BAD_REQUEST, "자기 자신만 해당 하루를 볼 수 있습니다."),
-    NOT_FOUND_USER_FIND_PASSWORD_EMAIL(false, 2020, BAD_REQUEST, "해당 이메일을 가진 유저가 존재하지 않습니다.");
+    NOT_FOUND_USER_FIND_PASSWORD_EMAIL(false, 2020, BAD_REQUEST, "해당 이메일을 가진 유저가 존재하지 않습니다."),
+    NOT_EMAIL_AUTHENTICATION_USER_LOGIN(false, 2021, UNAUTHORIZED, "이메일 인증이 필요한 유저입니다."),
+    NOT_VALID_AUTH_CODE(false, 2022, BAD_REQUEST, "인증 시간이 만료된 인증 코드이거나 올바르지 않은 인증 코드입니다.");
 
     private final boolean isSuccess;
     private final int code;

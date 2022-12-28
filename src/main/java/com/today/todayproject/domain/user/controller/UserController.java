@@ -31,6 +31,16 @@ public class UserController {
     }
 
     /**
+     * 이메일 인증 코드 확인 API
+     */
+    @PostMapping("/confirm-email-auth-code")
+    public BaseResponse<String> confirmEmailAuthCode(
+            @ModelAttribute UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
+        userService.confirmEmailAuthCode(userEmailAuthCodeDto);
+        return new BaseResponse<>("이메일 인증을 성공했습니다.");
+    }
+
+    /**
      * 회원 정보 수정 API
      */
     @PatchMapping("/user/update")
