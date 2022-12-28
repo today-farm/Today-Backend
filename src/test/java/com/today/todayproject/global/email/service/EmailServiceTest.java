@@ -2,16 +2,11 @@ package com.today.todayproject.global.email.service;
 
 import com.today.todayproject.domain.user.Role;
 import com.today.todayproject.domain.user.User;
-import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.email.dto.EmailDto;
 import com.today.todayproject.global.util.GenerateDummy;
-import lombok.RequiredArgsConstructor;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import javax.mail.MessagingException;
@@ -43,7 +38,7 @@ class EmailServiceTest {
         EmailDto emailDto = emailService.generateEmailDtoAndChangePassword(user, passwordEncoder);
 
         //when, then
-        assertDoesNotThrow(() -> emailService.sendEmail(emailDto));
+        assertDoesNotThrow(() -> emailService.sendIssueTempPasswordEmail(emailDto));
     }
 
     @Test

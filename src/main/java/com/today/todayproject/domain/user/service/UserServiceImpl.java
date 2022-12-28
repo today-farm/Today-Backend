@@ -1,12 +1,6 @@
 package com.today.todayproject.domain.user.service;
 
-import com.today.todayproject.domain.crop.Crop;
-import com.today.todayproject.domain.crop.CropStatus;
-import com.today.todayproject.domain.crop.dto.CropInfoDto;
 import com.today.todayproject.domain.crop.repository.CropRepository;
-import com.today.todayproject.domain.growncrop.GrownCrop;
-import com.today.todayproject.domain.growncrop.repository.GrownCropInfoDto;
-import com.today.todayproject.domain.growncrop.repository.GrownCropRepository;
 import com.today.todayproject.domain.user.Role;
 import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.User;
@@ -28,8 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.MessagingException;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -221,7 +213,7 @@ public class UserServiceImpl implements UserService {
         }
 
         EmailDto emailDto = emailService.generateEmailDtoAndChangePassword(findUser, passwordEncoder);
-        emailService.sendEmail(emailDto);
+        emailService.sendIssueTempPasswordEmail(emailDto);
     }
 
 

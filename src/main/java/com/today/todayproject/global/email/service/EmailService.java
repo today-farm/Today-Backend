@@ -13,8 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.io.InputStream;
 
 @Service
 @RequiredArgsConstructor
@@ -45,7 +43,7 @@ public class EmailService {
         user.updatePassword(passwordEncoder, tempPassword);
     }
 
-    public void sendEmail(EmailDto emailDto) throws Exception {
+    public void sendIssueTempPasswordEmail(EmailDto emailDto) throws Exception {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
         mimeMessageHelper.setFrom(fromAddress);
