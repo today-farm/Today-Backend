@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.mail.MessagingException;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -112,6 +113,17 @@ public class UserServiceImpl implements UserService {
 
     private int getAuthenticationCode() {
         return Integer.parseInt(RandomStringUtils.randomNumeric(6));
+    }
+
+    @Override
+    public void confirmEmailAuthCode(UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
+        EmailAuth emailAuth = emailAuthRepository.findValidAuthByEmail(
+                        userEmailAuthCodeDto.getEmail(), userEmailAuthCodeDto.getAuthCode(), LocalDateTime.now())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_VALID_AUTH_CODE));
+        User findUser = userRepository.findByEmail(userEmailAuthCodeDto.getEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+        emailAuth.useAuthCode();
+        findUser.emailAuthSuccess();
     }
 
     /**
