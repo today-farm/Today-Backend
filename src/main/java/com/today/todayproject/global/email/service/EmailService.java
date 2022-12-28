@@ -1,22 +1,20 @@
 package com.today.todayproject.global.email.service;
 
 import com.today.todayproject.domain.user.User;
-import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.email.dto.EmailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.util.ResourceUtils;
 
-import javax.activation.FileDataSource;
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 @RequiredArgsConstructor
@@ -54,8 +52,7 @@ public class EmailService {
         mimeMessageHelper.setTo(emailDto.getUserEmail());
         mimeMessageHelper.setSubject(emailDto.getTitle());
         mimeMessageHelper.setText(emailDto.getContent(), true);
-        mimeMessageHelper.addInline("haru-img", ResourceUtils.getFile(
-                ResourceUtils.CLASSPATH_URL_PREFIX + "email/findpassword/no-think.jpeg"));
+        mimeMessageHelper.addInline("haru-img", new ClassPathResource("email/findpassword/no-think.jpeg"));
 
         mailSender.send(mimeMessage);
         log.info("임시비밀번호 발급 이메일 전송 완료");
