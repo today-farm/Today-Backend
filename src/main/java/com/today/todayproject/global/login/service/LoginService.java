@@ -2,6 +2,8 @@ package com.today.todayproject.global.login.service;
 
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.repository.UserRepository;
+import com.today.todayproject.global.BaseException;
+import com.today.todayproject.global.BaseResponseStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,6 +25,14 @@ public class LoginService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 이메일이 없습니다."));
+
+        if (user.getEmailAuth() == false) {
+            try {
+                throw new BaseException(BaseResponseStatus.NOT_EMAIL_AUTHENTICATION_USER_LOGIN);
+            } catch (BaseException e) {
+                throw new RuntimeException(e.getStatus().getMessage());
+            }
+        }
 
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
