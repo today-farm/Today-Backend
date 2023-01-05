@@ -56,7 +56,6 @@ class NotificationControllerTest {
                 .password(delegatingPasswordEncoder.encode("password1"))
                 .nickname("user1")
                 .role(Role.USER)
-                .emailAuth(true)
                 .build();
         userRepository.save(user);
     }
