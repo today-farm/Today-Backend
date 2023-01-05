@@ -184,8 +184,10 @@ public class UserServiceImpl implements UserService {
             throw new BaseException(BaseResponseStatus.WRONG_CURRENT_PASSWORD);
         }
         String deleteProfileImgUrl = loginUser.getProfileImgUrl();
-        s3UploadService.deleteOriginalFile(deleteProfileImgUrl);
-        userRepository.delete(loginUser);
+        if (deleteProfileImgUrl != null) {
+            s3UploadService.deleteOriginalFile(deleteProfileImgUrl);
+            userRepository.delete(loginUser);
+        }
     }
 
     public UserGetPagingDto searchUsers(Pageable pageable, UserSearchDto userSearchDto) {
