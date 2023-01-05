@@ -8,8 +8,8 @@ import com.today.todayproject.domain.user.repository.UserRepository;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
 import com.today.todayproject.global.email.EmailAuth;
-import com.today.todayproject.global.email.dto.AuthenticationCodeEmailDto;
-import com.today.todayproject.global.email.dto.AuthenticationCodeEmailResponseDto;
+import com.today.todayproject.global.email.dto.AuthenticationCodeEmailSendDto;
+import com.today.todayproject.global.email.dto.AuthenticationCodeEmailConfirmResponseDto;
 import com.today.todayproject.global.email.dto.IssueTempPasswordEmailDto;
 import com.today.todayproject.global.email.repository.EmailAuthRepository;
 import com.today.todayproject.global.email.service.EmailService;
@@ -27,7 +27,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.mail.MessagingException;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -74,7 +73,6 @@ public class UserServiceImpl implements UserService {
 
             user.encodePassword(passwordEncoder);
             User saveUser = userRepository.save(user);
-            sendAuthenticationCodeEmail(userSignUpRequestDto, user);
             return saveUser.getId();
         } else {
             // profile 사진이 없다면, User build 시 profile null로 추가
@@ -89,22 +87,27 @@ public class UserServiceImpl implements UserService {
             log.info("profileImg : {}", profileImg);
             user.encodePassword(passwordEncoder);
             User saveUser = userRepository.save(user);
-            sendAuthenticationCodeEmail(userSignUpRequestDto, user);
             return saveUser.getId();
         }
     }
 
-    private void sendAuthenticationCodeEmail(UserSignUpRequestDto userSignUpRequestDto, User user) throws MessagingException {
-        EmailAuth emailAuth = generateEmailAuth(userSignUpRequestDto);
-        AuthenticationCodeEmailDto authenticationCodeEmailDto =
-                emailService.generateAuthenticationCodeEmailDto(user.getEmail(), emailAuth.getAuthCode());
-        emailService.sendAuthenticationCodeEmail(authenticationCodeEmailDto);
+    @Override
+    public void sendAuthenticationCodeEmail(UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
+        if(userRepository.findByEmail(userEmailAuthCodeDto.getEmail()).isPresent()) {
+            throw new BaseException(BaseResponseStatus.EXIST_EMAIL);
+        }
+
+        EmailAuth emailAuth = generateEmailAuth(userEmailAuthCodeDto);
+        AuthenticationCodeEmailSendDto authenticationCodeEmailSendDto =
+                emailService.generateAuthenticationCodeEmailDto(
+                        userEmailAuthCodeDto.getEmail(), emailAuth.getAuthCode());
+        emailService.sendAuthenticationCodeEmail(authenticationCodeEmailSendDto);
     }
 
-    private EmailAuth generateEmailAuth(UserSignUpRequestDto userSignUpRequestDto) {
+    private EmailAuth generateEmailAuth(UserEmailAuthCodeDto userEmailAuthCodeDto) {
         return emailAuthRepository.save(
                 EmailAuth.builder()
-                        .email(userSignUpRequestDto.getEmail())
+                        .email(userEmailAuthCodeDto.getEmail())
                         .authCode(getAuthenticationCode())
                         .expired(false)
                         .build());
@@ -115,15 +118,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthenticationCodeEmailResponseDto confirmEmailAuthCode(UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
+    public AuthenticationCodeEmailConfirmResponseDto confirmEmailAuthCode(UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
         EmailAuth emailAuth = emailAuthRepository.findValidAuthByEmail(
                         userEmailAuthCodeDto.getEmail(), userEmailAuthCodeDto.getAuthCode(), LocalDateTime.now())
                 .orElse(null);
 
         if (emailAuth == null) {
-            return new AuthenticationCodeEmailResponseDto(false);
+            return new AuthenticationCodeEmailConfirmResponseDto(false);
         }
-        return new AuthenticationCodeEmailResponseDto(true);
+        return new AuthenticationCodeEmailConfirmResponseDto(true);
     }
 
     /**

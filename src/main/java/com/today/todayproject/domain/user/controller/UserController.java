@@ -1,11 +1,9 @@
 package com.today.todayproject.domain.user.controller;
 
-import com.today.todayproject.domain.crop.dto.ThisMonthUserCropDto;
 import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.service.UserService;
-import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponse;
-import com.today.todayproject.global.email.dto.AuthenticationCodeEmailResponseDto;
+import com.today.todayproject.global.email.dto.AuthenticationCodeEmailConfirmResponseDto;
 import com.today.todayproject.global.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -32,14 +30,24 @@ public class UserController {
     }
 
     /**
+     * 이메일 인증 코드 전송 API
+     */
+    @PostMapping("/send-email-auth-code")
+    public BaseResponse<String> sendEmailAuthCode(
+            @ModelAttribute UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
+        userService.sendAuthenticationCodeEmail(userEmailAuthCodeDto);
+        return new BaseResponse<>("인증 코드를 담은 메일이 전송되었습니다.");
+    }
+
+    /**
      * 이메일 인증 코드 확인 API
      */
     @PostMapping("/confirm-email-auth-code")
-    public BaseResponse<AuthenticationCodeEmailResponseDto> confirmEmailAuthCode(
+    public BaseResponse<AuthenticationCodeEmailConfirmResponseDto> confirmEmailAuthCode(
             @ModelAttribute UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
-        AuthenticationCodeEmailResponseDto authenticationCodeEmailResponseDto =
+        AuthenticationCodeEmailConfirmResponseDto authenticationCodeEmailConfirmResponseDto =
                 userService.confirmEmailAuthCode(userEmailAuthCodeDto);
-        return new BaseResponse<>(authenticationCodeEmailResponseDto);
+        return new BaseResponse<>(authenticationCodeEmailConfirmResponseDto);
     }
 
     /**

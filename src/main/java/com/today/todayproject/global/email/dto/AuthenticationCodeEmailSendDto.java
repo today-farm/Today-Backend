@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AuthenticationCodeEmailConfirmDto {
+public class AuthenticationCodeEmailSendDto {
 
     private String userEmail;
     private String title;

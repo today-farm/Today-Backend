@@ -2,7 +2,7 @@ package com.today.todayproject.global.email.service;
 
 import com.today.todayproject.domain.user.Role;
 import com.today.todayproject.domain.user.User;
-import com.today.todayproject.global.email.dto.AuthenticationCodeEmailConfirmDto;
+import com.today.todayproject.global.email.dto.AuthenticationCodeEmailSendDto;
 import com.today.todayproject.global.email.dto.IssueTempPasswordEmailDto;
 import com.today.todayproject.global.util.GenerateDummy;
 import org.junit.jupiter.api.Test;
@@ -66,10 +66,10 @@ class EmailServiceTest {
         User user = GenerateDummy.generateDummyUser("ohk9134@naver.com", "1234", "KSH1",
                 "s3://imgUrl1", Role.USER);
         em.persist(user);
-        AuthenticationCodeEmailConfirmDto authenticationCodeEmailConfirmDto =
+        AuthenticationCodeEmailSendDto authenticationCodeEmailSendDto =
                 emailService.generateAuthenticationCodeEmailDto(user.getEmail(), 123456);
 
         //when, then
-        assertDoesNotThrow(() -> emailService.sendAuthenticationCodeEmail(authenticationCodeEmailConfirmDto));
+        assertDoesNotThrow(() -> emailService.sendAuthenticationCodeEmail(authenticationCodeEmailSendDto));
     }
 }
