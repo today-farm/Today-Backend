@@ -182,7 +182,6 @@ class UserControllerTest {
 
     private String getAccessTokenByLogin(String email, String password) throws Exception {
         User user = userRepository.findByEmail(email).orElse(null);
-        user.emailAuthSuccess();
         Map<String, String> userMap = new HashMap<>();
         userMap.put("email", email);
         userMap.put("password", password);

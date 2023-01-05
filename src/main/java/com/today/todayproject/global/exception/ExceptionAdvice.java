@@ -22,7 +22,8 @@ public class ExceptionAdvice {
         log.error("BaseException errorMessage(): {}", exception.getStatus().getMessage());
         log.error("BaseException errorCode(): {}", exception.getStatus().getCode());
 
-        return new ResponseEntity(new ExceptionDto(exception.getStatus().getCode(), exception.getStatus().getMessage())
+        return new ResponseEntity(new ExceptionDto(false, exception.getStatus().getCode(),
+                exception.getStatus().getMessage())
                 , exception.getStatus().getHttpStatus());
     }
 
@@ -30,14 +31,16 @@ public class ExceptionAdvice {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity handleHttpRequestMethodEx(HttpRequestMethodNotSupportedException exception) {
         log.error("HTTP Method 매핑 오류 발생! {}", exception.getMessage());
-        return new ResponseEntity(new ExceptionDto(5000, exception.getMessage()), HttpStatus.METHOD_NOT_ALLOWED);
+        return new ResponseEntity(new ExceptionDto(false,
+                5000, exception.getMessage()), HttpStatus.METHOD_NOT_ALLOWED);
     }
 
     // Validation 예외 발생 시
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         log.error("Controller Validation 오류 발생");
-        return new ResponseEntity(new ExceptionDto(5001,
+        return new ResponseEntity(new ExceptionDto(false,
+                5001,
                 exception.getBindingResult().getAllErrors().get(0).getDefaultMessage()), HttpStatus.BAD_REQUEST);
     }
 
@@ -46,13 +49,15 @@ public class ExceptionAdvice {
     public ResponseEntity handleMemberEx(Exception exception) {
 
         exception.printStackTrace();
-        return new ResponseEntity(new ExceptionDto(10000, exception.getMessage()), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity(new ExceptionDto(false,
+                10000, exception.getMessage()), HttpStatus.BAD_REQUEST);
     }
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
     static class ExceptionDto {
+        private Boolean isSuccess;
         private int errorCode;
         private String message;
     }
