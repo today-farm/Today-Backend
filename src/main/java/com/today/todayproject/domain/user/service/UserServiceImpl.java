@@ -186,8 +186,8 @@ public class UserServiceImpl implements UserService {
         String deleteProfileImgUrl = loginUser.getProfileImgUrl();
         if (deleteProfileImgUrl != null) {
             s3UploadService.deleteOriginalFile(deleteProfileImgUrl);
-            userRepository.delete(loginUser);
         }
+        userRepository.delete(loginUser);
     }
 
     public UserGetPagingDto searchUsers(Pageable pageable, UserSearchDto userSearchDto) {
