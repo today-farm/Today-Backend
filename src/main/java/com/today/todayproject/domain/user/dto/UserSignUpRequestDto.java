@@ -30,6 +30,6 @@ public class UserSignUpRequestDto {
     @NotBlank(message = "닉네임을 입력해주세요.", groups = NotBlankGroup.class)
     @Pattern(regexp = "^[a-zA-Z0-9가-힣]+$", message = "닉네임은 숫자, 한글, 영어만 가능합니다.",
     groups = PatternGroup.class)
-    @Size(min = 2, max = 10, message = "닉네임은 2자 이상 10자 이하여야합니다.",groups = SizeGroup.class)
+    @Size(min = 2, max = 8, message = "닉네임은 2자 이상 8자 이하여야합니다.",groups = SizeGroup.class)
     private String nickname;
 }
