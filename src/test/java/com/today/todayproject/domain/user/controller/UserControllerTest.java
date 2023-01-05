@@ -465,7 +465,7 @@ class UserControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"1", "가", "a", "가나다라마바사아자차카타파하"})
-    void 회원_수정_수정할_닉네임이_2자_이상_10자_이하가_아니면_수정_실패(String changeNickname) throws Exception {
+    void 회원_수정_수정할_닉네임이_2자_이상_8자_이하가_아니면_수정_실패(String changeNickname) throws Exception {
         //given
         String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
@@ -493,8 +493,8 @@ class UserControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1", "12", "123", "abcdefghijklm"})
-    void 회원_수정_수정할_비밀번호가_4자_이상_12자_이하가_아니면_예외_처리(String changePassword) throws Exception {
+    @ValueSource(strings = {"1a!", "12a!", "123aa!"})
+    void 회원_수정_수정할_비밀번호가_8자_이상이_아니면_예외_처리(String changePassword) throws Exception {
         //given
         String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
