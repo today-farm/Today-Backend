@@ -26,14 +26,6 @@ public class LoginService implements UserDetailsService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("해당 이메일이 없습니다."));
 
-        if (user.getEmailAuth() == false) {
-            try {
-                throw new BaseException(BaseResponseStatus.NOT_EMAIL_AUTHENTICATION_USER_LOGIN);
-            } catch (BaseException e) {
-                throw new RuntimeException(e.getStatus().getMessage());
-            }
-        }
-
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())

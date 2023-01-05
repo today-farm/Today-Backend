@@ -17,7 +17,6 @@ public class GenerateDummy {
                 .nickname(nickname)
                 .profileImgUrl(profileImgUrl)
                 .role(role)
-                .emailAuth(true)
                 .build();
     }
 
