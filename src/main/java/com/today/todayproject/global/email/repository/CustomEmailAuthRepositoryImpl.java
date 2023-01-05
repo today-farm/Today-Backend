@@ -25,6 +25,7 @@ public class CustomEmailAuthRepositoryImpl implements CustomEmailAuthRepository 
                         QEmailAuth.emailAuth.authCode.eq(authCode),
                         QEmailAuth.emailAuth.expireDate.goe(currentTime),
                         QEmailAuth.emailAuth.expired.eq(false))
+                .orderBy(QEmailAuth.emailAuth.expireDate.desc())
                 .fetchFirst();
 
         return Optional.ofNullable(emailAuth);
