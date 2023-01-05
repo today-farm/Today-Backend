@@ -1,7 +1,7 @@
 package com.today.todayproject.global.email.service;
 
 import com.today.todayproject.domain.user.User;
-import com.today.todayproject.global.email.dto.AuthenticationCodeEmailDto;
+import com.today.todayproject.global.email.dto.AuthenticationCodeEmailConfirmDto;
 import com.today.todayproject.global.email.dto.IssueTempPasswordEmailDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -59,22 +59,22 @@ public class EmailService {
         log.info("임시비밀번호 발급 이메일 전송 완료");
     }
 
-    public AuthenticationCodeEmailDto generateAuthenticationCodeEmailDto(String userEmail, int authCode) {
+    public AuthenticationCodeEmailConfirmDto generateAuthenticationCodeEmailDto(String userEmail, int authCode) {
         String title = "하루 농장 회원가입 인증 코드 발급 메일입니다.";
         String content = "하루 농장 회원가입 인증 코드는 " + authCode + "입니다.";
         String htmlContent = "<img src='cid:haru-img'> <p>" + content + "</p>";
 
-        return new AuthenticationCodeEmailDto(userEmail, title, htmlContent);
+        return new AuthenticationCodeEmailConfirmDto(userEmail, title, htmlContent);
     }
 
     public void sendAuthenticationCodeEmail(
-            AuthenticationCodeEmailDto authenticationCodeEmailDto) throws MessagingException {
+            AuthenticationCodeEmailConfirmDto authenticationCodeEmailConfirmDto) throws MessagingException {
         MimeMessage mimeMessage = mailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
         mimeMessageHelper.setFrom(fromAddress);
-        mimeMessageHelper.setTo(authenticationCodeEmailDto.getUserEmail());
-        mimeMessageHelper.setSubject(authenticationCodeEmailDto.getTitle());
-        mimeMessageHelper.setText(authenticationCodeEmailDto.getContent(), true);
+        mimeMessageHelper.setTo(authenticationCodeEmailConfirmDto.getUserEmail());
+        mimeMessageHelper.setSubject(authenticationCodeEmailConfirmDto.getTitle());
+        mimeMessageHelper.setText(authenticationCodeEmailConfirmDto.getContent(), true);
         mimeMessageHelper.addInline("haru-img", new ClassPathResource("email/findpassword/no-think.jpeg"));
 
         mailSender.send(mimeMessage);

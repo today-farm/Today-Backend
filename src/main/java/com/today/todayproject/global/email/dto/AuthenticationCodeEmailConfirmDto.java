@@ -5,9 +5,11 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-public class AuthenticationCodeEmailResponseDto {
+@NoArgsConstructor
+public class AuthenticationCodeEmailConfirmDto {
 
-    private Boolean authSuccess;
+    private String userEmail;
+    private String title;
+    private String content;
 }
