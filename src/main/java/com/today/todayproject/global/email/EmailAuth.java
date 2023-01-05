@@ -30,8 +30,4 @@ public class EmailAuth {
         this.expired = expired;
         this.expireDate = LocalDateTime.now().plusMinutes(MAX_EXPIRE_TIME);
     }
-
-    public void useAuthCode() {
-        this.expired = true;
-    }
 }

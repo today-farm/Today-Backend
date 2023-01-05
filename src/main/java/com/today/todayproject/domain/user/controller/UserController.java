@@ -5,6 +5,7 @@ import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.service.UserService;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponse;
+import com.today.todayproject.global.email.dto.AuthenticationCodeEmailResponseDto;
 import com.today.todayproject.global.validation.ValidationSequence;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -34,10 +35,11 @@ public class UserController {
      * 이메일 인증 코드 확인 API
      */
     @PostMapping("/confirm-email-auth-code")
-    public BaseResponse<String> confirmEmailAuthCode(
+    public BaseResponse<AuthenticationCodeEmailResponseDto> confirmEmailAuthCode(
             @ModelAttribute UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
-        userService.confirmEmailAuthCode(userEmailAuthCodeDto);
-        return new BaseResponse<>("이메일 인증을 성공했습니다.");
+        AuthenticationCodeEmailResponseDto authenticationCodeEmailResponseDto =
+                userService.confirmEmailAuthCode(userEmailAuthCodeDto);
+        return new BaseResponse<>(authenticationCodeEmailResponseDto);
     }
 
     /**

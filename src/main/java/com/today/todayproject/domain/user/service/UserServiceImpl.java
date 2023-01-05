@@ -9,6 +9,7 @@ import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
 import com.today.todayproject.global.email.EmailAuth;
 import com.today.todayproject.global.email.dto.AuthenticationCodeEmailDto;
+import com.today.todayproject.global.email.dto.AuthenticationCodeEmailResponseDto;
 import com.today.todayproject.global.email.dto.IssueTempPasswordEmailDto;
 import com.today.todayproject.global.email.repository.EmailAuthRepository;
 import com.today.todayproject.global.email.service.EmailService;
@@ -69,7 +70,6 @@ public class UserServiceImpl implements UserService {
                     .nickname(userSignUpRequestDto.getNickname())
                     .profileImgUrl(profileImgUrl)
                     .role(Role.USER)
-                    .emailAuth(false)
                     .build();
 
             user.encodePassword(passwordEncoder);
@@ -84,7 +84,6 @@ public class UserServiceImpl implements UserService {
                     .nickname(userSignUpRequestDto.getNickname())
                     .profileImgUrl(null)
                     .role(Role.USER)
-                    .emailAuth(false)
                     .build();
 
             log.info("profileImg : {}", profileImg);
@@ -116,14 +115,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void confirmEmailAuthCode(UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
+    public AuthenticationCodeEmailResponseDto confirmEmailAuthCode(UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
         EmailAuth emailAuth = emailAuthRepository.findValidAuthByEmail(
                         userEmailAuthCodeDto.getEmail(), userEmailAuthCodeDto.getAuthCode(), LocalDateTime.now())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_VALID_AUTH_CODE));
-        User findUser = userRepository.findByEmail(userEmailAuthCodeDto.getEmail())
-                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
-        emailAuth.useAuthCode();
-        findUser.emailAuthSuccess();
+                .orElse(null);
+
+        if (emailAuth == null) {
+            return new AuthenticationCodeEmailResponseDto(false);
+        }
+        return new AuthenticationCodeEmailResponseDto(true);
     }
 
     /**

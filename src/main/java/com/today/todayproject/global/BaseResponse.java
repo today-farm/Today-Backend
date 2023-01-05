@@ -20,10 +20,5 @@ public class BaseResponse<T> {
         this.result = result;
     }
 
-    // 요청 실패 시 (생성자 파라미터에 BaseResponseStatus 예외 넘어옴)
-    public BaseResponse(BaseResponseStatus status) {
-        this.isSuccess = status.isSuccess();
-        this.message = status.getMessage();
-        this.code = status.getCode();
-    }
+    // 요청 실패 시는 예외가 바로 발생해서 ExceptionAdvice에서 처리
 }
