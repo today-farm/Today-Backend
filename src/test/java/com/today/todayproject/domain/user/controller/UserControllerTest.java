@@ -290,14 +290,15 @@ class UserControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"1", "12", "123", "aabbccddeeffg"})
-    void 회원_가입_시_비밀번호가_4자_이상_12자_이하가_아니면_회원_가입_실패(String password) throws Exception {
+    @ValueSource(strings = {"a1!", "aaaaaaaaaa2", "22222222222!", "abbbbbbbbbbb"})
+    void 회원_가입_시_비밀번호가_영어_숫자_특수문자가_포함된_8자_이상이_아니면_회원_가입_실패(String password) throws Exception {
         //given
         String wrongSizePasswordDto = objectMapper.writeValueAsString(
                 new UserSignUpRequestDto(email, password, nickname));
 
         //when
-        signUpFail(generateSignUpDtoFile(wrongSizePasswordDto), "비밀번호는 4자 이상 12자 이하여야합니다.");
+        signUpFail(generateSignUpDtoFile(wrongSizePasswordDto),
+                "비밀번호는 숫자, 영어, 특수문자가 1개 이상 포함된 8자 이상이어야합니다.");
 
         //then
         assertThat(userRepository.findAll().size()).isEqualTo(0);
@@ -319,13 +320,13 @@ class UserControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"1", "aabbccddeef"})
-    void 회원_가입_시_닉네임이_2자_이상_10자_이하가_아니면_회원_가입_실패(String nickname) throws Exception {
+    void 회원_가입_시_닉네임이_2자_이상_8자_이하가_아니면_회원_가입_실패(String nickname) throws Exception {
         //given
         String wrongRegexNicknameDto = objectMapper.writeValueAsString(
                 new UserSignUpRequestDto(email, password, nickname));
 
         //when
-        signUpFail(generateSignUpDtoFile(wrongRegexNicknameDto), "닉네임은 2자 이상 10자 이하여야합니다.");
+        signUpFail(generateSignUpDtoFile(wrongRegexNicknameDto), "닉네임은 2자 이상 8자 이하여야합니다.");
 
         //then
         assertThat(userRepository.findAll().size()).isEqualTo(0);
