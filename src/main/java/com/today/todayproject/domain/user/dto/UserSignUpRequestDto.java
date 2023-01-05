@@ -22,9 +22,9 @@ public class UserSignUpRequestDto {
             message = "이메일 형식에 맞게 입력해주세요.", groups = PatternGroup.class)
     private String email;
 
-    @NotBlank(message = "비밀번호를 입력해주세요.")
-    @Size(min = 4, max = 12, message = "비밀번호는 4자 이상 12자 이하여야합니다.",
-    groups = SizeGroup.class)
+    @NotBlank(message = "비밀번호를 입력해주세요.", groups = NotBlankGroup.class)
+    @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^+\\-=])(?=\\S+$).*$",
+            message = "비밀번호는 숫자, 영어, 특수문자가 1개 이상 포함된 8자 이상이어야합니다.", groups = PatternGroup.class)
     private String password;
 
     @NotBlank(message = "닉네임을 입력해주세요.", groups = NotBlankGroup.class)
