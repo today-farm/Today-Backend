@@ -92,22 +92,22 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void sendAuthenticationCodeEmail(UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
-        if(userRepository.findByEmail(userEmailAuthCodeDto.getEmail()).isPresent()) {
+    public void sendAuthenticationCodeEmail(UserEmailAuthCodeSendDto userEmailAuthCodeSendDto) throws Exception {
+        if(userRepository.findByEmail(userEmailAuthCodeSendDto.getEmail()).isPresent()) {
             throw new BaseException(BaseResponseStatus.EXIST_EMAIL);
         }
 
-        EmailAuth emailAuth = generateEmailAuth(userEmailAuthCodeDto);
+        EmailAuth emailAuth = generateEmailAuth(userEmailAuthCodeSendDto);
         AuthenticationCodeEmailSendDto authenticationCodeEmailSendDto =
                 emailService.generateAuthenticationCodeEmailDto(
-                        userEmailAuthCodeDto.getEmail(), emailAuth.getAuthCode());
+                        userEmailAuthCodeSendDto.getEmail(), emailAuth.getAuthCode());
         emailService.sendAuthenticationCodeEmail(authenticationCodeEmailSendDto);
     }
 
-    private EmailAuth generateEmailAuth(UserEmailAuthCodeDto userEmailAuthCodeDto) {
+    private EmailAuth generateEmailAuth(UserEmailAuthCodeSendDto userEmailAuthCodeSendDto) {
         return emailAuthRepository.save(
                 EmailAuth.builder()
-                        .email(userEmailAuthCodeDto.getEmail())
+                        .email(userEmailAuthCodeSendDto.getEmail())
                         .authCode(getAuthenticationCode())
                         .expired(false)
                         .build());
@@ -118,9 +118,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public AuthenticationCodeEmailConfirmResponseDto confirmEmailAuthCode(UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
+    public AuthenticationCodeEmailConfirmResponseDto confirmEmailAuthCode(UserEmailAuthCodeConfirmDto userEmailAuthCodeConfirmDto) throws Exception {
         EmailAuth emailAuth = emailAuthRepository.findValidAuthByEmail(
-                        userEmailAuthCodeDto.getEmail(), userEmailAuthCodeDto.getAuthCode(), LocalDateTime.now())
+                        userEmailAuthCodeConfirmDto.getEmail(), userEmailAuthCodeConfirmDto.getAuthCode(), LocalDateTime.now())
                 .orElse(null);
 
         if (emailAuth == null) {

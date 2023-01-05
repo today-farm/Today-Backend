@@ -34,8 +34,8 @@ public class UserController {
      */
     @PostMapping("/send-email-auth-code")
     public BaseResponse<String> sendEmailAuthCode(
-            @ModelAttribute UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
-        userService.sendAuthenticationCodeEmail(userEmailAuthCodeDto);
+            @ModelAttribute UserEmailAuthCodeSendDto userEmailAuthCodeSendDto) throws Exception {
+        userService.sendAuthenticationCodeEmail(userEmailAuthCodeSendDto);
         return new BaseResponse<>("인증 코드를 담은 메일이 전송되었습니다.");
     }
 
@@ -44,9 +44,9 @@ public class UserController {
      */
     @PostMapping("/confirm-email-auth-code")
     public BaseResponse<AuthenticationCodeEmailConfirmResponseDto> confirmEmailAuthCode(
-            @ModelAttribute UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception {
+            @ModelAttribute UserEmailAuthCodeConfirmDto userEmailAuthCodeConfirmDto) throws Exception {
         AuthenticationCodeEmailConfirmResponseDto authenticationCodeEmailConfirmResponseDto =
-                userService.confirmEmailAuthCode(userEmailAuthCodeDto);
+                userService.confirmEmailAuthCode(userEmailAuthCodeConfirmDto);
         return new BaseResponse<>(authenticationCodeEmailConfirmResponseDto);
     }
 

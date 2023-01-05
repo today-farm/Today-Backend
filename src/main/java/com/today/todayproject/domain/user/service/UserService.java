@@ -1,6 +1,5 @@
 package com.today.todayproject.domain.user.service;
 
-import com.today.todayproject.domain.user.User;
 import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.global.email.dto.AuthenticationCodeEmailConfirmResponseDto;
 import org.springframework.data.domain.Pageable;
@@ -10,9 +9,9 @@ public interface UserService {
 
     Long signUp(UserSignUpRequestDto userSignUpRequestDto, MultipartFile profileImg) throws Exception;
 
-    void sendAuthenticationCodeEmail(UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception;
+    void sendAuthenticationCodeEmail(UserEmailAuthCodeSendDto userEmailAuthCodeSendDto) throws Exception;
 
-    AuthenticationCodeEmailConfirmResponseDto confirmEmailAuthCode(UserEmailAuthCodeDto userEmailAuthCodeDto) throws Exception;
+    AuthenticationCodeEmailConfirmResponseDto confirmEmailAuthCode(UserEmailAuthCodeConfirmDto userEmailAuthCodeConfirmDto) throws Exception;
 
     void updateUser(UserUpdateRequestDto userUpdateRequestDto, MultipartFile profileImg) throws Exception;
 
