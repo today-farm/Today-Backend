@@ -65,7 +65,7 @@ class UserControllerTest {
     private static final String BEARER = "Bearer ";
 
     private String email = "test1@gmail.com";
-    private String password = "password1";
+    private String password = "password1!";
     private String nickname = "KSH";
 
     @Value("${jwt.access.header}")
@@ -76,25 +76,25 @@ class UserControllerTest {
     }
 
     private void saveUsersAndFriends() throws Exception {
-        User user1 = GenerateDummy.generateDummyUser("test1@naver.com", "1234", "KSH1",
+        User user1 = GenerateDummy.generateDummyUser("test1@naver.com", "password1234!", "KSH1",
                 "s3://imgUrl1", Role.USER);
-        User user2 = GenerateDummy.generateDummyUser("test2@naver.com", "1234", "KSH2",
+        User user2 = GenerateDummy.generateDummyUser("test2@naver.com", "password1234!", "KSH2",
                 "s3://imgUrl2", Role.USER);
-        User user3 = GenerateDummy.generateDummyUser("test3@naver.com", "1234", "KSH3",
+        User user3 = GenerateDummy.generateDummyUser("test3@naver.com", "password1234!", "KSH3",
                 "s3://imgUrl3", Role.USER);
-        User user4 = GenerateDummy.generateDummyUser("test4@naver.com", "1234", "KSH4",
+        User user4 = GenerateDummy.generateDummyUser("test4@naver.com", "password1234!", "KSH4",
                 "s3://imgUrl4", Role.USER);
-        User user5 = GenerateDummy.generateDummyUser("test5@naver.com", "1234", "KSH5",
+        User user5 = GenerateDummy.generateDummyUser("test5@naver.com", "password1234!", "KSH5",
                 "s3://imgUrl5", Role.USER);
-        User user6 = GenerateDummy.generateDummyUser("test6@naver.com", "1234", "KSH6",
+        User user6 = GenerateDummy.generateDummyUser("test6@naver.com", "password1234!", "KSH6",
                 "s3://imgUrl6", Role.USER);
-        User user7 = GenerateDummy.generateDummyUser("test7@naver.com", "1234", "KSH7",
+        User user7 = GenerateDummy.generateDummyUser("test7@naver.com", "password1234!", "KSH7",
                 "s3://imgUrl7", Role.USER);
-        User user8 = GenerateDummy.generateDummyUser("test8@naver.com", "1234", "KSH8",
+        User user8 = GenerateDummy.generateDummyUser("test8@naver.com", "password1234!", "KSH8",
                 "s3://imgUrl8", Role.USER);
-        User user9 = GenerateDummy.generateDummyUser("test9@naver.com", "1234", "KSH9",
+        User user9 = GenerateDummy.generateDummyUser("test9@naver.com", "password1234!", "KSH9",
                 "s3://imgUrl9", Role.USER);
-        User user10 = GenerateDummy.generateDummyUser("test10@naver.com", "1234", "KSH10",
+        User user10 = GenerateDummy.generateDummyUser("test10@naver.com", "password1234!", "KSH10",
                 "s3://imgUrl10", Role.USER);
 
         signUpDummyData(user1);
@@ -481,7 +481,7 @@ class UserControllerTest {
                             .file(generatedUpdateDto)
                             .header(accessHeader, BEARER + accessToken))
             .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("수정할 닉네임은 2자 이상 10자 이하여야합니다."));
+                .andExpect(jsonPath("$.message").value("수정할 닉네임은 2자 이상 8자 이하여야합니다."));
 
 
 
@@ -510,7 +510,7 @@ class UserControllerTest {
                         .file(generatedUpdateDto)
                         .header(accessHeader, BEARER + accessToken))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("수정할 비밀번호는 4자 이상 12자 이하여야합니다."));
+                .andExpect(jsonPath("$.message").value("비밀번호는 숫자, 영어, 특수문자가 1개 이상 포함된 8자 이상이어야합니다."));
 
         //then
         User updateFailUser = userRepository.findByEmail(email)
@@ -523,7 +523,7 @@ class UserControllerTest {
     void 처음_요청_시_유저_조회_성공() throws Exception {
         //given
         userAndFriendSetUp();
-        String accessToken = getAccessTokenByLogin("test1@naver.com", "1234");
+        String accessToken = getAccessTokenByLogin("test1@naver.com", "password1234!");
         String searchUserNickname = "KSH";
 
         //when, then
@@ -541,7 +541,7 @@ class UserControllerTest {
     void 처음_요청_아닐_시_유저_조회_성공() throws Exception {
         //given
         userAndFriendSetUp();
-        String accessToken = getAccessTokenByLogin("test1@naver.com", "1234");
+        String accessToken = getAccessTokenByLogin("test1@naver.com", "password1234!");
         String searchUserNickname = "KSH";
 
         User loginUser = userRepository.findByEmail("test1@naver.com")
