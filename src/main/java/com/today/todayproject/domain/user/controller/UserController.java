@@ -30,6 +30,18 @@ public class UserController {
     }
 
     /**
+     * 닉네임 중복 체크 API
+     */
+    @PostMapping("/sign-up/nickname-duplicate-check")
+    public BaseResponse<UserNicknameDuplicateCheckResponseDto> nicknameDuplicateCheck(
+            @ModelAttribute UserNicknameDuplicateCheckRequestDto userNicknameDuplicateCheckRequestDto
+    ) {
+        UserNicknameDuplicateCheckResponseDto userNicknameDuplicateCheckResponseDto =
+                userService.nicknameDuplicateCheck(userNicknameDuplicateCheckRequestDto);
+        return new BaseResponse<>(userNicknameDuplicateCheckResponseDto);
+    }
+
+    /**
      * 이메일 인증 코드 전송 API
      */
     @PostMapping("/send-email-auth-code")
