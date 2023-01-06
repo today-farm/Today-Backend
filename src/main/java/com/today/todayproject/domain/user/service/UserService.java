@@ -9,6 +9,9 @@ public interface UserService {
 
     Long signUp(UserSignUpRequestDto userSignUpRequestDto, MultipartFile profileImg) throws Exception;
 
+    UserNicknameDuplicateCheckResponseDto nicknameDuplicateCheck(
+            UserNicknameDuplicateCheckRequestDto userNicknameDuplicateCheckRequestDto);
+
     void sendAuthenticationCodeEmail(UserEmailAuthCodeSendDto userEmailAuthCodeSendDto) throws Exception;
 
     AuthenticationCodeEmailConfirmResponseDto confirmEmailAuthCode(UserEmailAuthCodeConfirmDto userEmailAuthCodeConfirmDto) throws Exception;

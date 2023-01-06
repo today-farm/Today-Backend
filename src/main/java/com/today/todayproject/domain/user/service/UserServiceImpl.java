@@ -92,6 +92,18 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserNicknameDuplicateCheckResponseDto nicknameDuplicateCheck(
+            UserNicknameDuplicateCheckRequestDto userNicknameDuplicateCheckRequestDto) {
+        String nickname = userNicknameDuplicateCheckRequestDto.getNickname();
+        boolean isExistNickname = userRepository.findByNickname(nickname).isPresent();
+        boolean duplicateCheck = false;
+        if (isExistNickname) {
+            duplicateCheck = true;
+        }
+        return new UserNicknameDuplicateCheckResponseDto(duplicateCheck);
+    }
+
+    @Override
     public void sendAuthenticationCodeEmail(UserEmailAuthCodeSendDto userEmailAuthCodeSendDto) throws Exception {
         if(userRepository.findByEmail(userEmailAuthCodeSendDto.getEmail()).isPresent()) {
             throw new BaseException(BaseResponseStatus.EXIST_EMAIL);
