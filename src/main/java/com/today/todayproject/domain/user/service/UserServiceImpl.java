@@ -19,6 +19,7 @@ import com.today.todayproject.global.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -44,6 +45,9 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
     private final S3UploadService s3UploadService;
     private final EmailService emailService;
+
+    @Value("${image.defaultProfileImageUrl}")
+    private String defaultProfileImageUrl;
 
     /**
      * 회원 가입 로직
@@ -80,7 +84,7 @@ public class UserServiceImpl implements UserService {
                     .email(userSignUpRequestDto.getEmail())
                     .password(userSignUpRequestDto.getPassword())
                     .nickname(userSignUpRequestDto.getNickname())
-                    .profileImgUrl(null)
+                    .profileImgUrl(defaultProfileImageUrl)
                     .role(Role.USER)
                     .build();
 
