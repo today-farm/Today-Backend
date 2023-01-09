@@ -241,6 +241,18 @@ public class UserServiceImpl implements UserService {
         return new UserGetPagingDto(userGetFriendUserInfoDto, userGetUserInfoDto);
     }
 
+    @Override
+    public UserGetMyInfoDto getMyInfo() throws BaseException {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+
+        String email = loginUser.getEmail();
+        String nickname = loginUser.getNickname();
+        String profileImgUrl = loginUser.getProfileImgUrl();
+
+        return new UserGetMyInfoDto(email, nickname, profileImgUrl);
+    }
+
     private UserGetUserInfoDto getUserGetUserInfoDto(Slice<User> searchUsers) {
         List<UserSearchInfoDto> userInfos = searchUsers.stream()
                 .map(user -> {
