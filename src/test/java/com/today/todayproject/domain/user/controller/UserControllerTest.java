@@ -71,6 +71,9 @@ class UserControllerTest {
     @Value("${jwt.access.header}")
     private String accessHeader;
 
+    @Value("${image.defaultProfileImageUrl}")
+    private String defaultProfileImageUrl;
+
     void userAndFriendSetUp() throws Exception {
         saveUsersAndFriends();
     }
@@ -231,7 +234,7 @@ class UserControllerTest {
         User findUser = userRepository.findByEmail(email)
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
         assertThat(findUser).isNotNull();
-        assertThat(findUser.getProfileImgUrl()).isNull();
+        assertThat(findUser.getProfileImgUrl()).isEqualTo(defaultProfileImageUrl);
         assertThat(findUser.getEmail()).isEqualTo(email);
         assertThat(passwordEncoder.matches(password, findUser.getPassword())).isTrue();
         assertThat(findUser.getNickname()).isEqualTo(nickname);

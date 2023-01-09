@@ -13,6 +13,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
@@ -61,6 +62,9 @@ class UserServiceImplTest {
     private User user8;
     private User user9;
     private User user10;
+
+    @Value("${image.defaultProfileImageUrl}")
+    private String defaultProfileImageUrl;
 
     private static final int SEARCH_SIZE = 5;
 
@@ -176,7 +180,7 @@ class UserServiceImplTest {
         assertThat(findUser.getId()).isEqualTo(savedUserId);
         assertThat(findUser.getEmail()).isEqualTo(userSignUpRequestDto.getEmail());
         assertThat(findUser.getNickname()).isEqualTo(userSignUpRequestDto.getNickname());
-        assertThat(findUser.getProfileImgUrl()).isNull();
+        assertThat(findUser.getProfileImgUrl()).isEqualTo(defaultProfileImageUrl);
         assertThat(findUser.getRole()).isEqualTo(Role.USER);
     }
 
