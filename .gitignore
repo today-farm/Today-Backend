@@ -45,3 +45,5 @@ application-jwt.yml
 application-db.yml
 application-mail.yml
 .DS_Store
+/src/main/resources/application-image.yml
+/src/test/resources/application-image.yml
