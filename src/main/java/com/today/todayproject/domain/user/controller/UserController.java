@@ -2,6 +2,7 @@ package com.today.todayproject.domain.user.controller;
 
 import com.today.todayproject.domain.user.dto.*;
 import com.today.todayproject.domain.user.service.UserService;
+import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponse;
 import com.today.todayproject.global.email.dto.AuthenticationCodeEmailConfirmResponseDto;
 import com.today.todayproject.global.validation.ValidationSequence;
@@ -95,6 +96,15 @@ public class UserController {
         UserSearchDto userSearchDto = new UserSearchDto(loginUserId, lastFriendUserId, lastUserId, searchUserNickname);
         UserGetPagingDto userGetPagingDto = userService.searchUsers(pageable, userSearchDto);
         return new BaseResponse<>(userGetPagingDto);
+    }
+
+    /**
+     * 내 정보 조회 API
+     */
+    @GetMapping("/user/find-my-info")
+    public BaseResponse<UserGetMyInfoDto> getMyInfo() throws BaseException {
+        UserGetMyInfoDto myInfoDto = userService.getMyInfo();
+        return new BaseResponse<>(myInfoDto);
     }
 
     /**
