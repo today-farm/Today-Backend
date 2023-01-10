@@ -158,17 +158,15 @@ public class UserServiceImpl implements UserService {
 
         String currentNickname = loginUser.getNickname();
 
-        if (userUpdateMyInfoRequestDto == null) {
-            throw new BaseException(BaseResponseStatus.NOT_FOUND_UPDATE_USER_INFO);
-        }
 
-        String changeNickname = userUpdateMyInfoRequestDto.getChangeNickname();
-
-        if (userUpdateMyInfoRequestDto.getChangeNickname() != null) {
-            if (currentNickname.equals(changeNickname)) {
-                throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
+        if (userUpdateMyInfoRequestDto != null) {
+            if (userUpdateMyInfoRequestDto.getChangeNickname() != null) {
+                String changeNickname = userUpdateMyInfoRequestDto.getChangeNickname();
+                if (currentNickname.equals(changeNickname)) {
+                    throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
+                }
+                loginUser.updateNickname(changeNickname);
             }
-            loginUser.updateNickname(changeNickname);
         }
 
         if (profileImg != null) {
