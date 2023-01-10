@@ -64,16 +64,16 @@ public class UserController {
     }
 
     /**
-     * 회원 정보 수정 API
+     * 내 정보 수정 API
      */
-    @PatchMapping("/user/update")
-    public BaseResponse<String> update(
-            @Validated(ValidationSequence.class) @RequestPart(required = false) UserUpdateRequestDto userUpdateRequestDto,
+    @PatchMapping("/user/update-my-info")
+    public BaseResponse<String> updateMyInfo(
+            @Validated(ValidationSequence.class) @RequestPart(required = false) UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto,
             @RequestPart(required = false) MultipartFile profileImg) throws Exception {
-        userService.updateUser(userUpdateRequestDto, profileImg);
-        return new BaseResponse<>("회원 수정 성공");
+        userService.updateUser(userUpdateMyInfoRequestDto, profileImg);
+        return new BaseResponse<>("내 정보 수정 성공");
     }
-
+    
     /**
      * 회원 탈퇴 API
      */
