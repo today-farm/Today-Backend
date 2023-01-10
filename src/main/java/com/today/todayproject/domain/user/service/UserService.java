@@ -17,7 +17,7 @@ public interface UserService {
 
     AuthenticationCodeEmailConfirmResponseDto confirmEmailAuthCode(UserEmailAuthCodeConfirmDto userEmailAuthCodeConfirmDto) throws Exception;
 
-    void updateUser(UserUpdateRequestDto userUpdateRequestDto, MultipartFile profileImg) throws Exception;
+    void updateUser(UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto, MultipartFile profileImg) throws Exception;
 
     void withdraw(UserWithdrawRequestDto userWithdrawRequestDto) throws Exception;
 

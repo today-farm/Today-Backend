@@ -49,6 +49,8 @@ public class UserServiceImpl implements UserService {
     @Value("${image.defaultProfileImageUrl}")
     private String defaultProfileImageUrl;
 
+    private static final String DEFAULT_PROFILE_IMG_URL = "icon_profile.png";
+
     /**
      * 회원 가입 로직
      */
@@ -150,39 +152,33 @@ public class UserServiceImpl implements UserService {
      */
     // TODO : Optional의 ifPresent로 로직 변경, 3중 if문 없애기
     @Override
-    public void updateUser(UserUpdateRequestDto userUpdateRequestDto, MultipartFile profileImg) throws Exception {
+    public void updateUser(UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto, MultipartFile profileImg) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
         String currentNickname = loginUser.getNickname();
-        if (userUpdateRequestDto != null) {
-            if(userUpdateRequestDto.getChangeNickname() != null) {
-                // 기존 닉네임과 변경할 닉네임이 같을 때 예외 처리
-                if (currentNickname.equals(userUpdateRequestDto.getChangeNickname())) {
-                    throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
-                }
-                loginUser.updateNickname(userUpdateRequestDto.getChangeNickname());
-            }
 
-
-            if(userUpdateRequestDto.getChangePassword() != null) {
-                // 기존 비밀번호와 변경할 비밀번호가 같을 때 예외 처리
-                if (loginUser.matchPassword(passwordEncoder, userUpdateRequestDto.getChangePassword())) {
-                    throw new BaseException(BaseResponseStatus.SAME_CURRENT_CHANGE_PASSWORD);
-                }
-                loginUser.updatePassword(passwordEncoder, userUpdateRequestDto.getChangePassword());
-            }
+        if (userUpdateMyInfoRequestDto == null) {
+            throw new BaseException(BaseResponseStatus.NOT_FOUND_UPDATE_USER_INFO);
         }
 
-        if(profileImg != null) {
+        String changeNickname = userUpdateMyInfoRequestDto.getChangeNickname();
+
+        if (userUpdateMyInfoRequestDto.getChangeNickname() != null) {
+            if (currentNickname.equals(changeNickname)) {
+                throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
+            }
+            loginUser.updateNickname(changeNickname);
+        }
+
+        if (profileImg != null) {
             // 현재 프로필 사진이 기본이라면 S3 삭제 X, 있을 때만 S3에서 삭제
-            if(loginUser.getProfileImgUrl() != null) {
+            if (!loginUser.getProfileImgUrl().equals(DEFAULT_PROFILE_IMG_URL)) {
                 s3UploadService.deleteOriginalFile(loginUser.getProfileImgUrl());
             }
             String changeProfileImgUrl = s3UploadService.uploadFile(profileImg);
             loginUser.updateProfileImgUrl(changeProfileImgUrl);
         }
-
     }
 
 
