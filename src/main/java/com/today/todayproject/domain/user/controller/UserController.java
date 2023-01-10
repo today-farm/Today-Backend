@@ -70,10 +70,21 @@ public class UserController {
     public BaseResponse<String> updateMyInfo(
             @Validated(ValidationSequence.class) @RequestPart(required = false) UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto,
             @RequestPart(required = false) MultipartFile profileImg) throws Exception {
-        userService.updateUser(userUpdateMyInfoRequestDto, profileImg);
+        userService.updateMyUserInfo(userUpdateMyInfoRequestDto, profileImg);
         return new BaseResponse<>("내 정보 수정 성공");
     }
-    
+
+    /**
+     * 비밀번호 변경 API
+     */
+    @PatchMapping("/user/update-password")
+    public BaseResponse<String> updatePassword(
+            @Validated(ValidationSequence.class) UserUpdatePasswordRequestDto userUpdatePasswordRequestDto)
+            throws Exception {
+        userService.updatePassword(userUpdatePasswordRequestDto);
+        return new BaseResponse<>("비밀번호 수정 성공");
+    }
+
     /**
      * 회원 탈퇴 API
      */
