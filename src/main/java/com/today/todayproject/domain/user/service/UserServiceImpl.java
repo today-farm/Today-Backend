@@ -152,7 +152,7 @@ public class UserServiceImpl implements UserService {
      */
     // TODO : Optional의 ifPresent로 로직 변경, 3중 if문 없애기
     @Override
-    public void updateUser(UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto, MultipartFile profileImg) throws Exception {
+    public void updateMyUserInfo(UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto, MultipartFile profileImg) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
@@ -179,6 +179,19 @@ public class UserServiceImpl implements UserService {
         }
     }
 
+    @Override
+    public void updatePassword(UserUpdatePasswordRequestDto userUpdatePasswordRequestDto) throws Exception {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+
+        if (userUpdatePasswordRequestDto != null) {
+            String changePassword = userUpdatePasswordRequestDto.getChangePassword();
+            if (loginUser.matchPassword(passwordEncoder, changePassword)) {
+                throw new BaseException(BaseResponseStatus.SAME_CURRENT_CHANGE_PASSWORD);
+            }
+            loginUser.updatePassword(passwordEncoder, changePassword);
+        }
+    }
 
     /**
      * 회원 탈퇴 로직
