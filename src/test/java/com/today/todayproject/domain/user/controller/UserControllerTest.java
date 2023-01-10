@@ -35,9 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SpringBootTest
@@ -387,29 +385,25 @@ class UserControllerTest {
         assertThat(afterUpdateUser.getNickname()).isEqualTo(nickname+"123");
     }
 
-//    @Test
-//    void 회원_수정_비밀번호만_수정_시_성공() throws Exception {
-//        //given
-//        String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
-//        signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
-//        String accessToken = getAccessTokenByLogin(email, password);
-//
-//        String updateDto = objectMapper.writeValueAsString(
-//                new UserUpdateMyInfoRequestDto(null, password + "123"));
-//        MockMultipartFile generatedUpdateDto = generateUpdateDtoFile(updateDto);
-//
-//        //when
-//        mockMvc.perform(
-//                        multipart(HttpMethod.PATCH, "/user/update-my-info")
-//                                .file(generatedUpdateDto)
-//                                .header(accessHeader, BEARER + accessToken))
-//                .andExpect(status().isOk());
-//
-//        //then
-//        User afterUpdateUser = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
-//        assertThat(passwordEncoder.matches(password + "123", afterUpdateUser.getPassword())).isTrue();
-//    }
+    @Test
+    void 회원_수정_비밀번호만_수정_시_성공() throws Exception {
+        //given
+        String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
+        signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
+        String accessToken = getAccessTokenByLogin(email, password);
+
+        //when
+        mockMvc.perform(
+                        patch("/user/update-password")
+                                .param("changePassword", password + "123")
+                                .header(accessHeader, BEARER + accessToken))
+                .andExpect(status().isOk());
+
+        //then
+        User afterUpdateUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+        assertThat(passwordEncoder.matches(password + "123", afterUpdateUser.getPassword())).isTrue();
+    }
 
     @Test
     void 회원_수정_프로필_사진만_수정_시_성공() throws Exception {
@@ -490,32 +484,27 @@ class UserControllerTest {
         assertThat(updateFailUser.getNickname()).isEqualTo(nickname);
     }
 
-//    @ParameterizedTest
-//    @ValueSource(strings = {"1a!", "12a!", "123aa!"})
-//    void 회원_수정_수정할_비밀번호가_8자_이상이_아니면_예외_처리(String changePassword) throws Exception {
-//        //given
-//        String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
-//        signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
-//        String accessToken = getAccessTokenByLogin(email, password);
-//
-//        String updateDto = objectMapper.writeValueAsString(
-//                new UserUpdateMyInfoRequestDto(null, changePassword));
-//        MockMultipartFile generatedUpdateDto = generateUpdateDtoFile(updateDto);
-//
-//        //when
-//        mockMvc.perform(
-//                multipart(HttpMethod.PATCH, "/user/update-my-info")
-//                        .file(generatedUpdateDto)
-//                        .header(accessHeader, BEARER + accessToken))
-//                .andExpect(status().isBadRequest())
-//                .andExpect(jsonPath("$.message").value("비밀번호는 숫자, 영어, 특수문자가 1개 이상 포함된 8자 이상이어야합니다."));
-//
-//        //then
-//        User updateFailUser = userRepository.findByEmail(email)
-//                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
-//        assertThat(passwordEncoder.matches(changePassword, updateFailUser.getPassword())).isFalse();
-//        assertThat(passwordEncoder.matches(password, updateFailUser.getPassword())).isTrue();
-//    }
+    @ParameterizedTest
+    @ValueSource(strings = {"1a!", "12a!", "123aa!"})
+    void 회원_수정_수정할_비밀번호가_8자_이상이_아니면_예외_처리(String changePassword) throws Exception {
+        //given
+        String signUpDto = objectMapper.writeValueAsString(new UserSignUpRequestDto(email, password, nickname));
+        signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
+        String accessToken = getAccessTokenByLogin(email, password);
+
+        //when
+        mockMvc.perform(
+                        patch("/user/update-password")
+                                .param("changePassword", changePassword)
+                                .header(accessHeader, BEARER + accessToken))
+                .andExpect(status().isBadRequest());
+
+        //then
+        User updateFailUser = userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+        assertThat(passwordEncoder.matches(changePassword, updateFailUser.getPassword())).isFalse();
+        assertThat(passwordEncoder.matches(password, updateFailUser.getPassword())).isTrue();
+    }
 
     @Test
     void 처음_요청_시_유저_조회_성공() throws Exception {

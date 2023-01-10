@@ -112,7 +112,7 @@ class UserServiceImplTest {
     }
 
     private UserSignUpRequestDto generateUserSignUpRequestDto() {
-        return new UserSignUpRequestDto("test1@gmail.com", "password1", "KSH");
+        return new UserSignUpRequestDto("test1@gmail.com", "password1!", "KSH");
     }
 
     private MockMultipartFile generateMultipartFileImage() throws IOException {
@@ -210,7 +210,7 @@ class UserServiceImplTest {
     }
 
     @Test
-    void 회원_수정_닉네임_비밀번호_프로필_사진_모두_수정() throws Exception {
+    void 회원_수정_닉네임_프로필_사진_모두_수정() throws Exception {
         //given
         UserSignUpRequestDto userSignUpRequestDto = generateUserSignUpRequestDto();
         setAuthenticatedUser(userSignUpRequestDto);
@@ -225,7 +225,7 @@ class UserServiceImplTest {
         String changePassword = "changePassword1";
         MockMultipartFile changeProfileImg = generateMultipartFileImage();
         UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(changeNickname);
-        userService.updateUser(userUpdateMyInfoRequestDto, changeProfileImg);
+        userService.updateMyUserInfo(userUpdateMyInfoRequestDto, changeProfileImg);
 
         //then
         assertThat(findUser.getNickname()).isNotEqualTo(beforeNickname);
@@ -245,31 +245,31 @@ class UserServiceImplTest {
         //when
         String changeNickname = "changeKSH";
         UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(changeNickname);
-        userService.updateUser(userUpdateMyInfoRequestDto, null);
+        userService.updateMyUserInfo(userUpdateMyInfoRequestDto, null);
 
         //then
         assertThat(findUser.getNickname()).isNotEqualTo(beforeNickname);
         assertThat(findUser.getNickname()).isEqualTo(changeNickname);
     }
 
-//    @Test
-//    void 회원_수정_비밀번호만_수정() throws Exception {
-//        //given
-//        UserSignUpRequestDto userSignUpRequestDto = generateUserSignUpRequestDto();
-//        setAuthenticatedUser(userSignUpRequestDto);
-//        User findUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
-//                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
-//        String beforePassword = findUser.getPassword();
-//
-//        //when
-//        String changePassword = "changePassword1";
-//        UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(null, changePassword);
-//        userService.updateUser(userUpdateMyInfoRequestDto, null);
-//
-//        //then
-//        assertThat(passwordEncoder.matches(beforePassword, findUser.getPassword())).isFalse();
-//        assertThat(passwordEncoder.matches(changePassword, findUser.getPassword())).isTrue();
-//    }
+    @Test
+    void 회원_수정_비밀번호만_수정() throws Exception {
+        //given
+        UserSignUpRequestDto userSignUpRequestDto = generateUserSignUpRequestDto();
+        setAuthenticatedUser(userSignUpRequestDto);
+        User findUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+        String beforePassword = findUser.getPassword();
+
+        //when
+        String changePassword = "changePassword1";
+        UserUpdatePasswordRequestDto userUpdatePasswordRequestDto = new UserUpdatePasswordRequestDto(changePassword);
+        userService.updatePassword(userUpdatePasswordRequestDto);
+
+        //then
+        assertThat(passwordEncoder.matches(beforePassword, findUser.getPassword())).isFalse();
+        assertThat(passwordEncoder.matches(changePassword, findUser.getPassword())).isTrue();
+    }
 
     @Test
     void 회원_수정_프로필_사진만_수정() throws Exception {
@@ -282,7 +282,7 @@ class UserServiceImplTest {
 
         //when
         MockMultipartFile changeProfileImg = generateMultipartFileImage();
-        userService.updateUser(null, changeProfileImg);
+        userService.updateMyUserInfo(null, changeProfileImg);
 
         //then
         assertThat(findUser.getProfileImgUrl()).isNotEqualTo(beforeProfileImgUrl);
@@ -299,22 +299,22 @@ class UserServiceImplTest {
         UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(changeNickname);
 
         //then
-        assertThrows(BaseException.class, () -> userService.updateUser(userUpdateMyInfoRequestDto, null));
+        assertThrows(BaseException.class, () -> userService.updateMyUserInfo(userUpdateMyInfoRequestDto, null));
     }
 
-//    @Test
-//    void 회원_수정_비밀번호_수정_시_기존_비밀번호와_변경할_비밀번호가_같을_시_예외_처리() throws Exception {
-//        //given
-//        UserSignUpRequestDto userSignUpRequestDto = generateUserSignUpRequestDto();
-//        setAuthenticatedUser(userSignUpRequestDto);
-//
-//        //when
-//        String changePassword = "password1";
-//        UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(null, changePassword);
-//
-//        //then
-//        assertThrows(BaseException.class, () -> userService.updateUser(userUpdateMyInfoRequestDto, null));
-//    }
+    @Test
+    void 회원_수정_비밀번호_수정_시_기존_비밀번호와_변경할_비밀번호가_같을_시_예외_처리() throws Exception {
+        //given
+        UserSignUpRequestDto userSignUpRequestDto = generateUserSignUpRequestDto();
+        setAuthenticatedUser(userSignUpRequestDto);
+
+        //when
+        String changePassword = "password1!";
+        UserUpdatePasswordRequestDto userUpdatePasswordRequestDto = new UserUpdatePasswordRequestDto(changePassword);
+
+        //then
+        assertThrows(BaseException.class, () -> userService.updatePassword(userUpdatePasswordRequestDto));
+    }
 
     @Test
     void 회원_탈퇴_성공() throws Exception {
