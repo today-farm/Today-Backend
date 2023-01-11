@@ -68,9 +68,8 @@ public class UserController {
      */
     @PatchMapping("/user/update-my-info")
     public BaseResponse<String> updateMyInfo(
-            @Validated(ValidationSequence.class) @RequestPart(required = false) UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto,
-            @RequestPart(required = false) MultipartFile profileImg) throws Exception {
-        userService.updateMyUserInfo(userUpdateMyInfoRequestDto, profileImg);
+            @Validated(ValidationSequence.class) UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto) throws Exception {
+        userService.updateMyUserInfo(userUpdateMyInfoRequestDto);
         return new BaseResponse<>("내 정보 수정 성공");
     }
 

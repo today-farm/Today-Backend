@@ -152,29 +152,27 @@ public class UserServiceImpl implements UserService {
      */
     // TODO : Optional의 ifPresent로 로직 변경, 3중 if문 없애기
     @Override
-    public void updateMyUserInfo(UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto, MultipartFile profileImg) throws Exception {
+    public void updateMyUserInfo(UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto) throws Exception {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
         String currentNickname = loginUser.getNickname();
 
 
-        if (userUpdateMyInfoRequestDto != null) {
-            if (userUpdateMyInfoRequestDto.getChangeNickname() != null) {
-                String changeNickname = userUpdateMyInfoRequestDto.getChangeNickname();
-                if (currentNickname.equals(changeNickname)) {
-                    throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
-                }
-                loginUser.updateNickname(changeNickname);
+        if (userUpdateMyInfoRequestDto.getChangeNickname() != null) {
+            String changeNickname = userUpdateMyInfoRequestDto.getChangeNickname();
+            if (currentNickname.equals(changeNickname)) {
+                throw new BaseException(BaseResponseStatus.SAME_NICKNAME);
             }
+            loginUser.updateNickname(changeNickname);
         }
 
-        if (profileImg != null) {
+        if (userUpdateMyInfoRequestDto.getProfileImg() != null) {
             // 현재 프로필 사진이 기본이라면 S3 삭제 X, 있을 때만 S3에서 삭제
             if (!loginUser.getProfileImgUrl().equals(DEFAULT_PROFILE_IMG_URL)) {
                 s3UploadService.deleteOriginalFile(loginUser.getProfileImgUrl());
             }
-            String changeProfileImgUrl = s3UploadService.uploadFile(profileImg);
+            String changeProfileImgUrl = s3UploadService.uploadFile(userUpdateMyInfoRequestDto.getProfileImg());
             loginUser.updateProfileImgUrl(changeProfileImgUrl);
         }
     }
