@@ -262,7 +262,7 @@ class UserServiceImplTest {
 
         //when
         String changePassword = "changePassword1";
-        UserUpdatePasswordRequestDto userUpdatePasswordRequestDto = new UserUpdatePasswordRequestDto(beforePassword, changePassword);
+        UserUpdatePasswordRequestDto userUpdatePasswordRequestDto = new UserUpdatePasswordRequestDto("password1!", changePassword);
         userService.updatePassword(userUpdatePasswordRequestDto);
 
         //then
