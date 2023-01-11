@@ -387,6 +387,7 @@ class UserControllerTest {
         //when
         mockMvc.perform(
                         patch("/user/update-password")
+                                .param("currentPassword", password)
                                 .param("changePassword", password + "123")
                                 .header(accessHeader, BEARER + accessToken))
                 .andExpect(status().isOk());
@@ -477,6 +478,7 @@ class UserControllerTest {
         //when
         mockMvc.perform(
                         patch("/user/update-password")
+                                .param("currentPassword", password)
                                 .param("changePassword", changePassword)
                                 .header(accessHeader, BEARER + accessToken))
                 .andExpect(status().isBadRequest());

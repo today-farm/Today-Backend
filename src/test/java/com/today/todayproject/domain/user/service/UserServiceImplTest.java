@@ -262,7 +262,7 @@ class UserServiceImplTest {
 
         //when
         String changePassword = "changePassword1";
-        UserUpdatePasswordRequestDto userUpdatePasswordRequestDto = new UserUpdatePasswordRequestDto(changePassword);
+        UserUpdatePasswordRequestDto userUpdatePasswordRequestDto = new UserUpdatePasswordRequestDto(beforePassword, changePassword);
         userService.updatePassword(userUpdatePasswordRequestDto);
 
         //then
@@ -307,10 +307,13 @@ class UserServiceImplTest {
         //given
         UserSignUpRequestDto userSignUpRequestDto = generateUserSignUpRequestDto();
         setAuthenticatedUser(userSignUpRequestDto);
+        User findUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+        String beforePassword = findUser.getPassword();
 
         //when
         String changePassword = "password1!";
-        UserUpdatePasswordRequestDto userUpdatePasswordRequestDto = new UserUpdatePasswordRequestDto(changePassword);
+        UserUpdatePasswordRequestDto userUpdatePasswordRequestDto = new UserUpdatePasswordRequestDto(beforePassword, changePassword);
 
         //then
         assertThrows(BaseException.class, () -> userService.updatePassword(userUpdatePasswordRequestDto));
