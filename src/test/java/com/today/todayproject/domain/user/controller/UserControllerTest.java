@@ -340,15 +340,11 @@ class UserControllerTest {
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
         String beforeUpdateProfileImgUrl = beforeUpdateUser.getProfileImgUrl();
 
-        String updateDto = objectMapper.writeValueAsString(
-                new UserUpdateMyInfoRequestDto(nickname+"123"));
-        MockMultipartFile generatedUpdateDto = generateUpdateMyInfoDtoFile(updateDto);
-
         //when
         mockMvc.perform(
                 multipart(HttpMethod.PATCH, "/user/update-my-info")
                         .file(generateUpdateMultipartFileImage())
-                        .file(generatedUpdateDto)
+                        .param("changeNickname", nickname + "123")
                         .header(accessHeader, BEARER + accessToken))
                 .andExpect(status().isOk());
 
@@ -367,14 +363,10 @@ class UserControllerTest {
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
         String accessToken = getAccessTokenByLogin(email, password);
 
-        String updateDto = objectMapper.writeValueAsString(
-                new UserUpdateMyInfoRequestDto(nickname+"123"));
-        MockMultipartFile generatedUpdateDto = generateUpdateMyInfoDtoFile(updateDto);
-
         //when
         mockMvc.perform(
                         multipart(HttpMethod.PATCH, "/user/update-my-info")
-                                .file(generatedUpdateDto)
+                                .param("changeNickname", nickname + "123")
                                 .header(accessHeader, BEARER + accessToken))
                 .andExpect(status().isOk());
 
@@ -436,17 +428,12 @@ class UserControllerTest {
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
         String accessToken = getAccessTokenByLogin(email, password);
 
-        String updateDto = objectMapper.writeValueAsString(
-                new UserUpdateMyInfoRequestDto(changeNickname));
-        MockMultipartFile generatedUpdateDto = generateUpdateMyInfoDtoFile(updateDto);
-
         //when
         mockMvc.perform(
                         multipart(HttpMethod.PATCH, "/user/update-my-info")
-                                .file(generatedUpdateDto)
+                                .param("changeNickname", changeNickname)
                                 .header(accessHeader, BEARER + accessToken))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("수정할 닉네임은 숫자, 한글, 영어만 가능합니다."));
+                .andExpect(status().isBadRequest());
 
         //then
         User updateFailUser = userRepository.findByEmail(email)
@@ -463,17 +450,12 @@ class UserControllerTest {
         signUpProfileSuccess(generateSignUpDtoFile(signUpDto));
         String accessToken = getAccessTokenByLogin(email, password);
 
-        String updateDto = objectMapper.writeValueAsString(
-                new UserUpdateMyInfoRequestDto(changeNickname));
-        MockMultipartFile generatedUpdateDto = generateUpdateMyInfoDtoFile(updateDto);
-
         //when
         mockMvc.perform(
                     multipart(HttpMethod.PATCH, "/user/update-my-info")
-                            .file(generatedUpdateDto)
+                            .param("changeNickname", changeNickname)
                             .header(accessHeader, BEARER + accessToken))
-            .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("수정할 닉네임은 2자 이상 8자 이하여야합니다."));
+            .andExpect(status().isBadRequest());
 
 
 

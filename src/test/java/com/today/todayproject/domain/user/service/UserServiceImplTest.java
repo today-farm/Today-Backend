@@ -222,10 +222,9 @@ class UserServiceImplTest {
 
         //when
         String changeNickname = "changeKSH";
-        String changePassword = "changePassword1";
         MockMultipartFile changeProfileImg = generateMultipartFileImage();
-        UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(changeNickname);
-        userService.updateMyUserInfo(userUpdateMyInfoRequestDto, changeProfileImg);
+        UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(changeNickname, changeProfileImg);
+        userService.updateMyUserInfo(userUpdateMyInfoRequestDto);
 
         //then
         assertThat(findUser.getNickname()).isNotEqualTo(beforeNickname);
@@ -244,8 +243,8 @@ class UserServiceImplTest {
 
         //when
         String changeNickname = "changeKSH";
-        UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(changeNickname);
-        userService.updateMyUserInfo(userUpdateMyInfoRequestDto, null);
+        UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(changeNickname, null);
+        userService.updateMyUserInfo(userUpdateMyInfoRequestDto);
 
         //then
         assertThat(findUser.getNickname()).isNotEqualTo(beforeNickname);
@@ -282,7 +281,8 @@ class UserServiceImplTest {
 
         //when
         MockMultipartFile changeProfileImg = generateMultipartFileImage();
-        userService.updateMyUserInfo(null, changeProfileImg);
+        UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(null, changeProfileImg);
+        userService.updateMyUserInfo(userUpdateMyInfoRequestDto);
 
         //then
         assertThat(findUser.getProfileImgUrl()).isNotEqualTo(beforeProfileImgUrl);
@@ -296,10 +296,10 @@ class UserServiceImplTest {
 
         //when
         String changeNickname = "KSH";
-        UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(changeNickname);
+        UserUpdateMyInfoRequestDto userUpdateMyInfoRequestDto = new UserUpdateMyInfoRequestDto(changeNickname, null);
 
         //then
-        assertThrows(BaseException.class, () -> userService.updateMyUserInfo(userUpdateMyInfoRequestDto, null));
+        assertThrows(BaseException.class, () -> userService.updateMyUserInfo(userUpdateMyInfoRequestDto));
     }
 
     @Test
