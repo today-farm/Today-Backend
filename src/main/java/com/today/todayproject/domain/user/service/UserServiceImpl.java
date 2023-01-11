@@ -182,8 +182,14 @@ public class UserServiceImpl implements UserService {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
-        if (userUpdatePasswordRequestDto != null) {
-            String changePassword = userUpdatePasswordRequestDto.getChangePassword();
+        String changePassword = userUpdatePasswordRequestDto.getChangePassword();
+        String currentPassword = userUpdatePasswordRequestDto.getCurrentPassword();
+
+        if (!loginUser.matchPassword(passwordEncoder, currentPassword)) {
+            throw new BaseException(BaseResponseStatus.WRONG_CURRENT_PASSWORD);
+        }
+
+        if (loginUser.matchPassword(passwordEncoder, currentPassword)) {
             if (loginUser.matchPassword(passwordEncoder, changePassword)) {
                 throw new BaseException(BaseResponseStatus.SAME_CURRENT_CHANGE_PASSWORD);
             }
