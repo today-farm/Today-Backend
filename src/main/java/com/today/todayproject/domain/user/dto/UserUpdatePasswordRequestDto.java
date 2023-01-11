@@ -13,6 +13,9 @@ import javax.validation.constraints.Pattern;
 @AllArgsConstructor
 public class UserUpdatePasswordRequestDto {
 
+    @NotBlank(message = "현재 비밀번호를 입력해주세요.", groups = ValidationGroups.NotBlankGroup.class)
+    private String currentPassword;
+
     @NotBlank(message = "변경할 비밀번호를 입력해주세요.", groups = ValidationGroups.NotBlankGroup.class)
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-zA-Z])(?=.*[!@#$%^+\\-=])(?=\\S+$).{8,}$",
             message = "비밀번호는 숫자, 영어, 특수문자가 1개 이상 포함된 8자 이상이어야합니다.", groups = ValidationGroups.PatternGroup.class)
