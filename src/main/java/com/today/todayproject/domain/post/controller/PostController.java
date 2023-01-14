@@ -25,14 +25,14 @@ public class PostController {
         return new BaseResponse<>(postSaveResponseDto);
     }
 
-    @GetMapping("/{postId}/{userId}")
+    @GetMapping("/find-one/{postId}/{userId}")
     public BaseResponse<PostInfoDto> getPostInfo(@PathVariable("postId") Long postId,
                                                  @PathVariable("userId") Long userId) throws Exception {
         PostInfoDto postInfoDto = postService.getPostInfo(postId, userId);
         return new BaseResponse<>(postInfoDto);
     }
 
-    @GetMapping("/{userId}/{month}")
+    @GetMapping("find-user-and-month/{userId}/{month}")
     public BaseResponse<PostGetMonthInfoDto> getPostByUserAndMonth(@PathVariable("userId") Long userId,
                                                                    @PathVariable("month") int month) {
         PostGetMonthInfoDto userMonthPostInfo = postService.getUserMonthPostInfo(userId, month);
