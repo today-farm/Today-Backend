@@ -32,7 +32,7 @@ public class PostController {
         return new BaseResponse<>(postInfoDto);
     }
 
-    @GetMapping("find-user-and-month/{userId}/{month}")
+    @GetMapping("/find-user-and-month/{userId}/{month}")
     public BaseResponse<PostGetMonthInfoDto> getPostByUserAndMonth(@PathVariable("userId") Long userId,
                                                                    @PathVariable("month") int month) {
         PostGetMonthInfoDto userMonthPostInfo = postService.getUserMonthPostInfo(userId, month);
