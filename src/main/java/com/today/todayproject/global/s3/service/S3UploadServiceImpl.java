@@ -29,7 +29,7 @@ public class S3UploadServiceImpl implements S3UploadService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    private String deleteUrl = "https://todayproject-bucket.s3.ap-northeast-2.amazonaws.com/";
+    private String deleteUrl = "https://haru-farm-resource-bucket.s3.ap-northeast-2.amazonaws.com/";
 
     private final AmazonS3Client amazonS3Client;
 
