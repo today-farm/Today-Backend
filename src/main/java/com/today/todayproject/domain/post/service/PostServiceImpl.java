@@ -73,7 +73,7 @@ public class PostServiceImpl implements PostService{
 
         List<PostQuestionDto> postQuestions = postSaveDto.getPostQuestions();
         // Questions(질문들) 돌면서 content, imgUrl, videoUrl 설정
-        postQuestions.stream().forEach(postQuestionDto -> {
+        for (PostQuestionDto postQuestionDto : postQuestions) {
             String question = postQuestionDto.getQuestion();
             String content = postQuestionDto.getContent();
 
@@ -87,6 +87,8 @@ public class PostServiceImpl implements PostService{
             int addImgCount = postQuestionDto.getImgCount();
             int addVideoCount = postQuestionDto.getVideoCount();
 
+            checkImgCountAndVideoCountOver(addImgCount, addVideoCount);
+
             if(addImgCount != 0) {
                 addImgsAndConfirmPost(uploadImgs, post, postQuestion, addImgCount);
             }
@@ -94,7 +96,7 @@ public class PostServiceImpl implements PostService{
             if(addVideoCount != 0) {
                 addVideosAndConfirmPost(uploadVideos, post, postQuestion, addVideoCount);
             }
-        });
+        }
 
         // before로 변수 받는 이유 -> .getPostWriteCount, .getThisMonthHarvestCount로 if 문에서 비교하는데,
         // 조건문 끝나고 다음 조건갈 때 postWriteCount가 증가, .getThisMonthHarvestCount가 초기화되어 변하므로,
@@ -160,6 +162,15 @@ public class PostServiceImpl implements PostService{
                 .map(postQuestion -> postQuestion.getId())
                 .collect(Collectors.toList());
         return new PostSaveResponseDto(post.getId(), postQuestionIds);
+    }
+
+    private void checkImgCountAndVideoCountOver(int imgCount, int videoCount) throws BaseException {
+        if (imgCount > 3) {
+            throw new BaseException(BaseResponseStatus.EXCEED_IMG_COUNT);
+        }
+        if (videoCount > 3) {
+            throw new BaseException(BaseResponseStatus.EXCEED_VIDEO_COUNT);
+        }
     }
 
     private void addVideosAndConfirmPost(List<MultipartFile> uploadVideos, Post post, PostQuestion postQuestion, int addVideoCount) {
