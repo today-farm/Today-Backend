@@ -2,6 +2,8 @@ spring:
   profiles:
     group:
       "local" : "local, jwt, db, aws, mail, image"
+      "real1" : "real1, jwt, db, aws, mail, image"
+      "real2" : "real2, jwt, db, aws, mail, image"
     active : local
 
   servlet:
@@ -16,11 +18,33 @@ logging:
         util:
           EC2MetadataUtils : error
 
+management:
+  endpoint:
+  endpoints:
+    web:
+      base-path: /application
+
 ---
 spring:
   config:
     activate:
       on-profile: "local"
+
+---
+spring:
+  config:
+    activate:
+      on-profile: real1
+server:
+  port: 8081
+
+---
+spring:
+  config:
+    activate:
+      on-profile: real2
+server:
+  port: 8082
 
 #  h2:
 #    console:
