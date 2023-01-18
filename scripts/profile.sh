@@ -38,7 +38,7 @@ function find_switch_port()
 
     if [ -z $CONTAINER_ID ]
     then
-        echo "8081"
+        echo "8082"
     else
         find_port
     fi
