@@ -1,7 +1,9 @@
 spring:
   profiles:
     group:
-      "local" : "local, jwt, db, aws, mail, image"
+      "local" : "profile, jwt, db, aws, mail, image"
+      "real1" : "real1, jwt, db, aws, mail, image"
+      "real2" : "real2, jwt, db, aws, mail, image"
     active : local
 
   servlet:
