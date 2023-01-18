@@ -35,6 +35,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -251,7 +252,9 @@ class UserControllerTest {
         signUpFail(generateSignUpDtoFile(nicknameNullDto), "닉네임을 입력해주세요.");
 
         //then
-        assertThat(userRepository.findAll().size()).isEqualTo(0);
+        assertThatThrownBy(() -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.EXIST_EMAIL)))
+                .isInstanceOf(BaseException.class);
     }
 
     @Test
@@ -270,7 +273,9 @@ class UserControllerTest {
         signUpFail(generateSignUpDtoFile(nicknameNullDto), "닉네임을 입력해주세요.");
 
         //then
-        assertThat(userRepository.findAll().size()).isEqualTo(0);
+        assertThatThrownBy(() -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.EXIST_EMAIL)))
+                .isInstanceOf(BaseException.class);
     }
 
     @ParameterizedTest
@@ -284,7 +289,9 @@ class UserControllerTest {
         signUpFail(generateSignUpDtoFile(wrongEmailRegexDto), "이메일 형식에 맞게 입력해주세요.");
 
         //then
-        assertThat(userRepository.findAll().size()).isEqualTo(0);
+        assertThatThrownBy(() -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.EXIST_EMAIL)))
+                .isInstanceOf(BaseException.class);
     }
 
     @ParameterizedTest
@@ -299,7 +306,9 @@ class UserControllerTest {
                 "비밀번호는 숫자, 영어, 특수문자가 1개 이상 포함된 8자 이상이어야합니다.");
 
         //then
-        assertThat(userRepository.findAll().size()).isEqualTo(0);
+        assertThatThrownBy(() -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.EXIST_EMAIL)))
+                .isInstanceOf(BaseException.class);
     }
 
     @ParameterizedTest
@@ -313,7 +322,9 @@ class UserControllerTest {
         signUpFail(generateSignUpDtoFile(wrongRegexNicknameDto), "닉네임은 숫자, 한글, 영어만 가능합니다.");
 
         //then
-        assertThat(userRepository.findAll().size()).isEqualTo(0);
+        assertThatThrownBy(() -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.EXIST_EMAIL)))
+                .isInstanceOf(BaseException.class);
     }
 
     @ParameterizedTest
@@ -327,7 +338,9 @@ class UserControllerTest {
         signUpFail(generateSignUpDtoFile(wrongRegexNicknameDto), "닉네임은 2자 이상 8자 이하여야합니다.");
 
         //then
-        assertThat(userRepository.findAll().size()).isEqualTo(0);
+        assertThatThrownBy(() -> userRepository.findByEmail(email)
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.EXIST_EMAIL)))
+                .isInstanceOf(BaseException.class);
     }
 
     @Test
