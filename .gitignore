@@ -37,13 +37,11 @@ out/
 .vscode/
 
 ### 서버 설정 파일 ###
-/src/main/resources/application-jwt.yml
-/src/main/resources/application-db.yml
-/src/main/resources/application-aws.yml
 application-aws.yml
 application-jwt.yml
 application-db.yml
 application-mail.yml
 .DS_Store
-/src/main/resources/application-image.yml
-/src/test/resources/application-image.yml
+application-image.yml
+application-real1.yml
+application-real2.yml
