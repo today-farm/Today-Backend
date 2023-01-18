@@ -34,7 +34,7 @@ spring:
 spring:
   config:
     activate:
-      on-profile: real1
+      on-profile: "real1"
 server:
   port: 8081
 
@@ -42,7 +42,7 @@ server:
 spring:
   config:
     activate:
-      on-profile: real2
+      on-profile: "real2"
 server:
   port: 8082
 
