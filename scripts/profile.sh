@@ -2,7 +2,7 @@
 
 function find_profile()
 {
-    CURRENT_PROFILE=$(curl -s http://http://43.200.198.172/profile)
+    CURRENT_PROFILE=$(curl -s http://localhost/profile)
 
     if [ $CURRENT_PROFILE == real1 ]
     then
@@ -38,7 +38,7 @@ function find_switch_port()
 
     if [ -z $CONTAINER_ID ]
     then
-        echo "8082"
+        echo "8081"
     else
         find_port
     fi
