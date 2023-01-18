@@ -52,6 +52,7 @@ public class SecurityConfig {
                 // 기본 페이지, css, image, js 하위 폴더에 있는 자료들은 모두 접근 가능, h2-console에 접근 가능
                 .antMatchers("/","/css/**","/images/**","/js/**","/favicon.ico","/h2-console/**").permitAll()
                 .antMatchers("/sign-up/**", "/find-password", "/send-email-auth-code", "/confirm-email-auth-code").permitAll() // 로그인, 회원가입 접근 가능
+                .antMatchers("/profile/**").permitAll() // 프로필 관련 기능 접근 가능
                 .anyRequest().authenticated(); // 위의 경로 이외에는 모두 인증된 사용자만 접근 가능
 //                .and()
 //                        .exceptionHandling()
