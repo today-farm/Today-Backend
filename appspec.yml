@@ -12,7 +12,15 @@ permissions:
     group: ec2-user
 
 hooks:
+  ApplicationStop:
+    - location: scripts/stop.sh
+      timeout: 360
+      runas: ec2-user
   ApplicationStart:
-    - location: scripts/deploy.sh
-      timeout: 60
+    - location: scripts/start.sh
+      timeout: 360
+      runas: ec2-user
+  ValidateService:
+    - location: scripts/health.sh
+      timeout: 360
       runas: ec2-user
