@@ -18,6 +18,12 @@ logging:
         util:
           EC2MetadataUtils : error
 
+management:
+  endpoint:
+  endpoints:
+    web:
+      base-path: /application
+
 ---
 spring:
   config:
