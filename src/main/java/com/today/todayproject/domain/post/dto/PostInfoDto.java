@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,16 +26,12 @@ public class PostInfoDto {
         this.postQuestions = post.getPostQuestions().stream()
                 .map(postQuestion -> new PostQuestionInfoDto(postQuestion))
                 .collect(Collectors.toList());
-        this.creationDay = convertLocalDateTimeFormatToDay(post.getCreatedDate());
+        this.creationDay = formattingCreatedDate(post.getCreatedDate());
         this.todayFeeling = post.getTodayFeeling();
         this.canPublicAccess = post.getCanPublicAccess();
     }
 
-    private String convertLocalDateTimeFormatToDay(LocalDateTime createdDate) {
-        int dayOfMonth = createdDate.getDayOfMonth();
-        String day = "";
-        if(dayOfMonth >= 1 && dayOfMonth < 10) day = "0" + dayOfMonth;
-        if(dayOfMonth >= 10) day = String.valueOf(dayOfMonth);
-        return day;
+    private String formattingCreatedDate(LocalDateTime createdDate) {
+        return createdDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"));
     }
 }
