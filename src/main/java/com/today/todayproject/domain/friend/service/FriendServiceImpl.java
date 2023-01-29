@@ -2,6 +2,7 @@ package com.today.todayproject.domain.friend.service;
 
 import com.today.todayproject.domain.friend.Friend;
 import com.today.todayproject.domain.friend.dto.FriendInfoDto;
+import com.today.todayproject.domain.friend.dto.FriendRequestInfoDto;
 import com.today.todayproject.domain.friend.repository.FriendRepository;
 import com.today.todayproject.domain.notification.NotificationType;
 import com.today.todayproject.domain.notification.service.NotificationService;
@@ -138,5 +139,25 @@ public class FriendServiceImpl implements FriendService {
 
         friendRepository.deleteByFriendIdAndFriendOwnerId(friendUser.getId(), loginUser.getId());
         friendRepository.deleteByFriendIdAndFriendOwnerId(loginUser.getId(), friendUser.getId());
+    }
+
+    @Override
+    public List<FriendRequestInfoDto> getRequestedFriendUsers(Long loginUserId) throws BaseException {
+        checkInquiryUserIsLoginUser(loginUserId);
+        // friendOwnerId가 로그인한 유저 Id고, areWeFriend가 false인 데이터 찾기
+        // (로그인된 유저가 친구 요청을 받은 친구 찾기)
+        List<Friend> findFriends = friendRepository.findAllByFriendOwnerIdAndAreWeFriendIsFalse(loginUserId)
+                .orElse(Collections.emptyList());
+
+        List<FriendRequestInfoDto> friendRequestInfoDtos = new ArrayList<>();
+
+        for (Friend requestedFriend : findFriends) {
+            User friendUser = requestedFriend.getFriend();
+            Long userId = friendUser.getId();
+            String nickname = friendUser.getNickname();
+            String profileImgUrl = friendUser.getProfileImgUrl();
+            friendRequestInfoDtos.add(new FriendRequestInfoDto(userId, nickname, profileImgUrl));
+        }
+        return friendRequestInfoDtos;
     }
 }
