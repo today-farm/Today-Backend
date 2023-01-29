@@ -13,4 +13,6 @@ public class FriendInfoDto {
     private String nickname;
     private String profileImgUrl;
     private String recentFeeling;
+
+    private Boolean isFriend;
 }
