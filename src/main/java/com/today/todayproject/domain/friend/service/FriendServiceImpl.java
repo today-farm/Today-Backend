@@ -142,8 +142,10 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public List<FriendRequestInfoDto> getRequestedFriendUsers(Long loginUserId) throws BaseException {
-        checkInquiryUserIsLoginUser(loginUserId);
+    public List<FriendRequestInfoDto> getRequestedFriendUsers() throws BaseException {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+        Long loginUserId = loginUser.getId();
         // friendOwnerId가 로그인한 유저 Id고, areWeFriend가 false인 데이터 찾기
         // (로그인된 유저가 친구 요청을 받은 친구 찾기)
         List<Friend> findFriends = friendRepository.findAllByFriendOwnerIdAndAreWeFriendIsFalse(loginUserId)

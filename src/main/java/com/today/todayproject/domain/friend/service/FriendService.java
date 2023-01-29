@@ -18,5 +18,5 @@ public interface FriendService {
 
     void refuseFriendRequest(Long opponentFriendId) throws BaseException;
 
-    List<FriendRequestInfoDto> getRequestedFriendUsers(Long loginUserId) throws BaseException;
+    List<FriendRequestInfoDto> getRequestedFriendUsers() throws BaseException;
 }
