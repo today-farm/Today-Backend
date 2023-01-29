@@ -11,7 +11,7 @@ public interface FriendRepository extends JpaRepository<Friend, Long> {
 
     void deleteByFriendIdAndFriendOwnerId(Long friendUserId, Long friendOwnerId);
 
-    Optional<List<Friend>> findAllByFriendId(Long friendUserId);
+    Optional<List<Friend>> findAllByFriendIdOrderByAreWeFriend(Long friendUserId);
 
     Optional<Friend> findByFriendIdAndFriendOwnerId(Long friendId, Long friendOwnerId);
 

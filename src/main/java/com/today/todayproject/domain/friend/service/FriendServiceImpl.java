@@ -17,7 +17,6 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -91,24 +90,21 @@ public class FriendServiceImpl implements FriendService {
     @Override
     public List<FriendInfoDto> getFriends(Long friendOwnerId) throws BaseException {
         checkInquiryUserIsLoginUser(friendOwnerId);
-        // friendOwnerId가 FriendId인 데이터 찾기 (로그인된 유저와 친구되어 있는 친구 행 찾기)
-        List<Friend> findFriends = friendRepository.findAllByFriendId(friendOwnerId)
+        // friendUserId가 FriendOwnerId인 데이터 찾기 (로그인된 유저와 친구되어 있는 친구 행 찾기)
+        List<Friend> findFriends = friendRepository.findAllByFriendIdOrderByAreWeFriend(friendOwnerId)
                 .orElse(Collections.emptyList());
-
-        List<Friend> friendsOfLoginUser = findFriends.stream()
-                .filter(Friend::getAreWeFriend) // areWeFriend가 true인 데이터만 추출
-                .collect(Collectors.toList());
 
         List<FriendInfoDto> friendInfoDtos = new ArrayList<>();
 
-        for (Friend friendOfLoginUser : friendsOfLoginUser) {
+        for (Friend friendOfLoginUser : findFriends) {
             User friendUser = userRepository.findById(friendOfLoginUser.getFriendOwnerId())
                     .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
             Long userId = friendUser.getId();
             String nickname = friendUser.getNickname();
             String profileImgUrl = friendUser.getProfileImgUrl();
             String recentFeeling = friendUser.getRecentFeeling();
-            friendInfoDtos.add(new FriendInfoDto(userId, nickname, profileImgUrl, recentFeeling));
+            Boolean isFriend = friendOfLoginUser.getAreWeFriend();
+            friendInfoDtos.add(new FriendInfoDto(userId, nickname, profileImgUrl, recentFeeling, isFriend));
         }
         return friendInfoDtos;
     }
