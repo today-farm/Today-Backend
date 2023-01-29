@@ -49,10 +49,9 @@ public class FriendController {
         return new BaseResponse<>("친구 요청을 거절하였습니다.");
     }
 
-    @GetMapping("/find-request/{loginUserId}")
-    public BaseResponse<FriendFindRequestResponseDto> getRequestedFriendUsers(
-            @PathVariable("loginUserId") Long loginUserId) throws BaseException {
-        List<FriendRequestInfoDto> requestedFriendUsers = friendService.getRequestedFriendUsers(loginUserId);
+    @GetMapping("/find-requested-users")
+    public BaseResponse<FriendFindRequestResponseDto> getRequestedFriendUsers() throws BaseException {
+        List<FriendRequestInfoDto> requestedFriendUsers = friendService.getRequestedFriendUsers();
         return new BaseResponse<>(new FriendFindRequestResponseDto(requestedFriendUsers));
     }
 }
