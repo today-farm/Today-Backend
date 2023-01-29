@@ -21,7 +21,7 @@ public class Friend extends BaseTimeEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "friend_user_id")
-    private User friend; // 친구인 유저 id (ex : 4번)
+    private User friend; // 친구인 유저 id (ex : 4번) - Friend 테이블이므로 친구인 유저인 이 컬럼이 기준이 된다.
 
     private Long friendOwnerId; // 로그인한 유저 id (ex : 1번)
 
