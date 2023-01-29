@@ -1,7 +1,9 @@
 package com.today.todayproject.domain.friend.controller;
 
+import com.today.todayproject.domain.friend.dto.FriendFindRequestResponseDto;
 import com.today.todayproject.domain.friend.dto.FriendGetFriendsResponseDto;
 import com.today.todayproject.domain.friend.dto.FriendInfoDto;
+import com.today.todayproject.domain.friend.dto.FriendRequestInfoDto;
 import com.today.todayproject.domain.friend.service.FriendService;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponse;
@@ -45,5 +47,12 @@ public class FriendController {
     public BaseResponse<String> refuseRequest(@PathVariable("opponentId") Long opponentId) throws BaseException {
         friendService.refuseFriendRequest(opponentId);
         return new BaseResponse<>("친구 요청을 거절하였습니다.");
+    }
+
+    @GetMapping("/find-request/{loginUserId}")
+    public BaseResponse<FriendFindRequestResponseDto> getRequestedFriendUsers(
+            @PathVariable("loginUserId") Long loginUserId) throws BaseException {
+        List<FriendRequestInfoDto> requestedFriendUsers = friendService.getRequestedFriendUsers(loginUserId);
+        return new BaseResponse<>(new FriendFindRequestResponseDto(requestedFriendUsers));
     }
 }
