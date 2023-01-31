@@ -151,6 +151,17 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
+    public void acceptFriendAllRequest() throws BaseException {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+
+        List<Friend> allReceiveRequestFriends = friendRepository.findAllReceiveRequestFriends(loginUser.getId());
+        for (Friend receiveRequestFriend : allReceiveRequestFriends) {
+            receiveRequestFriend.updateAreWeFriend(true);
+        }
+    }
+
+    @Override
     public void refuseFriendRequest(Long toUserId) throws BaseException {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
