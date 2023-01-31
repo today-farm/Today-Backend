@@ -1,10 +1,7 @@
 package com.today.todayproject.domain.friend.service;
 
 import com.today.todayproject.domain.friend.Friend;
-import com.today.todayproject.domain.friend.dto.FriendWithEachOtherInfoDto;
-import com.today.todayproject.domain.friend.dto.GetFriendsResponseDto;
-import com.today.todayproject.domain.friend.dto.SendRequestFriendInfoDto;
-import com.today.todayproject.domain.friend.dto.FriendRequestInfoDto;
+import com.today.todayproject.domain.friend.dto.*;
 import com.today.todayproject.domain.friend.repository.FriendRepositoryImpl;
 import com.today.todayproject.domain.notification.NotificationType;
 import com.today.todayproject.domain.notification.service.NotificationService;
@@ -166,24 +163,31 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public List<FriendRequestInfoDto> getRequestedFriendUsers() throws BaseException {
+    public FriendFindRequestResponseDto getRequestedFriendUsers() throws BaseException {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
         Long loginUserId = loginUser.getId();
         // fromUserId가 로그인한 유저 Id고, areWeFriend가 false인 데이터 찾기
         // (로그인된 유저가 친구 요청을 받은 친구 찾기)
-        List<Friend> findFriends = friendRepository.findAllByFromUserIdAndAreWeFriendIsFalse(loginUserId)
-                .orElse(Collections.emptyList());
+        List<Friend> allReceiveRequestFriends = friendRepository.findAllReceiveRequestFriends(loginUserId);
 
-        List<FriendRequestInfoDto> friendRequestInfoDtos = new ArrayList<>();
+        List<ReceiveRequestFriendInfoDto> receiveRequestFriendInfoDtos =
+                generateReceiveRequestFriendInfo(allReceiveRequestFriends);
 
-        for (Friend requestedFriend : findFriends) {
-            User toUser = requestedFriend.getToUser();
-            Long userId = toUser.getId();
-            String nickname = toUser.getNickname();
-            String profileImgUrl = toUser.getProfileImgUrl();
-            friendRequestInfoDtos.add(new FriendRequestInfoDto(userId, nickname, profileImgUrl));
+        return new FriendFindRequestResponseDto(receiveRequestFriendInfoDtos);
+    }
+
+    private List<ReceiveRequestFriendInfoDto> generateReceiveRequestFriendInfo(List<Friend> allReceiveRequestFriends)
+            throws BaseException {
+        List<ReceiveRequestFriendInfoDto> receiveRequestFriendInfoDtos = new ArrayList<>();
+        for (Friend receiveRequestFriend : allReceiveRequestFriends) {
+            User friendWithEachOtherUser = userRepository.findById(receiveRequestFriend.getToUser().getId())
+                    .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_USER));
+            receiveRequestFriendInfoDtos.add(
+                    new ReceiveRequestFriendInfoDto(friendWithEachOtherUser.getId(),
+                            friendWithEachOtherUser.getNickname(), friendWithEachOtherUser.getProfileImgUrl())
+            );
         }
-        return friendRequestInfoDtos;
+        return receiveRequestFriendInfoDtos;
     }
 }

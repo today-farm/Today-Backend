@@ -1,8 +1,8 @@
 package com.today.todayproject.domain.friend.service;
 
+import com.today.todayproject.domain.friend.dto.FriendFindRequestResponseDto;
 import com.today.todayproject.domain.friend.dto.GetFriendsResponseDto;
-import com.today.todayproject.domain.friend.dto.SendRequestFriendInfoDto;
-import com.today.todayproject.domain.friend.dto.FriendRequestInfoDto;
+import com.today.todayproject.domain.friend.dto.ReceiveRequestFriendInfoDto;
 import com.today.todayproject.global.BaseException;
 
 import java.util.List;
@@ -19,5 +19,5 @@ public interface FriendService {
 
     void refuseFriendRequest(Long toUserId) throws BaseException;
 
-    List<FriendRequestInfoDto> getRequestedFriendUsers() throws BaseException;
+    FriendFindRequestResponseDto getRequestedFriendUsers() throws BaseException;
 }
