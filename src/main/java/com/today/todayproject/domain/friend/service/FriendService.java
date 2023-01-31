@@ -15,7 +15,7 @@ public interface FriendService {
 
     GetFriendsResponseDto getFriends(Long fromUserId) throws BaseException;
 
-    void acceptFriendRequest(Long toUserId) throws BaseException;
+    void acceptFriendOneRequest(Long toUserId) throws BaseException;
 
     void refuseFriendRequest(Long toUserId) throws BaseException;
 

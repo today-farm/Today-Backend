@@ -140,7 +140,7 @@ public class FriendServiceImpl implements FriendService {
     }
 
     @Override
-    public void acceptFriendRequest(Long toUserId) throws BaseException {
+    public void acceptFriendOneRequest(Long toUserId) throws BaseException {
         User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
                 .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
 
