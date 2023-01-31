@@ -50,7 +50,7 @@ public class FriendController {
 
     @GetMapping("/find-requested-users")
     public BaseResponse<FriendFindRequestResponseDto> getRequestedFriendUsers() throws BaseException {
-        List<ReceiveRequestFriendInfoDto> requestedFriendUsers = friendService.getRequestedFriendUsers();
-        return new BaseResponse<>(new FriendFindRequestResponseDto(requestedFriendUsers));
+        FriendFindRequestResponseDto friendFindRequestResponseDto = friendService.getRequestedFriendUsers();
+        return new BaseResponse<>(friendFindRequestResponseDto);
     }
 }
