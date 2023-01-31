@@ -2,8 +2,6 @@ package com.today.todayproject.domain.post.service;
 
 import com.today.todayproject.domain.crop.Crop;
 import com.today.todayproject.domain.crop.repository.CropRepository;
-import com.today.todayproject.domain.friend.Friend;
-import com.today.todayproject.domain.friend.repository.FriendRepository;
 import com.today.todayproject.domain.growncrop.GrownCrop;
 import com.today.todayproject.domain.growncrop.repository.GrownCropRepository;
 import com.today.todayproject.domain.post.Post;
@@ -32,7 +30,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -51,7 +48,6 @@ public class PostServiceImpl implements PostService{
     private final GrownCropRepository grownCropRepository;
     private final PostImgUrlRepository postImgUrlRepository;
     private final PostVideoUrlRepository postVideoUrlRepository;
-    private final FriendRepository friendRepository;
 
     private static final int CROP_HARVEST_WRITE_COUNT = 7;
 
