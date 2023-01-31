@@ -36,7 +36,7 @@ public class FriendController {
         return new BaseResponse<>(getFriendsResponseDto);
     }
 
-    @PostMapping("/accept-request/{toUserId}")
+    @PostMapping("/accept-one-request/{toUserId}")
     public BaseResponse<String> acceptRequest(@PathVariable("toUserId") Long toUserId) throws BaseException {
         friendService.acceptFriendRequest(toUserId);
         return new BaseResponse<>("친구 요청을 수락하였습니다.");
