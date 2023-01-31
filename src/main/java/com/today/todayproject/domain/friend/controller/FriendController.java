@@ -1,8 +1,8 @@
 package com.today.todayproject.domain.friend.controller;
 
 import com.today.todayproject.domain.friend.dto.FriendFindRequestResponseDto;
-import com.today.todayproject.domain.friend.dto.FriendGetFriendsResponseDto;
-import com.today.todayproject.domain.friend.dto.FriendInfoDto;
+import com.today.todayproject.domain.friend.dto.GetFriendsResponseDto;
+import com.today.todayproject.domain.friend.dto.SendRequestFriendInfoDto;
 import com.today.todayproject.domain.friend.dto.FriendRequestInfoDto;
 import com.today.todayproject.domain.friend.service.FriendService;
 import com.today.todayproject.global.BaseException;
@@ -32,9 +32,9 @@ public class FriendController {
     }
 
     @GetMapping("/friends/{fromUserId}")
-    public BaseResponse<FriendGetFriendsResponseDto> getFriends(@PathVariable("fromUserId") Long fromUserId) throws BaseException {
-        List<FriendInfoDto> friendInfoDtos = friendService.getFriends(fromUserId);
-        return new BaseResponse<>(new FriendGetFriendsResponseDto(friendInfoDtos));
+    public BaseResponse<GetFriendsResponseDto> getFriends(@PathVariable("fromUserId") Long fromUserId) throws BaseException {
+        GetFriendsResponseDto getFriendsResponseDto = friendService.getFriends(fromUserId);
+        return new BaseResponse<>(getFriendsResponseDto);
     }
 
     @PostMapping("/accept-request/{toUserId}")
