@@ -9,4 +9,6 @@ public interface CustomFriendRepository {
     List<Friend> findAllSendRequestFriends(Long loginUserId);
 
     List<Friend> findAllFriendsWithEachOther(Long loginUserId);
+
+    List<Friend> findAllReceiveRequestFriends(Long loginUserId);
 }

@@ -46,12 +46,13 @@ public class CustomFriendRepositoryImpl implements CustomFriendRepository{
                 .fetch();
     }
 
-    private BooleanExpression isFriend(NumberPath<Long> toUserId, Long loginUserId) {
+    @Override
+    public List<Friend> findAllReceiveRequestFriends(Long loginUserId) {
         return query.selectFrom(friend)
                 .where(
-                        friend.fromUserId.eq(toUserId),
-                        friend.toUser.id.eq(loginUserId),
-                        friend.areWeFriend.eq(true)
-                ).exists();
+                        friend.fromUserId.eq(loginUserId),
+                        friend.areWeFriend.eq(false)
+                )
+                .fetch();
     }
 }
