@@ -20,5 +20,7 @@ public interface PostService {
 
     void delete(Long postId) throws Exception;
 
+    CheckTodayPostDto checkTodayPost() throws BaseException;
+
     void initUserCanWritePost();
 }

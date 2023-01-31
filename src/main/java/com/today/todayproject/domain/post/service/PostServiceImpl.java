@@ -392,6 +392,18 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
+    public CheckTodayPostDto checkTodayPost() throws BaseException {
+        User loginUser = userRepository.findByEmail(SecurityUtil.getLoginUserEmail())
+                .orElseThrow(() -> new BaseException(BaseResponseStatus.NOT_FOUND_LOGIN_USER));
+
+        Boolean canWritePost = false;
+        if (loginUser.getCanWritePost()) {
+            canWritePost = true;
+        }
+        return new CheckTodayPostDto(canWritePost);
+    }
+
+    @Override
     @Scheduled(cron = "0 0 3 * * ?", zone = "Asia/Seoul")
     public void initUserCanWritePost() {
         List<User> allUsers = userRepository.findAll();
