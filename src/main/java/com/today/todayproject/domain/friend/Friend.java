@@ -20,10 +20,10 @@ public class Friend extends BaseTimeEntity {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "friend_user_id")
-    private User friend; // 친구인 유저 id (ex : 4번) - Friend 테이블이므로 친구인 유저인 이 컬럼이 기준이 된다.
+    @JoinColumn(name = "to_user_id")
+    private User toUser; // 친구인 유저 id (ex : 4번) - Friend 테이블이므로 친구인 유저인 이 컬럼이 기준이 된다.
 
-    private Long friendOwnerId; // 로그인한 유저 id (ex : 1번)
+    private Long fromUserId; // 로그인한 유저 id (ex : 1번)
 
     @ColumnDefault("false")
     private Boolean areWeFriend; // 서로 친구인지 확인하는 필드 (친구 요청 수락된 상태인지)
@@ -38,9 +38,9 @@ public class Friend extends BaseTimeEntity {
     /**
      * 연관관계 메소드
      */
-    public void confirmUser(User friend) {
-        this.friend = friend;
-        friend.getFriendList().add(this);
+    public void confirmUser(User toUser) {
+        this.toUser = toUser;
+        toUser.getFriendList().add(this);
     }
 
     public void updateAreWeFriend(boolean updateAreWeFriend) {

@@ -32,8 +32,8 @@ public class GenerateDummy {
 
     private static void generateRequestedFriendAndAddFriends(User friendOwnerUser, User friendUser, List<Friend> friends) {
         friends.add(Friend.builder()
-                .friendOwnerId(friendUser.getId())
-                .friend(friendOwnerUser)
+                .fromUserId(friendUser.getId())
+                .toUser(friendOwnerUser)
                 .areWeFriend(false)
                 .nickname(friendOwnerUser.getNickname())
                 .build());
@@ -41,8 +41,8 @@ public class GenerateDummy {
 
     private static void generateRequestFriendAndAddFriends(User friendOwnerUser, User friendUser, List<Friend> friends) {
         friends.add(Friend.builder()
-                .friendOwnerId(friendOwnerUser.getId())
-                .friend(friendUser)
+                .fromUserId(friendOwnerUser.getId())
+                .toUser(friendUser)
                 .areWeFriend(true)
                 .nickname(friendUser.getNickname())
                 .build());

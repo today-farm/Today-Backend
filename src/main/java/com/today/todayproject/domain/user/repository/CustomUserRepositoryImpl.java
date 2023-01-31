@@ -3,6 +3,7 @@ package com.today.todayproject.domain.user.repository;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.today.todayproject.domain.friend.Friend;
+import com.today.todayproject.domain.friend.QFriend;
 import com.today.todayproject.domain.user.User;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponseStatus;
@@ -18,7 +19,7 @@ import javax.persistence.EntityManager;
 
 import java.util.List;
 
-import static com.today.todayproject.domain.friend.QFriend.friend1;
+import static com.today.todayproject.domain.friend.QFriend.friend;
 import static com.today.todayproject.domain.user.QUser.user;
 
 @Repository
@@ -45,12 +46,12 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
 
     private List<User> getFriendUsers(Long loginUserId, Long lastFriendUserId, String searchUserNickname, Pageable pageable) {
         return query.selectFrom(user)
-                .leftJoin(user.friendList, friend1)
+                .leftJoin(user.friendList, friend)
                 .where(
                         ltUserId(lastFriendUserId),
 
-                    friend1.friendOwnerId.eq(loginUserId)
-                            .and(friend1.areWeFriend.eq(true)),
+                    friend.fromUserId.eq(loginUserId)
+                            .and(friend.areWeFriend.eq(true)),
 
                         userNicknameHasStr(searchUserNickname)
                 )
@@ -76,11 +77,11 @@ public class CustomUserRepositoryImpl implements CustomUserRepository {
 
     private List<User> getUsers(Long loginUserId, Long lastUserId, String searchUserNickname, int userPageSize) {
         return query.selectFrom(user)
-                .leftJoin(user.friendList, friend1)
+                .leftJoin(user.friendList, friend)
                 .where(
                         ltUserId(lastUserId),
                         user.id.ne(loginUserId),
-                        friend1.friendOwnerId.ne(loginUserId).or(friend1.friendOwnerId.isNull()),
+                        friend.fromUserId.ne(loginUserId).or(friend.fromUserId.isNull()),
                         userNicknameHasStr(searchUserNickname)
                 )
                 .orderBy(user.id.desc())

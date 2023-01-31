@@ -8,15 +8,15 @@ import java.util.List;
 
 public interface FriendService {
 
-    void add(Long friendId) throws Exception;
+    void add(Long toUserId) throws Exception;
 
-    void delete(Long deleteFriendUserId) throws Exception;
+    void delete(Long deleteToUserId) throws Exception;
 
-    List<FriendInfoDto> getFriends(Long friendOwnerId) throws BaseException;
+    List<FriendInfoDto> getFriends(Long fromUserId) throws BaseException;
 
-    void acceptFriendRequest(Long opponentFriendId) throws BaseException;
+    void acceptFriendRequest(Long toUserId) throws BaseException;
 
-    void refuseFriendRequest(Long opponentFriendId) throws BaseException;
+    void refuseFriendRequest(Long toUserId) throws BaseException;
 
     List<FriendRequestInfoDto> getRequestedFriendUsers() throws BaseException;
 }

@@ -9,15 +9,17 @@ import java.util.Optional;
 
 public interface FriendRepository extends JpaRepository<Friend, Long> {
 
-    void deleteByFriendIdAndFriendOwnerId(Long friendUserId, Long friendOwnerId);
+    void deleteByToUserIdAndFromUserId(Long toUserId, Long fromUserId);
 
-    Optional<List<Friend>> findAllByFriendIdOrderByAreWeFriend(Long friendUserId);
+    Optional<List<Friend>> findAllByToUserIdOrderByAreWeFriend(Long toUserId);
 
-    Optional<Friend> findByFriendIdAndFriendOwnerId(Long friendId, Long friendOwnerId);
+    Optional<Friend> findByToUserIdAndFromUserId(Long friendId, Long fromUserId);
 
-    boolean existsByFriendOwnerIdAndFriend (Long friendOwnerId, User friend);
+    boolean existsByFromUserIdAndToUser(Long fromUserId, User toUser);
 
-    Optional<List<Friend>> findAllByFriendOwnerIdAndAreWeFriendIsFalse(Long friendOwnerId);
+    Optional<List<Friend>> findAllByFromUserIdAndAreWeFriendIsFalse(Long fromUserId);
 
-//    boolean existsByFriendOwnerIdAndFriendAndAreWeFriend (Long friendOwnerId, User friend, boolean areWeFriend);
+    Friend findByFromUserId(Long fromUserId);
+
+//    boolean existsByFromUserIdAndFriendAndAreWeFriend (Long FromUserId, User friend, boolean areWeFriend);
 }

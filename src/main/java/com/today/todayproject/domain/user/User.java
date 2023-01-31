@@ -43,7 +43,7 @@ public class User extends BaseTimeEntity {
     @Builder.Default
     private List<Post> posts = new ArrayList<>();
 
-    @OneToMany(mappedBy = "friend", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "toUser", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<Friend> friendList = new ArrayList<>();
 

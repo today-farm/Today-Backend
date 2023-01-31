@@ -19,33 +19,33 @@ public class FriendController {
 
     private final FriendService friendService;
 
-    @PostMapping("/add/{friendId}")
-    public BaseResponse<String> add(@PathVariable("friendId") Long friendId) throws Exception {
-        friendService.add(friendId);
+    @PostMapping("/add/{toUserId}")
+    public BaseResponse<String> add(@PathVariable("toUserId") Long toUserId) throws Exception {
+        friendService.add(toUserId);
         return new BaseResponse<>("친구 요청을 보냈습니다");
     }
 
-    @PostMapping("/delete/{deleteFriendUserId}")
-    public BaseResponse<String> delete(@PathVariable("deleteFriendUserId") Long deleteFriendUserId) throws Exception {
-        friendService.delete(deleteFriendUserId);
+    @PostMapping("/delete/{deleteToUserId}")
+    public BaseResponse<String> delete(@PathVariable("deleteToUserId") Long deleteToUserId) throws Exception {
+        friendService.delete(deleteToUserId);
         return new BaseResponse<>("친구 삭제에 성공했습니다.");
     }
 
-    @GetMapping("/friends/{friendOwnerId}")
-    public BaseResponse<FriendGetFriendsResponseDto> getFriends(@PathVariable("friendOwnerId") Long friendOwnerId) throws BaseException {
-        List<FriendInfoDto> friendInfoDtos = friendService.getFriends(friendOwnerId);
+    @GetMapping("/friends/{fromUserId}")
+    public BaseResponse<FriendGetFriendsResponseDto> getFriends(@PathVariable("fromUserId") Long fromUserId) throws BaseException {
+        List<FriendInfoDto> friendInfoDtos = friendService.getFriends(fromUserId);
         return new BaseResponse<>(new FriendGetFriendsResponseDto(friendInfoDtos));
     }
 
-    @PostMapping("/accept-request/{opponentId}")
-    public BaseResponse<String> acceptRequest(@PathVariable("opponentId") Long opponentId) throws BaseException {
-        friendService.acceptFriendRequest(opponentId);
+    @PostMapping("/accept-request/{toUserId}")
+    public BaseResponse<String> acceptRequest(@PathVariable("toUserId") Long toUserId) throws BaseException {
+        friendService.acceptFriendRequest(toUserId);
         return new BaseResponse<>("친구 요청을 수락하였습니다.");
     }
 
-    @DeleteMapping("/refuse-request/{opponentId}")
-    public BaseResponse<String> refuseRequest(@PathVariable("opponentId") Long opponentId) throws BaseException {
-        friendService.refuseFriendRequest(opponentId);
+    @DeleteMapping("/refuse-request/{toUserId}")
+    public BaseResponse<String> refuseRequest(@PathVariable("toUserId") Long toUserId) throws BaseException {
+        friendService.refuseFriendRequest(toUserId);
         return new BaseResponse<>("친구 요청을 거절하였습니다.");
     }
 
