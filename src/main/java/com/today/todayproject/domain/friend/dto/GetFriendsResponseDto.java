@@ -10,7 +10,8 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class FriendGetFriendsResponseDto {
+public class GetFriendsResponseDto {
 
-    private List<SendRequestFriendInfoDto> friendInfos = new ArrayList<>();
+    private List<SendRequestFriendInfoDto> sendRequestFriendInfos = new ArrayList<>();
+    private List<FriendWithEachOtherInfoDto> friendWithEachOtherInfos = new ArrayList<>();
 }

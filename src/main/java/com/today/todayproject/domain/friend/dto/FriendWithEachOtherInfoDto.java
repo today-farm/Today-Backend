@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SendRequestFriendInfoDto {
+public class FriendWithEachOtherInfoDto {
 
     private Long userId;
     private String nickname;
