@@ -2,6 +2,7 @@ package com.today.todayproject.domain.post.controller;
 
 import com.today.todayproject.domain.post.dto.*;
 import com.today.todayproject.domain.post.service.PostService;
+import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -53,5 +54,11 @@ public class PostController {
     public BaseResponse<String> delete(@PathVariable("postId") Long postId) throws Exception {
         postService.delete(postId);
         return new BaseResponse<>("하루 삭제에 성공하였습니다.");
+    }
+
+    @GetMapping("/check-today-post")
+    public BaseResponse<CheckTodayPostDto> checkTodayPost() throws BaseException {
+        CheckTodayPostDto checkTodayPostDto = postService.checkTodayPost();
+        return new BaseResponse<>(checkTodayPostDto);
     }
 }
