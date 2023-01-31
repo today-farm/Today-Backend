@@ -12,5 +12,5 @@ import java.util.List;
 @NoArgsConstructor
 public class FriendFindRequestResponseDto {
 
-    private List<FriendRequestInfoDto> friendRequestInfoDtos = new ArrayList<>();
+    private List<ReceiveRequestFriendInfoDto> receiveRequestFriendInfos = new ArrayList<>();
 }

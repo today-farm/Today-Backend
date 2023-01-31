@@ -2,8 +2,7 @@ package com.today.todayproject.domain.friend.controller;
 
 import com.today.todayproject.domain.friend.dto.FriendFindRequestResponseDto;
 import com.today.todayproject.domain.friend.dto.GetFriendsResponseDto;
-import com.today.todayproject.domain.friend.dto.SendRequestFriendInfoDto;
-import com.today.todayproject.domain.friend.dto.FriendRequestInfoDto;
+import com.today.todayproject.domain.friend.dto.ReceiveRequestFriendInfoDto;
 import com.today.todayproject.domain.friend.service.FriendService;
 import com.today.todayproject.global.BaseException;
 import com.today.todayproject.global.BaseResponse;
@@ -51,7 +50,7 @@ public class FriendController {
 
     @GetMapping("/find-requested-users")
     public BaseResponse<FriendFindRequestResponseDto> getRequestedFriendUsers() throws BaseException {
-        List<FriendRequestInfoDto> requestedFriendUsers = friendService.getRequestedFriendUsers();
+        List<ReceiveRequestFriendInfoDto> requestedFriendUsers = friendService.getRequestedFriendUsers();
         return new BaseResponse<>(new FriendFindRequestResponseDto(requestedFriendUsers));
     }
 }
