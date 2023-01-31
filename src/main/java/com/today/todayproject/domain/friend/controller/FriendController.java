@@ -42,6 +42,12 @@ public class FriendController {
         return new BaseResponse<>("친구 요청을 수락하였습니다.");
     }
 
+    @PostMapping("/accept-all-request")
+    public BaseResponse<String> acceptAllRequest() throws BaseException {
+        friendService.acceptFriendAllRequest();
+        return new BaseResponse<>("친구 요청을 모두 수락하였습니다.");
+    }
+
     @DeleteMapping("/refuse-request/{toUserId}")
     public BaseResponse<String> refuseRequest(@PathVariable("toUserId") Long toUserId) throws BaseException {
         friendService.refuseFriendRequest(toUserId);
