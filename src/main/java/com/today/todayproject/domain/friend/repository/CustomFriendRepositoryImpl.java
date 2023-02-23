@@ -35,8 +35,8 @@ public class CustomFriendRepositoryImpl implements CustomFriendRepository{
     public List<Friend> findAllFriendsWithEachOther(Long loginUserId) {
         QFriend selfFriend = new QFriend("selfFriend");
 
-        return query.selectFrom(friend)
-                .join(selfFriend)
+        return query.selectFrom(selfFriend)
+                .join(friend)
                 .on(friend.toUser.id.eq(selfFriend.fromUserId))
                 .where(
                         friend.fromUserId.eq(loginUserId),
